@@ -1,0 +1,142 @@
+python3-cyberfusion-queue-support (1.1.1.1.3) unstable; urgency=low
+
+  - Publish to PyPI
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Wed, 21 Aug 2024 17:29:00 +0200
+
+python3-cyberfusion-queue-support (1.1.1.1.2) unstable; urgency=low
+
+  - Don't re-raise QueueFulfillFailed
+  - Consistently quote reference in log messages
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Sun, 28 Jul 2024 01:56:00 +0200
+
+python3-cyberfusion-queue-support (1.1.1.1.1) unstable; urgency=low
+
+  - Log reference more
+  - Add newlines to CommandQueueFulfillFailed string
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Sun, 28 Jul 2024 01:24:00 +0200
+
+python3-cyberfusion-queue-support (1.1.1.1) unstable; urgency=low
+
+  - Add command + stdout + str() to CommandQueueFulfillFailed
+  - Log reference
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Sat, 27 Jul 2024 23:17:00 +0200
+
+python3-cyberfusion-queue-support (1.1.1) unstable; urgency=low
+
+  - Add logging
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Sat, 27 Jul 2024 22:46:00 +0200
+
+python3-cyberfusion-queue-support (1.1) unstable; urgency=low
+
+  - Raise exception on failed fulfill
+  - Add reference
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Wed, 24 Jul 2024 19:24:00 +0200
+
+python3-cyberfusion-queue-support (1.0.11.4) unstable; urgency=low
+
+  - Handle non-existent UID / GID
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Tue, 14 May 2024 12:51:00 +0200
+
+python3-cyberfusion-queue-support (1.0.11.3) unstable; urgency=low
+
+  - Add move_duplicate_last to disable behaviour introduced in c2c88e3080182bbbcc2c9df43ddd8eb23b7193ff
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Mon, 08 Apr 2024 18:35:00 +0200
+
+python3-cyberfusion-queue-support (1.0.11.2) unstable; urgency=low
+
+  - Move duplicate queue item to last place
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Sun, 07 Apr 2024 19:15:00 +0200
+
+python3-cyberfusion-queue-support (1.0.11.1) unstable; urgency=low
+
+  - Use functions to get UID and GID (for easy mocking)
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Sun, 07 Apr 2024 15:53:00 +0200
+
+python3-cyberfusion-queue-support (1.0.11) unstable; urgency=low
+
+  - Use owner_name/group_name instead of owner_uid/group_gid
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Sun, 07 Apr 2024 15:45:00 +0200
+
+python3-cyberfusion-queue-support (1.0.10.1) unstable; urgency=low
+
+  - Remove systemd daemon reload
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Mon, 11 Mar 2024 16:39:00 +0200
+
+python3-cyberfusion-queue-support (1.0.10) unstable; urgency=low
+
+  - Remove item order
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Fri, 22 Dec 2023 13:19:00 +0200
+
+python3-cyberfusion-queue-support (1.0.9) unstable; urgency=low
+
+  - Get decimal permissions with bits
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Fri, 21 Jul 2023 08:47:00 +0200
+
+python3-cyberfusion-queue-support (1.0.8) unstable; urgency=low
+
+  - Do not bit mask permissions
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Thu, 20 Jul 2023 22:29:00 +0200
+
+python3-cyberfusion-queue-support (1.0.7) unstable; urgency=low
+
+  - Add hide_outcomes
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Wed, 03 May 2023 17:51:00 +0200
+
+python3-cyberfusion-queue-support (1.0.6) unstable; urgency=low
+
+  - Raise error if queue operates on symlink
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Wed, 03 May 2023 13:43:00 +0200
+
+python3-cyberfusion-queue-support (1.0.5) unstable; urgency=low
+
+  - Add move
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Tue, 02 May 2023 15:55:00 +0200
+
+python3-cyberfusion-queue-support (1.0.4) unstable; urgency=low
+
+  - Rename reload to daemon_reload
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Tue, 02 May 2023 12:14:00 +0200
+
+python3-cyberfusion-queue-support (1.0.3) unstable; urgency=low
+
+  - Add systemd daemon-reload
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Tue, 02 May 2023 09:32:00 +0200
+
+python3-cyberfusion-queue-support (1.0.2) unstable; urgency=low
+
+  - Fix nullable outcomes types
+  - Ddeal with old_mode=None
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Mon, 01 May 2023 17:11:00 +0200
+
+python3-cyberfusion-queue-support (1.0.1) unstable; urgency=low
+
+  - Distribute items module
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Mon, 01 May 2023 22:07:00 +0200
+
+python3-cyberfusion-queue-support (1.0) unstable; urgency=low
+
+  - Initial release
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Sun, 30 Apr 2023 22:07:00 +0200
