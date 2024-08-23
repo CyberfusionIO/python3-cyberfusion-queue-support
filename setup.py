@@ -7,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="python3-cyberfusion-queue-support",
-    version="1.1.1.1.3",
+    version="1.1.1.2",
     description="Library to queue actions.",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -22,4 +22,7 @@ setup(
     ],
     package_dir={"": "src"},
     data_files=[],
+    install_requires=[
+        "python3-cyberfusion-systemd-support~=1.0",
+    ],
 )
