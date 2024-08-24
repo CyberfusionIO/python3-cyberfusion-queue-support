@@ -10,16 +10,14 @@ from cyberfusion.QueueSupport.outcomes import MkdirItemCreateOutcome
 # Equal
 
 
-def test_mkdir_item_equal(
-    existent_directory_path: Generator[str, None, None]
-) -> None:
+def test_mkdir_item_equal(existent_directory_path: Generator[str, None, None]) -> None:
     assert MkdirItem(path=existent_directory_path) == MkdirItem(
         path=existent_directory_path
     )
 
 
 def test_mkdir_item_not_equal_path(
-    existent_directory_path: Generator[str, None, None]
+    existent_directory_path: Generator[str, None, None],
 ) -> None:
     assert MkdirItem(path=existent_directory_path) != MkdirItem(
         path=existent_directory_path + "-example"
@@ -27,7 +25,7 @@ def test_mkdir_item_not_equal_path(
 
 
 def test_mkdir_item_equal_different_type(
-    existent_directory_path: Generator[str, None, None]
+    existent_directory_path: Generator[str, None, None],
 ) -> None:
     assert (MkdirItem(path=existent_directory_path) == 5) is False
 
@@ -36,7 +34,7 @@ def test_mkdir_item_equal_different_type(
 
 
 def test_mkdir_item_path_symlink_raises(
-    existent_symlink_path: Generator[str, None, None]
+    existent_symlink_path: Generator[str, None, None],
 ) -> None:
     with pytest.raises(PathIsSymlinkError):
         MkdirItem(path=existent_symlink_path)
@@ -62,7 +60,4 @@ def test_mkdir_item_exists_not_has_outcome_create(
 
     object_ = MkdirItem(path=existent_directory_path)
 
-    assert (
-        MkdirItemCreateOutcome(path=existent_directory_path)
-        not in object_.outcomes
-    )
+    assert MkdirItemCreateOutcome(path=existent_directory_path) not in object_.outcomes

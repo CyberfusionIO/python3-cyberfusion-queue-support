@@ -10,16 +10,12 @@ from cyberfusion.QueueSupport.outcomes import UnlinkItemUnlinkOutcome
 # Equal
 
 
-def test_unlink_item_equal(
-    existent_file_path: Generator[str, None, None]
-) -> None:
-    assert UnlinkItem(path=existent_file_path) == UnlinkItem(
-        path=existent_file_path
-    )
+def test_unlink_item_equal(existent_file_path: Generator[str, None, None]) -> None:
+    assert UnlinkItem(path=existent_file_path) == UnlinkItem(path=existent_file_path)
 
 
 def test_unlink_item_not_equal_path(
-    existent_file_path: Generator[str, None, None]
+    existent_file_path: Generator[str, None, None],
 ) -> None:
     assert UnlinkItem(path=existent_file_path) != UnlinkItem(
         path=existent_file_path + "-example"
@@ -27,7 +23,7 @@ def test_unlink_item_not_equal_path(
 
 
 def test_unlink_item_equal_different_type(
-    existent_file_path: Generator[str, None, None]
+    existent_file_path: Generator[str, None, None],
 ) -> None:
     assert (UnlinkItem(path=existent_file_path) == 5) is False
 
@@ -36,7 +32,7 @@ def test_unlink_item_equal_different_type(
 
 
 def test_unlink_item_path_symlink_raises(
-    existent_symlink_path: Generator[str, None, None]
+    existent_symlink_path: Generator[str, None, None],
 ) -> None:
     with pytest.raises(PathIsSymlinkError):
         UnlinkItem(path=existent_symlink_path)
@@ -62,6 +58,4 @@ def test_unlink_item_not_exists_not_has_outcome_unlink(
 
     object_ = UnlinkItem(path=non_existent_path)
 
-    assert (
-        UnlinkItemUnlinkOutcome(path=non_existent_path) not in object_.outcomes
-    )
+    assert UnlinkItemUnlinkOutcome(path=non_existent_path) not in object_.outcomes

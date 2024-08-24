@@ -108,14 +108,10 @@ class ChownItem(_Item):
     def fulfill(self) -> None:
         """Fulfill outcomes."""
         owner_name_change_outcomes = [
-            x
-            for x in self.outcomes
-            if isinstance(x, ChownItemOwnerChangeOutcome)
+            x for x in self.outcomes if isinstance(x, ChownItemOwnerChangeOutcome)
         ]
         group_name_change_outcomes = [
-            x
-            for x in self.outcomes
-            if isinstance(x, ChownItemGroupChangeOutcome)
+            x for x in self.outcomes if isinstance(x, ChownItemGroupChangeOutcome)
         ]
 
         if owner_name_change_outcomes:

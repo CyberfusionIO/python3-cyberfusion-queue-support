@@ -36,9 +36,7 @@ class SystemdUnitDisableItem(_Item):
         outcomes = []
 
         if self.unit.is_enabled:
-            outcomes.append(
-                SystemdUnitDisableItemDisableOutcome(unit=self.unit)
-            )
+            outcomes.append(SystemdUnitDisableItemDisableOutcome(unit=self.unit))
 
         return outcomes
 

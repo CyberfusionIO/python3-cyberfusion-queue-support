@@ -1,7 +1,6 @@
 import os
 from typing import Generator
 
-import pytest
 from pytest_mock import MockerFixture
 
 from cyberfusion.QueueSupport.items.mkdir import MkdirItem

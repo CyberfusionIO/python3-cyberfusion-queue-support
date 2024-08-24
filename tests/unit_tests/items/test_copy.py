@@ -23,9 +23,7 @@ def test_copy_item_not_equal_source(
 ) -> None:
     assert CopyItem(
         source=existent_file_path, destination=non_existent_path
-    ) != CopyItem(
-        source=existent_file_path + "-example", destination=non_existent_path
-    )
+    ) != CopyItem(source=existent_file_path + "-example", destination=non_existent_path)
 
 
 def test_copy_item_not_equal_destination(
@@ -33,9 +31,7 @@ def test_copy_item_not_equal_destination(
 ) -> None:
     assert CopyItem(
         source=existent_file_path, destination=non_existent_path
-    ) != CopyItem(
-        source=existent_file_path, destination=non_existent_path + "-example"
-    )
+    ) != CopyItem(source=existent_file_path, destination=non_existent_path + "-example")
 
 
 def test_copy_item_equal_different_type(
@@ -72,13 +68,9 @@ def test_copy_item_has_outcome_copy(
 ) -> None:
     assert not os.path.exists(non_existent_path)
 
-    object_ = CopyItem(
-        source=existent_file_path, destination=non_existent_path
-    )
+    object_ = CopyItem(source=existent_file_path, destination=non_existent_path)
 
     assert (
-        CopyItemCopyOutcome(
-            source=existent_file_path, destination=non_existent_path
-        )
+        CopyItemCopyOutcome(source=existent_file_path, destination=non_existent_path)
         in object_.outcomes
     )

@@ -42,18 +42,14 @@ class CopyItem(_Item):
         outcomes = []
 
         outcomes.append(
-            CopyItemCopyOutcome(
-                source=self.source, destination=self.destination
-            )
+            CopyItemCopyOutcome(source=self.source, destination=self.destination)
         )
 
         return outcomes
 
     def fulfill(self) -> None:
         """Fulfill outcomes."""
-        copy_outcomes = [
-            x for x in self.outcomes if isinstance(x, CopyItemCopyOutcome)
-        ]
+        copy_outcomes = [x for x in self.outcomes if isinstance(x, CopyItemCopyOutcome)]
 
         shutil.copyfile(copy_outcomes[0].source, copy_outcomes[0].destination)
 
@@ -62,7 +58,4 @@ class CopyItem(_Item):
         if not isinstance(other, CopyItem):
             return False
 
-        return (
-            other.source == self.source
-            and other.destination == self.destination
-        )
+        return other.source == self.source and other.destination == self.destination

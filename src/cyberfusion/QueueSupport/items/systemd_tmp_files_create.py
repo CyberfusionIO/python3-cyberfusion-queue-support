@@ -45,9 +45,7 @@ class SystemdTmpFilesCreateItem(_Item):
             if isinstance(x, SystemdTmpFilesCreateItemCreateOutcome)
         ]
 
-        TmpFileConfigurationFile(
-            systemd_tmp_files_create_outcomes[0].path
-        ).create()
+        TmpFileConfigurationFile(systemd_tmp_files_create_outcomes[0].path).create()
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""

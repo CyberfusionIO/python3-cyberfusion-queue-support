@@ -23,10 +23,7 @@ class CopyItemCopyOutcome(OutcomeInterface):
         if not isinstance(other, CopyItemCopyOutcome):
             return False
 
-        return (
-            other.source == self.source
-            and other.destination == self.destination
-        )
+        return other.source == self.source and other.destination == self.destination
 
 
 class MoveItemMoveOutcome(OutcomeInterface):
@@ -46,10 +43,7 @@ class MoveItemMoveOutcome(OutcomeInterface):
         if not isinstance(other, MoveItemMoveOutcome):
             return False
 
-        return (
-            other.source == self.source
-            and other.destination == self.destination
-        )
+        return other.source == self.source and other.destination == self.destination
 
 
 class MkdirItemCreateOutcome(OutcomeInterface):
@@ -80,7 +74,9 @@ class SystemdTmpFilesCreateItemCreateOutcome(OutcomeInterface):
 
     def __str__(self) -> str:
         """Get human-readable string."""
-        return f"Create tmp files according to tmp files configuration file at {self.path}"
+        return (
+            f"Create tmp files according to tmp files configuration file at {self.path}"
+        )
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""
@@ -131,9 +127,7 @@ class CommandItemRunOutcome(OutcomeInterface):
 class ChmodItemModeChangeOutcome(OutcomeInterface):
     """Represents outcome."""
 
-    def __init__(
-        self, *, path: str, old_mode: Optional[int], new_mode: int
-    ) -> None:
+    def __init__(self, *, path: str, old_mode: Optional[int], new_mode: int) -> None:
         """Set attributes."""
         self.path = path
         self.old_mode = old_mode

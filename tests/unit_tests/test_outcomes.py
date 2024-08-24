@@ -1,6 +1,5 @@
 from typing import Generator
 
-import pytest
 
 from cyberfusion.Common import generate_random_string
 from cyberfusion.QueueSupport.outcomes import (
@@ -103,7 +102,7 @@ def test_unlink_item_unlink_outcome_string(non_existent_path: str) -> None:
 
 
 def test_command_item_run_outcome_string(non_existent_path: str) -> None:
-    assert str(CommandItemRunOutcome(command="true")) == f"Run true"
+    assert str(CommandItemRunOutcome(command="true")) == "Run true"
 
 
 def test_chmod_item_owner_name_change_outcome_string(
@@ -144,10 +143,7 @@ def test_systemd_unit_enable_item_enable_outcome_string() -> None:
 
 
 def test_systemd_unit_stop_item_stop_outcome_string() -> None:
-    assert (
-        str(SystemdUnitStopItemStopOutcome(unit=Unit("example")))
-        == "Stop example"
-    )
+    assert str(SystemdUnitStopItemStopOutcome(unit=Unit("example"))) == "Stop example"
 
 
 def test_systemd_unit_disable_item_disable_outcome_string() -> None:
@@ -223,9 +219,7 @@ def test_chmod_item_mode_change_outcome_equal_different_type(
     non_existent_path: str,
 ) -> None:
     assert (
-        ChmodItemModeChangeOutcome(
-            path=non_existent_path, old_mode=MODE, new_mode=MODE
-        )
+        ChmodItemModeChangeOutcome(path=non_existent_path, old_mode=MODE, new_mode=MODE)
         == 5
     ) is False
 
@@ -270,9 +264,7 @@ def test_copy_item_copy_outcome_equal(
 ) -> None:
     assert CopyItemCopyOutcome(
         source=existent_file_path, destination=non_existent_path
-    ) == CopyItemCopyOutcome(
-        source=existent_file_path, destination=non_existent_path
-    )
+    ) == CopyItemCopyOutcome(source=existent_file_path, destination=non_existent_path)
 
 
 def test_copy_item_copy_outcome_not_equal_source(
@@ -302,9 +294,7 @@ def test_copy_item_copy_outcome_equal_different_type(
     non_existent_path: str,
 ) -> None:
     assert (
-        CopyItemCopyOutcome(
-            source=existent_file_path, destination=non_existent_path
-        )
+        CopyItemCopyOutcome(source=existent_file_path, destination=non_existent_path)
         == 5
     ) is False
 
@@ -317,9 +307,7 @@ def test_move_item_move_outcome_equal(
 ) -> None:
     assert MoveItemMoveOutcome(
         source=existent_file_path, destination=non_existent_path
-    ) == MoveItemMoveOutcome(
-        source=existent_file_path, destination=non_existent_path
-    )
+    ) == MoveItemMoveOutcome(source=existent_file_path, destination=non_existent_path)
 
 
 def test_move_item_move_outcome_not_equal_source(
@@ -349,9 +337,7 @@ def test_move_item_move_outcome_equal_different_type(
     non_existent_path: str,
 ) -> None:
     assert (
-        MoveItemMoveOutcome(
-            source=existent_file_path, destination=non_existent_path
-        )
+        MoveItemMoveOutcome(source=existent_file_path, destination=non_existent_path)
         == 5
     ) is False
 
@@ -547,12 +533,8 @@ def test_systemd_unit_enable_item_enable_outcome_not_equal_unit() -> None:
     ) != SystemdUnitEnableItemEnableOutcome(unit=Unit("example-example"))
 
 
-def test_systemd_unit_enable_item_enable_outcome_equal_different_type() -> (
-    None
-):
-    assert (
-        SystemdUnitEnableItemEnableOutcome(unit=Unit("example")) == 5
-    ) is False
+def test_systemd_unit_enable_item_enable_outcome_equal_different_type() -> None:
+    assert (SystemdUnitEnableItemEnableOutcome(unit=Unit("example")) == 5) is False
 
 
 # Equal: SystemdUnitStopItemStopOutcome
@@ -589,12 +571,8 @@ def test_systemd_unit_disable_item_disable_outcome_not_equal_unit() -> None:
     ) != SystemdUnitDisableItemDisableOutcome(unit=Unit("example-example"))
 
 
-def test_systemd_unit_disable_item_disable_outcome_equal_different_type() -> (
-    None
-):
-    assert (
-        SystemdUnitDisableItemDisableOutcome(unit=Unit("example")) == 5
-    ) is False
+def test_systemd_unit_disable_item_disable_outcome_equal_different_type() -> None:
+    assert (SystemdUnitDisableItemDisableOutcome(unit=Unit("example")) == 5) is False
 
 
 # Equal: SystemdUnitRestartItemRestartOutcome
@@ -612,12 +590,8 @@ def test_systemd_unit_restart_item_restart_outcome_not_equal_unit() -> None:
     ) != SystemdUnitRestartItemRestartOutcome(unit=Unit("example-example"))
 
 
-def test_systemd_unit_restart_item_restart_outcome_equal_different_type() -> (
-    None
-):
-    assert (
-        SystemdUnitRestartItemRestartOutcome(unit=Unit("example")) == 5
-    ) is False
+def test_systemd_unit_restart_item_restart_outcome_equal_different_type() -> None:
+    assert (SystemdUnitRestartItemRestartOutcome(unit=Unit("example")) == 5) is False
 
 
 # Equal: SystemdUnitReloadItemReloadOutcome
@@ -635,12 +609,8 @@ def test_systemd_unit_reload_item_reload_outcome_not_equal_unit() -> None:
     ) != SystemdUnitReloadItemReloadOutcome(unit=Unit("example-example"))
 
 
-def test_systemd_unit_reload_item_reload_outcome_equal_different_type() -> (
-    None
-):
-    assert (
-        SystemdUnitReloadItemReloadOutcome(unit=Unit("example")) == 5
-    ) is False
+def test_systemd_unit_reload_item_reload_outcome_equal_different_type() -> None:
+    assert (SystemdUnitReloadItemReloadOutcome(unit=Unit("example")) == 5) is False
 
 
 # Equal: SystemdTmpFilesCreateItemCreateOutcome
@@ -658,9 +628,5 @@ def test_systemd_tmp_files_create_item_create_outcome_not_equal_unit() -> None:
     ) != SystemdTmpFilesCreateItemCreateOutcome(path="/tmp/example/example")
 
 
-def test_systemd_tmp_files_create_item_create_outcome_equal_different_type() -> (
-    None
-):
-    assert (
-        SystemdTmpFilesCreateItemCreateOutcome(path="/tmp/example") == 5
-    ) is False
+def test_systemd_tmp_files_create_item_create_outcome_equal_different_type() -> None:
+    assert (SystemdTmpFilesCreateItemCreateOutcome(path="/tmp/example") == 5) is False

@@ -6,26 +6,21 @@ from cyberfusion.QueueSupport.items.systemd_unit_stop import (
     SystemdUnitStopItem,
 )
 from cyberfusion.QueueSupport.outcomes import SystemdUnitStopItemStopOutcome
-from cyberfusion.QueueSupport.utilities import get_decimal_permissions
 from cyberfusion.SystemdSupport.units import Unit
 
 # Equal
 
 
 def test_systemd_unit_stop_item_equal(
-    existent_file_path: Generator[str, None, None]
+    existent_file_path: Generator[str, None, None],
 ) -> None:
-    assert SystemdUnitStopItem(name="example") == SystemdUnitStopItem(
-        name="example"
-    )
+    assert SystemdUnitStopItem(name="example") == SystemdUnitStopItem(name="example")
 
 
 def test_systemd_unit_stop_item_not_equal_name(
-    existent_file_path: Generator[str, None, None]
+    existent_file_path: Generator[str, None, None],
 ) -> None:
-    assert SystemdUnitStopItem(name="example") != SystemdUnitStopItem(
-        name="johndoe"
-    )
+    assert SystemdUnitStopItem(name="example") != SystemdUnitStopItem(name="johndoe")
 
 
 def test_systemd_unit_stop_item_equal_different_type(
@@ -47,10 +42,7 @@ def test_systemd_unit_stop_item_active_has_outcome_stop(
 
     object_ = SystemdUnitStopItem(name="example")
 
-    assert (
-        SystemdUnitStopItemStopOutcome(unit=Unit("example"))
-        in object_.outcomes
-    )
+    assert SystemdUnitStopItemStopOutcome(unit=Unit("example")) in object_.outcomes
 
 
 def test_systemd_unit_stop_item_not_active_not_has_outcome_stop(
@@ -63,7 +55,4 @@ def test_systemd_unit_stop_item_not_active_not_has_outcome_stop(
 
     object_ = SystemdUnitStopItem(name="example")
 
-    assert (
-        SystemdUnitStopItemStopOutcome(unit=Unit("example"))
-        not in object_.outcomes
-    )
+    assert SystemdUnitStopItemStopOutcome(unit=Unit("example")) not in object_.outcomes

@@ -83,7 +83,7 @@ def existent_symlink_path() -> Generator[str, None, None]:
 def existent_file_path() -> Generator[str, None, None]:
     path = get_path()
 
-    with open(path, "w") as f:
+    with open(path, "w"):
         pass
 
     yield path

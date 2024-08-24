@@ -24,9 +24,7 @@ def test_chown_item_fulfill_owner_name_change(
     )
     object_.fulfill()
 
-    assert (
-        getpwuid(os.stat(existent_file_path).st_uid).pw_name == ci_owner_name
-    )
+    assert getpwuid(os.stat(existent_file_path).st_uid).pw_name == ci_owner_name
 
 
 def test_chown_item_fulfill_not_owner_name_change(
@@ -63,9 +61,7 @@ def test_chown_item_fulfill_group_name_change(
     )
     object_.fulfill()
 
-    assert (
-        getgrgid(os.stat(existent_file_path).st_gid).gr_name == ci_group_name
-    )
+    assert getgrgid(os.stat(existent_file_path).st_gid).gr_name == ci_group_name
 
 
 def test_chown_item_fulfill_not_group_name_change(

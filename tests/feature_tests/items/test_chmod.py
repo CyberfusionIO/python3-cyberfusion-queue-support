@@ -1,7 +1,6 @@
 import os
 from typing import Generator
 
-import pytest
 from pytest_mock import MockerFixture
 
 from cyberfusion.QueueSupport.items.chmod import ChmodItem
@@ -11,7 +10,7 @@ MODE = 0o755
 
 
 def test_chmod_item_fulfill_mode_change(
-    existent_file_path: Generator[str, None, None]
+    existent_file_path: Generator[str, None, None],
 ) -> None:
     old_mode = get_decimal_permissions(existent_file_path)
     assert old_mode != MODE

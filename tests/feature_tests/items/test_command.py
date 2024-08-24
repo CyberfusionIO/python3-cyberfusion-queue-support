@@ -1,6 +1,4 @@
-import os
 import subprocess
-from typing import Generator
 
 import pytest
 from pytest_mock import MockerFixture

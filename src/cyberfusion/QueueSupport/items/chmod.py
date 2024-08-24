@@ -60,15 +60,11 @@ class ChmodItem(_Item):
     def fulfill(self) -> None:
         """Fulfill outcomes."""
         mode_change_outcomes = [
-            x
-            for x in self.outcomes
-            if isinstance(x, ChmodItemModeChangeOutcome)
+            x for x in self.outcomes if isinstance(x, ChmodItemModeChangeOutcome)
         ]
 
         if mode_change_outcomes:
-            os.chmod(
-                mode_change_outcomes[0].path, mode_change_outcomes[0].new_mode
-            )
+            os.chmod(mode_change_outcomes[0].path, mode_change_outcomes[0].new_mode)
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""
