@@ -23,9 +23,7 @@ def test_move_item_not_equal_source(
 ) -> None:
     assert MoveItem(
         source=existent_file_path, destination=non_existent_path
-    ) != MoveItem(
-        source=existent_file_path + "-example", destination=non_existent_path
-    )
+    ) != MoveItem(source=existent_file_path + "-example", destination=non_existent_path)
 
 
 def test_move_item_not_equal_destination(
@@ -33,9 +31,7 @@ def test_move_item_not_equal_destination(
 ) -> None:
     assert MoveItem(
         source=existent_file_path, destination=non_existent_path
-    ) != MoveItem(
-        source=existent_file_path, destination=non_existent_path + "-example"
-    )
+    ) != MoveItem(source=existent_file_path, destination=non_existent_path + "-example")
 
 
 def test_move_item_equal_different_type(
@@ -72,13 +68,9 @@ def test_move_item_has_outcome_move(
 ) -> None:
     assert not os.path.exists(non_existent_path)
 
-    object_ = MoveItem(
-        source=existent_file_path, destination=non_existent_path
-    )
+    object_ = MoveItem(source=existent_file_path, destination=non_existent_path)
 
     assert (
-        MoveItemMoveOutcome(
-            source=existent_file_path, destination=non_existent_path
-        )
+        MoveItemMoveOutcome(source=existent_file_path, destination=non_existent_path)
         in object_.outcomes
     )

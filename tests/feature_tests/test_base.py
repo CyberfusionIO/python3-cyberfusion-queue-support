@@ -15,7 +15,8 @@ def test_queue_process_raises_exception(
     queue: Queue, existent_file_path: Generator[str, None, None]
 ) -> None:
     item = ChmodItem(
-        path=existent_file_path, mode=204983136789054  # Invalid mode
+        path=existent_file_path,
+        mode=204983136789054,  # Invalid mode
     )
 
     queue.add(item)
@@ -104,9 +105,7 @@ def test_queue_process_returns_outcomes_when_not_hide_outcomes(
 ) -> None:
     spy_chmod = mocker.spy(os, "chmod")
 
-    queue.add(
-        ChmodItem(path=existent_file_path, mode=MODE, hide_outcomes=False)
-    )
+    queue.add(ChmodItem(path=existent_file_path, mode=MODE, hide_outcomes=False))
 
     assert queue.process(preview=False)
 
@@ -120,9 +119,7 @@ def test_queue_process_not_returns_outcomes_when_hide_outcomes(
 ) -> None:
     spy_chmod = mocker.spy(os, "chmod")
 
-    queue.add(
-        ChmodItem(path=existent_file_path, mode=MODE, hide_outcomes=True)
-    )
+    queue.add(ChmodItem(path=existent_file_path, mode=MODE, hide_outcomes=True))
 
     assert not queue.process(preview=False)
 

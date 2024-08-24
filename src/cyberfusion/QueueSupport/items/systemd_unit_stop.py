@@ -41,9 +41,7 @@ class SystemdUnitStopItem(_Item):
     def fulfill(self) -> None:
         """Fulfill outcomes."""
         systemd_unit_stop_outcomes = [
-            x
-            for x in self.outcomes
-            if isinstance(x, SystemdUnitStopItemStopOutcome)
+            x for x in self.outcomes if isinstance(x, SystemdUnitStopItemStopOutcome)
         ]
 
         if systemd_unit_stop_outcomes:

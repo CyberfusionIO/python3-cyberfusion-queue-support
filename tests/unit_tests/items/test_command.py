@@ -1,8 +1,3 @@
-import os
-from typing import Generator
-
-import pytest
-
 from cyberfusion.QueueSupport.items.command import CommandItem
 from cyberfusion.QueueSupport.outcomes import CommandItemRunOutcome
 

@@ -1,5 +1,3 @@
-from typing import Generator
-
 from pytest_mock import MockerFixture
 
 from cyberfusion.QueueSupport.items.systemd_unit_disable import (

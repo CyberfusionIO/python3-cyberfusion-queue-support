@@ -22,9 +22,7 @@ class Queue:
         if item not in self.items:
             self.items.append(item)
 
-            logger.info(
-                "Added item to queue (reference: '%s')", item.reference
-            )
+            logger.info("Added item to queue (reference: '%s')", item.reference)
         else:
             # If item already in queue, move to last place
 

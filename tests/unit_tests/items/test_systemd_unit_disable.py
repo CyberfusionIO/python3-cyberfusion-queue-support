@@ -8,14 +8,13 @@ from cyberfusion.QueueSupport.items.systemd_unit_disable import (
 from cyberfusion.QueueSupport.outcomes import (
     SystemdUnitDisableItemDisableOutcome,
 )
-from cyberfusion.QueueSupport.utilities import get_decimal_permissions
 from cyberfusion.SystemdSupport.units import Unit
 
 # Equal
 
 
 def test_systemd_unit_disable_item_equal(
-    existent_file_path: Generator[str, None, None]
+    existent_file_path: Generator[str, None, None],
 ) -> None:
     assert SystemdUnitDisableItem(name="example") == SystemdUnitDisableItem(
         name="example"
@@ -23,7 +22,7 @@ def test_systemd_unit_disable_item_equal(
 
 
 def test_systemd_unit_disable_item_not_equal_name(
-    existent_file_path: Generator[str, None, None]
+    existent_file_path: Generator[str, None, None],
 ) -> None:
     assert SystemdUnitDisableItem(name="example") != SystemdUnitDisableItem(
         name="johndoe"
@@ -50,8 +49,7 @@ def test_systemd_unit_disable_item_enabled_has_outcome_disable(
     object_ = SystemdUnitDisableItem(name="example")
 
     assert (
-        SystemdUnitDisableItemDisableOutcome(unit=Unit("example"))
-        in object_.outcomes
+        SystemdUnitDisableItemDisableOutcome(unit=Unit("example")) in object_.outcomes
     )
 
 

@@ -99,7 +99,7 @@ def test_chown_item_equal_different_type(
 
 
 def test_chown_item_path_symlink_raises(
-    existent_symlink_path: Generator[str, None, None]
+    existent_symlink_path: Generator[str, None, None],
 ) -> None:
     with pytest.raises(PathIsSymlinkError):
         ChownItem(path=existent_symlink_path, owner_name=0, group_name=0)

@@ -13,16 +13,14 @@ MODE = 0o755
 # Equal
 
 
-def test_chmod_item_equal(
-    existent_file_path: Generator[str, None, None]
-) -> None:
+def test_chmod_item_equal(existent_file_path: Generator[str, None, None]) -> None:
     assert ChmodItem(path=existent_file_path, mode=MODE) == ChmodItem(
         path=existent_file_path, mode=MODE
     )
 
 
 def test_chmod_item_not_equal_path(
-    existent_file_path: Generator[str, None, None]
+    existent_file_path: Generator[str, None, None],
 ) -> None:
     assert ChmodItem(path=existent_file_path, mode=MODE) != ChmodItem(
         path=existent_file_path + "-example", mode=MODE
@@ -30,7 +28,7 @@ def test_chmod_item_not_equal_path(
 
 
 def test_chmod_item_not_equal_mode(
-    existent_file_path: Generator[str, None, None]
+    existent_file_path: Generator[str, None, None],
 ) -> None:
     assert ChmodItem(path=existent_file_path, mode=MODE) != ChmodItem(
         path=existent_file_path, mode=MODE + 1
@@ -38,7 +36,7 @@ def test_chmod_item_not_equal_mode(
 
 
 def test_chmod_item_equal_different_type(
-    existent_file_path: Generator[str, None, None]
+    existent_file_path: Generator[str, None, None],
 ) -> None:
     assert (ChmodItem(path=existent_file_path, mode=MODE) == 5) is False
 
@@ -47,7 +45,7 @@ def test_chmod_item_equal_different_type(
 
 
 def test_chmod_item_path_symlink_raises(
-    existent_symlink_path: Generator[str, None, None]
+    existent_symlink_path: Generator[str, None, None],
 ) -> None:
     with pytest.raises(PathIsSymlinkError):
         ChmodItem(path=existent_symlink_path, mode=MODE)
@@ -64,9 +62,7 @@ def test_chmod_item_not_exists_has_outcome_mode_change(
     object_ = ChmodItem(path=non_existent_path, mode=MODE)
 
     assert object_.outcomes == [
-        ChmodItemModeChangeOutcome(
-            path=non_existent_path, old_mode=None, new_mode=MODE
-        )
+        ChmodItemModeChangeOutcome(path=non_existent_path, old_mode=None, new_mode=MODE)
     ]
 
 

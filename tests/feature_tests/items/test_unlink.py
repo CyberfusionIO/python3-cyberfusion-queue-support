@@ -1,14 +1,13 @@
 import os
 from typing import Generator
 
-import pytest
 from pytest_mock import MockerFixture
 
 from cyberfusion.QueueSupport.items.unlink import UnlinkItem
 
 
 def test_unlink_item_fulfill_create(
-    existent_file_path: Generator[str, None, None]
+    existent_file_path: Generator[str, None, None],
 ) -> None:
     assert os.path.exists(existent_file_path)
 

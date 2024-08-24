@@ -42,18 +42,14 @@ class MoveItem(_Item):
         outcomes = []
 
         outcomes.append(
-            MoveItemMoveOutcome(
-                source=self.source, destination=self.destination
-            )
+            MoveItemMoveOutcome(source=self.source, destination=self.destination)
         )
 
         return outcomes
 
     def fulfill(self) -> None:
         """Fulfill outcomes."""
-        move_outcomes = [
-            x for x in self.outcomes if isinstance(x, MoveItemMoveOutcome)
-        ]
+        move_outcomes = [x for x in self.outcomes if isinstance(x, MoveItemMoveOutcome)]
 
         shutil.move(move_outcomes[0].source, move_outcomes[0].destination)
 
@@ -62,7 +58,4 @@ class MoveItem(_Item):
         if not isinstance(other, MoveItem):
             return False
 
-        return (
-            other.source == self.source
-            and other.destination == self.destination
-        )
+        return other.source == self.source and other.destination == self.destination

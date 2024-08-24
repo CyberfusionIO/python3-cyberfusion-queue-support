@@ -8,14 +8,13 @@ from cyberfusion.QueueSupport.items.systemd_unit_enable import (
 from cyberfusion.QueueSupport.outcomes import (
     SystemdUnitEnableItemEnableOutcome,
 )
-from cyberfusion.QueueSupport.utilities import get_decimal_permissions
 from cyberfusion.SystemdSupport.units import Unit
 
 # Equal
 
 
 def test_systemd_unit_enable_item_equal(
-    existent_file_path: Generator[str, None, None]
+    existent_file_path: Generator[str, None, None],
 ) -> None:
     assert SystemdUnitEnableItem(name="example") == SystemdUnitEnableItem(
         name="example"
@@ -23,7 +22,7 @@ def test_systemd_unit_enable_item_equal(
 
 
 def test_systemd_unit_enable_item_not_equal_name(
-    existent_file_path: Generator[str, None, None]
+    existent_file_path: Generator[str, None, None],
 ) -> None:
     assert SystemdUnitEnableItem(name="example") != SystemdUnitEnableItem(
         name="johndoe"
@@ -49,10 +48,7 @@ def test_systemd_unit_enable_item_not_enabled_has_outcome_enable(
 
     object_ = SystemdUnitEnableItem(name="example")
 
-    assert (
-        SystemdUnitEnableItemEnableOutcome(unit=Unit("example"))
-        in object_.outcomes
-    )
+    assert SystemdUnitEnableItemEnableOutcome(unit=Unit("example")) in object_.outcomes
 
 
 def test_systemd_unit_enable_item_enabled_not_has_outcome_enable(
@@ -66,6 +62,5 @@ def test_systemd_unit_enable_item_enabled_not_has_outcome_enable(
     object_ = SystemdUnitEnableItem(name="example")
 
     assert (
-        SystemdUnitEnableItemEnableOutcome(unit=Unit("example"))
-        not in object_.outcomes
+        SystemdUnitEnableItemEnableOutcome(unit=Unit("example")) not in object_.outcomes
     )
