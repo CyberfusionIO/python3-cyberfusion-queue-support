@@ -9,7 +9,6 @@ from pwd import getpwuid
 from typing import List, Optional
 
 from cyberfusion.QueueSupport.exceptions import PathIsSymlinkError
-from cyberfusion.QueueSupport.interfaces import OutcomeInterface
 from cyberfusion.QueueSupport.items import _Item
 from cyberfusion.QueueSupport.outcomes import (
     ChownItemGroupChangeOutcome,
@@ -52,8 +51,10 @@ class ChownItem(_Item):
             raise PathIsSymlinkError(self.path)
 
     @property
-    def outcomes(self) -> List[OutcomeInterface]:
-        """Get outcomes of calling self.fulfill."""
+    def outcomes(
+        self,
+    ) -> List[ChownItemOwnerChangeOutcome | ChownItemGroupChangeOutcome]:
+        """Get outcomes of item."""
         outcomes = []
 
         if not os.path.exists(self.path):
@@ -107,26 +108,19 @@ class ChownItem(_Item):
 
     def fulfill(self) -> None:
         """Fulfill outcomes."""
-        owner_name_change_outcomes = [
-            x for x in self.outcomes if isinstance(x, ChownItemOwnerChangeOutcome)
-        ]
-        group_name_change_outcomes = [
-            x for x in self.outcomes if isinstance(x, ChownItemGroupChangeOutcome)
-        ]
-
-        if owner_name_change_outcomes:
-            os.chown(
-                owner_name_change_outcomes[0].path,
-                uid=get_uid(owner_name_change_outcomes[0].new_owner_name),
-                gid=-1,
-            )
-
-        if group_name_change_outcomes:
-            os.chown(
-                group_name_change_outcomes[0].path,
-                uid=-1,
-                gid=get_gid(group_name_change_outcomes[0].new_group_name),
-            )
+        for outcome in self.outcomes:
+            if isinstance(outcome, ChownItemOwnerChangeOutcome):
+                os.chown(
+                    outcome.path,
+                    uid=get_uid(outcome.new_owner_name),
+                    gid=-1,
+                )
+            else:
+                os.chown(
+                    outcome.path,
+                    uid=-1,
+                    gid=get_gid(outcome.new_group_name),
+                )
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""

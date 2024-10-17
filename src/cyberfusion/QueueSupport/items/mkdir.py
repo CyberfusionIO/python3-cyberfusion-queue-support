@@ -5,7 +5,6 @@ import os
 from typing import List, Optional
 
 from cyberfusion.QueueSupport.exceptions import PathIsSymlinkError
-from cyberfusion.QueueSupport.interfaces import OutcomeInterface
 from cyberfusion.QueueSupport.items import _Item
 from cyberfusion.QueueSupport.outcomes import MkdirItemCreateOutcome
 
@@ -31,8 +30,8 @@ class MkdirItem(_Item):
             raise PathIsSymlinkError(self.path)
 
     @property
-    def outcomes(self) -> List[OutcomeInterface]:
-        """Get outcomes of calling self.fulfill."""
+    def outcomes(self) -> List[MkdirItemCreateOutcome]:
+        """Get outcomes of item."""
         outcomes = []
 
         if not os.path.isdir(self.path):
@@ -46,12 +45,8 @@ class MkdirItem(_Item):
 
     def fulfill(self) -> None:
         """Fulfill outcomes."""
-        create_outcomes = [
-            x for x in self.outcomes if isinstance(x, MkdirItemCreateOutcome)
-        ]
-
-        if create_outcomes:
-            os.mkdir(create_outcomes[0].path)
+        for outcome in self.outcomes:
+            os.mkdir(outcome.path)
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""

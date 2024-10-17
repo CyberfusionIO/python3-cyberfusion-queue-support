@@ -3,7 +3,6 @@
 import logging
 from typing import List, Optional
 
-from cyberfusion.QueueSupport.interfaces import OutcomeInterface
 from cyberfusion.QueueSupport.items import _Item
 from cyberfusion.QueueSupport.outcomes import SystemdUnitStopItemStopOutcome
 from cyberfusion.SystemdSupport.units import Unit
@@ -29,8 +28,8 @@ class SystemdUnitStopItem(_Item):
         self.unit = Unit(self.name)
 
     @property
-    def outcomes(self) -> List[OutcomeInterface]:
-        """Get outcomes of calling self.fulfill."""
+    def outcomes(self) -> List[SystemdUnitStopItemStopOutcome]:
+        """Get outcomes of item."""
         outcomes = []
 
         if self.unit.is_active:
@@ -40,12 +39,8 @@ class SystemdUnitStopItem(_Item):
 
     def fulfill(self) -> None:
         """Fulfill outcomes."""
-        systemd_unit_stop_outcomes = [
-            x for x in self.outcomes if isinstance(x, SystemdUnitStopItemStopOutcome)
-        ]
-
-        if systemd_unit_stop_outcomes:
-            systemd_unit_stop_outcomes[0].unit.stop()
+        for outcome in self.outcomes:
+            outcome.unit.stop()
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""

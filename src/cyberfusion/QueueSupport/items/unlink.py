@@ -5,7 +5,6 @@ import os
 from typing import List, Optional
 
 from cyberfusion.QueueSupport.exceptions import PathIsSymlinkError
-from cyberfusion.QueueSupport.interfaces import OutcomeInterface
 from cyberfusion.QueueSupport.items import _Item
 from cyberfusion.QueueSupport.outcomes import UnlinkItemUnlinkOutcome
 
@@ -31,8 +30,8 @@ class UnlinkItem(_Item):
             raise PathIsSymlinkError(self.path)
 
     @property
-    def outcomes(self) -> List[OutcomeInterface]:
-        """Get outcomes of calling self.fulfill."""
+    def outcomes(self) -> List[UnlinkItemUnlinkOutcome]:
+        """Get outcomes of item."""
         outcomes = []
 
         if os.path.exists(self.path):
@@ -46,12 +45,8 @@ class UnlinkItem(_Item):
 
     def fulfill(self) -> None:
         """Fulfill outcomes."""
-        unlink_outcomes = [
-            x for x in self.outcomes if isinstance(x, UnlinkItemUnlinkOutcome)
-        ]
-
-        if unlink_outcomes:
-            os.unlink(unlink_outcomes[0].path)
+        for outcome in self.outcomes:
+            os.unlink(outcome.path)
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""

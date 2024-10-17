@@ -6,7 +6,6 @@ import shutil
 from typing import List, Optional
 
 from cyberfusion.QueueSupport.exceptions import PathIsSymlinkError
-from cyberfusion.QueueSupport.interfaces import OutcomeInterface
 from cyberfusion.QueueSupport.items import _Item
 from cyberfusion.QueueSupport.outcomes import MoveItemMoveOutcome
 
@@ -37,8 +36,8 @@ class MoveItem(_Item):
             raise PathIsSymlinkError(self.destination)
 
     @property
-    def outcomes(self) -> List[OutcomeInterface]:
-        """Get outcomes of calling self.fulfill."""
+    def outcomes(self) -> List[MoveItemMoveOutcome]:
+        """Get outcomes of item."""
         outcomes = []
 
         outcomes.append(
@@ -49,9 +48,8 @@ class MoveItem(_Item):
 
     def fulfill(self) -> None:
         """Fulfill outcomes."""
-        move_outcomes = [x for x in self.outcomes if isinstance(x, MoveItemMoveOutcome)]
-
-        shutil.move(move_outcomes[0].source, move_outcomes[0].destination)
+        for outcome in self.outcomes:
+            shutil.move(outcome.source, outcome.destination)
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""
