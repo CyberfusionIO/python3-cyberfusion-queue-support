@@ -3,7 +3,6 @@
 import logging
 from typing import List, Optional
 
-from cyberfusion.QueueSupport.interfaces import OutcomeInterface
 from cyberfusion.QueueSupport.items import _Item
 from cyberfusion.QueueSupport.outcomes import (
     SystemdUnitEnableItemEnableOutcome,
@@ -31,8 +30,8 @@ class SystemdUnitEnableItem(_Item):
         self.unit = Unit(self.name)
 
     @property
-    def outcomes(self) -> List[OutcomeInterface]:
-        """Get outcomes of calling self.fulfill."""
+    def outcomes(self) -> List[SystemdUnitEnableItemEnableOutcome]:
+        """Get outcomes of item."""
         outcomes = []
 
         if not self.unit.is_enabled:
@@ -42,14 +41,8 @@ class SystemdUnitEnableItem(_Item):
 
     def fulfill(self) -> None:
         """Fulfill outcomes."""
-        systemd_unit_enable_outcomes = [
-            x
-            for x in self.outcomes
-            if isinstance(x, SystemdUnitEnableItemEnableOutcome)
-        ]
-
-        if systemd_unit_enable_outcomes:
-            systemd_unit_enable_outcomes[0].unit.enable()
+        for outcome in self.outcomes:
+            outcome.unit.enable()
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""

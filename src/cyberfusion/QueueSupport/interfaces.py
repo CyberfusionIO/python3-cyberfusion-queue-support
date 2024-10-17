@@ -24,7 +24,7 @@ class ItemInterface(metaclass=ABCMeta):
     @property
     @abstractmethod
     def outcomes(self) -> List[OutcomeInterface]:  # pragma: no cover
-        """Get outcomes of calling self.fulfill."""
+        """Get outcomes of item."""
         pass
 
     @abstractmethod

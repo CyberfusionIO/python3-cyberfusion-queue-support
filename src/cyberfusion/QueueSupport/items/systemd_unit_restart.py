@@ -3,7 +3,6 @@
 import logging
 from typing import List, Optional
 
-from cyberfusion.QueueSupport.interfaces import OutcomeInterface
 from cyberfusion.QueueSupport.items import _Item
 from cyberfusion.QueueSupport.outcomes import (
     SystemdUnitRestartItemRestartOutcome,
@@ -31,8 +30,8 @@ class SystemdUnitRestartItem(_Item):
         self.unit = Unit(self.name)
 
     @property
-    def outcomes(self) -> List[OutcomeInterface]:
-        """Get outcomes of calling self.fulfill."""
+    def outcomes(self) -> List[SystemdUnitRestartItemRestartOutcome]:
+        """Get outcomes of item."""
         outcomes = []
 
         outcomes.append(SystemdUnitRestartItemRestartOutcome(unit=self.unit))
@@ -41,13 +40,8 @@ class SystemdUnitRestartItem(_Item):
 
     def fulfill(self) -> None:
         """Fulfill outcomes."""
-        systemd_unit_restart_outcomes = [
-            x
-            for x in self.outcomes
-            if isinstance(x, SystemdUnitRestartItemRestartOutcome)
-        ]
-
-        systemd_unit_restart_outcomes[0].unit.restart()
+        for outcome in self.outcomes:
+            outcome.unit.restart()
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""

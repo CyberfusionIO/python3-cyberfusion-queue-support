@@ -3,7 +3,6 @@
 import logging
 from typing import List, Optional
 
-from cyberfusion.QueueSupport.interfaces import OutcomeInterface
 from cyberfusion.QueueSupport.items import _Item
 from cyberfusion.QueueSupport.outcomes import (
     SystemdTmpFilesCreateItemCreateOutcome,
@@ -29,8 +28,8 @@ class SystemdTmpFilesCreateItem(_Item):
         self._hide_outcomes = hide_outcomes
 
     @property
-    def outcomes(self) -> List[OutcomeInterface]:
-        """Get outcomes of calling self.fulfill."""
+    def outcomes(self) -> List[SystemdTmpFilesCreateItemCreateOutcome]:
+        """Get outcomes of item."""
         outcomes = []
 
         outcomes.append(SystemdTmpFilesCreateItemCreateOutcome(path=self.path))
@@ -39,13 +38,8 @@ class SystemdTmpFilesCreateItem(_Item):
 
     def fulfill(self) -> None:
         """Fulfill outcomes."""
-        systemd_tmp_files_create_outcomes = [
-            x
-            for x in self.outcomes
-            if isinstance(x, SystemdTmpFilesCreateItemCreateOutcome)
-        ]
-
-        TmpFileConfigurationFile(systemd_tmp_files_create_outcomes[0].path).create()
+        for outcome in self.outcomes:
+            TmpFileConfigurationFile(outcome.path).create()
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""
