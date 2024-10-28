@@ -1,3 +1,10 @@
+python3-cyberfusion-queue-support (1.2) unstable; urgency=low
+
+  - Start using Semantic Versioning (SemVer)
+  - Add RmTreeItem for removing directories
+
+ -- Mika Scheer <mscheer@cyberfusion.io>  Mon, 28 Oct 2024 14:25:00 +0000
+
 python3-cyberfusion-queue-support (1.1.4) unstable; urgency=low
 
   - Use more specific outcomes type annotations

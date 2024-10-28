@@ -105,6 +105,25 @@ class UnlinkItemUnlinkOutcome(OutcomeInterface):
         return other.path == self.path
 
 
+class RmTreeItemRemoveOutcome(OutcomeInterface):
+    """Represents outcome."""
+
+    def __init__(self, *, path: str) -> None:
+        """Set attributes."""
+        self.path = path
+
+    def __str__(self) -> str:
+        """Get human-readable string."""
+        return f"Remove {self.path}"
+
+    def __eq__(self, other: object) -> bool:
+        """Get equality based on attributes."""
+        if not isinstance(other, RmTreeItemRemoveOutcome):
+            return False
+
+        return other.path == self.path
+
+
 class CommandItemRunOutcome(OutcomeInterface):
     """Represents outcome."""
 

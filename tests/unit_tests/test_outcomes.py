@@ -17,6 +17,7 @@ from cyberfusion.QueueSupport.outcomes import (
     SystemdUnitRestartItemRestartOutcome,
     SystemdUnitStopItemStopOutcome,
     UnlinkItemUnlinkOutcome,
+    RmTreeItemRemoveOutcome,
 )
 from cyberfusion.SystemdSupport.units import Unit
 
@@ -87,6 +88,17 @@ def test_move_item_create_outcome_string(
             )
         )
         == f"Move {non_existent_path} to {existent_file_path}"
+    )
+
+
+def test_rmtree_item_remove_outcome_string(non_existent_path: str) -> None:
+    assert (
+        str(
+            RmTreeItemRemoveOutcome(
+                path=non_existent_path,
+            )
+        )
+        == f"Remove {non_existent_path}"
     )
 
 
@@ -342,7 +354,39 @@ def test_move_item_move_outcome_equal_different_type(
     ) is False
 
 
-# Equal: UnlinkItemModeChangeOutcome
+# Equal: RmTreeItemRemoveOutcome
+
+
+def test_rmtree_item_remove_outcome_equal(non_existent_path: str) -> None:
+    assert RmTreeItemRemoveOutcome(
+        path=non_existent_path,
+    ) == RmTreeItemRemoveOutcome(
+        path=non_existent_path,
+    )
+
+
+def test_rmtree_item_remove_outcome_not_equal_path(
+    non_existent_path: str,
+) -> None:
+    assert RmTreeItemRemoveOutcome(
+        path=non_existent_path,
+    ) != RmTreeItemRemoveOutcome(
+        path=non_existent_path + "-example",
+    )
+
+
+def test_rmtree_item_remove_outcome_equal_different_type(
+    non_existent_path: str,
+) -> None:
+    assert (
+        RmTreeItemRemoveOutcome(
+            path=non_existent_path,
+        )
+        == 5
+    ) is False
+
+
+# Equal: UnlinkItemUnlinkOutcome
 
 
 def test_unlink_item_unlink_outcome_equal(non_existent_path: str) -> None:

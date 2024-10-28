@@ -100,7 +100,8 @@ def existent_directory_path() -> Generator[str, None, None]:
 
     yield path
 
-    shutil.rmtree(path)
+    if os.path.exists(path):
+        shutil.rmtree(path)
 
 
 @pytest.fixture
