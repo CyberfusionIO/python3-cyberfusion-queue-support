@@ -46,8 +46,8 @@ class RmTreeItem(_Item):
 
     def fulfill(self) -> None:
         """Fulfill outcomes."""
-        if self.outcomes:
-            shutil.rmtree(self.outcomes[0].path)
+        for outcome in self.outcomes:
+            shutil.rmtree(outcome.path)
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""

@@ -2,7 +2,11 @@
 
 Library to queue actions.
 
-After creating a _queue_, _items_ can be added to it. These _items_ can be of multiple types such as `ChmodItem` or `SystemdUnitRestartItem`, and they can have attributes such as a path for an `MkdirItem` or a unit name for a `SystemdUnitEnableItem`. Each _item_ type has one or multiple _outcomes_ that should come true for an _item_ of that type to be completed. For example: for an _item_ of type `UnlinkItem`, the outcome is that the file at the path given with the item is unlinked. When a _queue_ is processed, all the _items_ add to it are fulfilled, thus all the _items'_ _outcomes_ are completed.
+# Concepts
+
+All project specific terms are in _italic_.
+
+After creating a _queue_, _items_ can be added to it. These _items_ can be of multiple types such as `ChmodItem` or `SystemdUnitRestartItem`, and they can have attributes such as a path for an `MkdirItem` or a unit name for a `SystemdUnitEnableItem`. Each _item_ type has one or multiple _outcomes_ that should come true for an _item_ of that type to be completed. For example: for an _item_ of type `UnlinkItem`, the _outcome_ is that the file at the path given with the _item_ is unlinked. When a _queue_ is _processed_, all the _items_ added to it are _fulfilled_, meaning all the _items'_ _outcomes_ are completed.
 
 # Install
 
