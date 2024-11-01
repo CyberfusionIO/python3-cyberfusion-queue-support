@@ -98,7 +98,7 @@ def test_rmtree_item_remove_outcome_string(non_existent_path: str) -> None:
                 path=non_existent_path,
             )
         )
-        == f"Remove {non_existent_path}"
+        == f"Remove directory tree {non_existent_path}"
     )
 
 

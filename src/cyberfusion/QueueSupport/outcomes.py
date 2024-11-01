@@ -114,7 +114,7 @@ class RmTreeItemRemoveOutcome(OutcomeInterface):
 
     def __str__(self) -> str:
         """Get human-readable string."""
-        return f"Remove {self.path}"
+        return f"Remove directory tree {self.path}"
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""
