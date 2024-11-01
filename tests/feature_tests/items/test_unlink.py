@@ -6,7 +6,7 @@ from pytest_mock import MockerFixture
 from cyberfusion.QueueSupport.items.unlink import UnlinkItem
 
 
-def test_unlink_item_fulfill_create(
+def test_unlink_item_fulfill_unlink(
     existent_file_path: Generator[str, None, None],
 ) -> None:
     assert os.path.exists(existent_file_path)
@@ -17,7 +17,7 @@ def test_unlink_item_fulfill_create(
     assert not os.path.exists(existent_file_path)
 
 
-def test_unlink_item_fulfill_not_create(
+def test_unlink_item_fulfill_not_unlink(
     mocker: MockerFixture, non_existent_path: str
 ) -> None:
     assert not os.path.exists(non_existent_path)
