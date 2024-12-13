@@ -248,6 +248,25 @@ class SystemdUnitEnableItemEnableOutcome(OutcomeInterface):
         return other.unit.name == self.unit.name
 
 
+class SystemdUnitStartItemStartOutcome(OutcomeInterface):
+    """Represents outcome."""
+
+    def __init__(self, *, unit: Unit) -> None:
+        """Set attributes."""
+        self.unit = unit
+
+    def __str__(self) -> str:
+        """Get human-readable string."""
+        return f"Start {self.unit.name}"
+
+    def __eq__(self, other: object) -> bool:
+        """Get equality based on attributes."""
+        if not isinstance(other, SystemdUnitStartItemStartOutcome):
+            return False
+
+        return other.unit.name == self.unit.name
+
+
 class SystemdUnitDisableItemDisableOutcome(OutcomeInterface):
     """Represents outcome."""
 

@@ -13,6 +13,7 @@ from cyberfusion.QueueSupport.outcomes import (
     SystemdTmpFilesCreateItemCreateOutcome,
     SystemdUnitDisableItemDisableOutcome,
     SystemdUnitEnableItemEnableOutcome,
+    SystemdUnitStartItemStartOutcome,
     SystemdUnitReloadItemReloadOutcome,
     SystemdUnitRestartItemRestartOutcome,
     SystemdUnitStopItemStopOutcome,
@@ -151,6 +152,12 @@ def test_systemd_unit_enable_item_enable_outcome_string() -> None:
     assert (
         str(SystemdUnitEnableItemEnableOutcome(unit=Unit("example")))
         == "Enable example"
+    )
+
+
+def test_systemd_unit_start_item_start_outcome_string() -> None:
+    assert (
+        str(SystemdUnitStartItemStartOutcome(unit=Unit("example"))) == "Start example"
     )
 
 
@@ -579,6 +586,25 @@ def test_systemd_unit_enable_item_enable_outcome_not_equal_unit() -> None:
 
 def test_systemd_unit_enable_item_enable_outcome_equal_different_type() -> None:
     assert (SystemdUnitEnableItemEnableOutcome(unit=Unit("example")) == 5) is False
+
+
+# Equal: SystemdUnitStartItemStartOutcome
+
+
+def test_systemd_unit_start_item_start_outcome_equal() -> None:
+    assert SystemdUnitStartItemStartOutcome(
+        unit=Unit("example")
+    ) == SystemdUnitStartItemStartOutcome(unit=Unit("example"))
+
+
+def test_systemd_unit_start_item_start_outcome_not_equal_unit() -> None:
+    assert SystemdUnitStartItemStartOutcome(
+        unit=Unit("example"),
+    ) != SystemdUnitStartItemStartOutcome(unit=Unit("example-example"))
+
+
+def test_systemd_unit_start_item_start_outcome_equal_different_type() -> None:
+    assert (SystemdUnitStartItemStartOutcome(unit=Unit("example")) == 5) is False
 
 
 # Equal: SystemdUnitStopItemStopOutcome
