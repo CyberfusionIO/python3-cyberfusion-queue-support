@@ -14,6 +14,7 @@ from cyberfusion.QueueSupport.outcomes import (
     SystemdUnitDisableItemDisableOutcome,
     SystemdUnitEnableItemEnableOutcome,
     SystemdUnitStartItemStartOutcome,
+    SystemdDaemonReloadItemReloadOutcome,
     SystemdUnitReloadItemReloadOutcome,
     SystemdUnitRestartItemRestartOutcome,
     SystemdUnitStopItemStopOutcome,
@@ -159,6 +160,10 @@ def test_systemd_unit_start_item_start_outcome_string() -> None:
     assert (
         str(SystemdUnitStartItemStartOutcome(unit=Unit("example"))) == "Start example"
     )
+
+
+def test_systemd_daemon_reload_item_reload_outcome_string() -> None:
+    assert str(SystemdDaemonReloadItemReloadOutcome()) == "Reload daemon"
 
 
 def test_systemd_unit_stop_item_stop_outcome_string() -> None:
@@ -605,6 +610,19 @@ def test_systemd_unit_start_item_start_outcome_not_equal_unit() -> None:
 
 def test_systemd_unit_start_item_start_outcome_equal_different_type() -> None:
     assert (SystemdUnitStartItemStartOutcome(unit=Unit("example")) == 5) is False
+
+
+# Equal: SystemdUnitReloadItemReloadOutcome
+
+
+def test_systemd_daemon_reload_item_reload_outcome_equal() -> None:
+    assert (
+        SystemdDaemonReloadItemReloadOutcome() == SystemdDaemonReloadItemReloadOutcome()
+    )
+
+
+def test_systemd_daemon_reload_item_reload_outcome_equal_different_type() -> None:
+    assert (SystemdDaemonReloadItemReloadOutcome() == 5) is False
 
 
 # Equal: SystemdUnitStopItemStopOutcome
