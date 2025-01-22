@@ -248,6 +248,27 @@ class SystemdUnitEnableItemEnableOutcome(OutcomeInterface):
         return other.unit.name == self.unit.name
 
 
+class SystemdDaemonReloadItemReloadOutcome(OutcomeInterface):
+    """Represents outcome."""
+
+    def __init__(
+        self,
+    ) -> None:
+        """Set attributes."""
+        pass
+
+    def __str__(self) -> str:
+        """Get human-readable string."""
+        return "Reload daemon"
+
+    def __eq__(self, other: object) -> bool:
+        """Get equality based on attributes."""
+        if not isinstance(other, SystemdDaemonReloadItemReloadOutcome):
+            return False
+
+        return True
+
+
 class SystemdUnitStartItemStartOutcome(OutcomeInterface):
     """Represents outcome."""
 
