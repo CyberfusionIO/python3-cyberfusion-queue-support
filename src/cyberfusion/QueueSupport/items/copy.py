@@ -74,6 +74,7 @@ class CopyItem(_Item):
                 CopyItemCopyOutcome(
                     source=self.source,
                     destination=self.destination,
+                    changed_lines=changed_lines,
                 )
             )
 

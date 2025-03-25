@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 from typing import Generator
 
 import pytest
@@ -62,15 +62,54 @@ def test_copy_item_destination_symlink_raises(
 # Outcomes
 
 
-def test_copy_item_has_outcome_copy(
-    existent_file_path: Generator[str, None, None],
-    non_existent_path: str,
+def test_copy_item_not_exists_has_outcome_copy(
+    tmp_path: Path,
 ) -> None:
-    assert not os.path.exists(non_existent_path)
+    tmp_file = tmp_path / "exists"
+    tmp_file_not_exists = tmp_file / "not_exists"
 
-    object_ = CopyItem(source=existent_file_path, destination=non_existent_path)
+    tmp_file.write_text("example")
 
-    assert (
-        CopyItemCopyOutcome(source=existent_file_path, destination=non_existent_path)
-        in object_.outcomes
-    )
+    object_ = CopyItem(source=str(tmp_file), destination=str(tmp_file_not_exists))
+
+    assert object_.outcomes
+
+    outcome = object_.outcomes[0]
+
+    assert isinstance(outcome, CopyItemCopyOutcome)
+    assert outcome.source == str(tmp_file)
+    assert outcome.destination == str(tmp_file_not_exists)
+    assert outcome.changed_lines
+
+
+def test_copy_item_not_same_has_outcome_copy(
+    existent_file_path: str,
+    tmp_path: Path,
+) -> None:
+    tmp_file = tmp_path / "example"
+
+    tmp_file.write_text("example")
+
+    object_ = CopyItem(source=existent_file_path, destination=str(tmp_file))
+
+    assert object_.outcomes
+
+    outcome = object_.outcomes[0]
+
+    assert isinstance(outcome, CopyItemCopyOutcome)
+    assert outcome.source == existent_file_path
+    assert outcome.destination == str(tmp_file)
+    assert outcome.changed_lines
+
+
+def test_copy_item_same_not_has_outcomes(
+    existent_file_path: str,
+    tmp_path: Path,
+) -> None:
+    tmp_file = tmp_path / "example"
+
+    tmp_file.touch()
+
+    object_ = CopyItem(source=existent_file_path, destination=str(tmp_file))
+
+    assert not object_.outcomes
