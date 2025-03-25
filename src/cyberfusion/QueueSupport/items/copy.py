@@ -1,5 +1,6 @@
 """Item."""
 
+import difflib
 import logging
 import os
 import shutil
@@ -35,14 +36,46 @@ class CopyItem(_Item):
         if os.path.islink(self.destination):
             raise PathIsSymlinkError(self.destination)
 
+    def _changed_lines(self) -> List[str]:
+        """Get differences with destination file.
+
+        No differences are returned when contents is not string.
+        """
+        results = []
+
+        contents = []
+
+        if os.path.isfile(self.destination):
+            contents = open(self.destination, "r").readlines()
+
+        source_contents = open(self.source).readlines()
+
+        for line in difflib.unified_diff(
+            contents,
+            source_contents,
+            fromfile=self.source,
+            tofile=self.destination,
+            lineterm="",
+            n=0,
+        ):
+            results.append(line)
+
+        return results
+
     @property
     def outcomes(self) -> List[CopyItemCopyOutcome]:
         """Get outcomes of item."""
         outcomes = []
 
-        outcomes.append(
-            CopyItemCopyOutcome(source=self.source, destination=self.destination)
-        )
+        changed_lines = self._changed_lines()
+
+        if changed_lines:
+            outcomes.append(
+                CopyItemCopyOutcome(
+                    source=self.source,
+                    destination=self.destination,
+                )
+            )
 
         return outcomes
 
