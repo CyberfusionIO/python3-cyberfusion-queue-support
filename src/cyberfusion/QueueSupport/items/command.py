@@ -35,9 +35,11 @@ class CommandItem(_Item):
 
         return outcomes
 
-    def fulfill(self) -> None:
+    def fulfill(self) -> List[CommandItemRunOutcome]:
         """Fulfill outcomes."""
-        for outcome in self.outcomes:
+        outcomes = self.outcomes
+
+        for outcome in outcomes:
             try:
                 output = subprocess.run(
                     outcome.command,
@@ -52,6 +54,8 @@ class CommandItem(_Item):
                 raise CommandQueueFulfillFailed(
                     self, command=outcome.command, stdout=e.stdout, stderr=e.stderr
                 ) from e
+
+        return outcomes
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""

@@ -38,10 +38,14 @@ class SystemdUnitRestartItem(_Item):
 
         return outcomes
 
-    def fulfill(self) -> None:
+    def fulfill(self) -> List[SystemdUnitRestartItemRestartOutcome]:
         """Fulfill outcomes."""
-        for outcome in self.outcomes:
+        outcomes = self.outcomes
+
+        for outcome in outcomes:
             outcome.unit.restart()
+
+        return outcomes
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""

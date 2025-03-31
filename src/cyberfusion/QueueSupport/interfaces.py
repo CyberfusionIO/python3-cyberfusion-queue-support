@@ -28,7 +28,7 @@ class ItemInterface(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def fulfill(self) -> None:  # pragma: no cover
+    def fulfill(self) -> List[OutcomeInterface]:  # pragma: no cover
         """Fulfill outcomes."""
         pass
 

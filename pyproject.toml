@@ -12,6 +12,8 @@ authors = [
 ]
 dependencies = [
     "python3-cyberfusion-systemd-support~=2.1",
+    "alembic==1.8.1",
+    "SQLAlchemy==1.4.46",
 ]
 
 [project.urls]
