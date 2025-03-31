@@ -291,7 +291,9 @@ def test_copy_item_copy_outcome_equal(
 ) -> None:
     assert CopyItemCopyOutcome(
         source=existent_file_path, destination=non_existent_path, changed_lines=[]
-    ) == CopyItemCopyOutcome(source=existent_file_path, destination=non_existent_path, changed_lines=[])
+    ) == CopyItemCopyOutcome(
+        source=existent_file_path, destination=non_existent_path, changed_lines=[]
+    )
 
 
 def test_copy_item_copy_outcome_not_equal_source(
@@ -301,7 +303,9 @@ def test_copy_item_copy_outcome_not_equal_source(
     assert CopyItemCopyOutcome(
         source=existent_file_path, destination=non_existent_path, changed_lines=[]
     ) != CopyItemCopyOutcome(
-        source=existent_file_path + "-example", destination=non_existent_path, changed_lines=[]
+        source=existent_file_path + "-example",
+        destination=non_existent_path,
+        changed_lines=[],
     )
 
 
@@ -312,7 +316,9 @@ def test_copy_item_copy_outcome_not_equal_destination(
     assert CopyItemCopyOutcome(
         source=existent_file_path, destination=non_existent_path, changed_lines=[]
     ) != CopyItemCopyOutcome(
-        source=existent_file_path, destination=non_existent_path + "-example", changed_lines=[]
+        source=existent_file_path,
+        destination=non_existent_path + "-example",
+        changed_lines=[],
     )
 
 
@@ -323,7 +329,9 @@ def test_copy_item_copy_outcome_not_equal_changed_lines(
     assert CopyItemCopyOutcome(
         source=existent_file_path, destination=non_existent_path, changed_lines=[]
     ) != CopyItemCopyOutcome(
-        source=existent_file_path, destination=non_existent_path, changed_lines=["example"]
+        source=existent_file_path,
+        destination=non_existent_path,
+        changed_lines=["example"],
     )
 
 
@@ -332,7 +340,9 @@ def test_copy_item_copy_outcome_equal_different_type(
     non_existent_path: str,
 ) -> None:
     assert (
-        CopyItemCopyOutcome(source=existent_file_path, destination=non_existent_path, changed_lines=[])
+        CopyItemCopyOutcome(
+            source=existent_file_path, destination=non_existent_path, changed_lines=[]
+        )
         == 5
     ) is False
 
