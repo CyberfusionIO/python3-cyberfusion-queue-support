@@ -69,7 +69,7 @@ class CopyItem(_Item):
 
         changed_lines = self._changed_lines()
 
-        if changed_lines:
+        if not os.path.exists(self.destination) or changed_lines:
             outcomes.append(
                 CopyItemCopyOutcome(
                     source=self.source,

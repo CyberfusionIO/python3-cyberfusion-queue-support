@@ -68,14 +68,17 @@ def test_mkdir_item_create_outcome_string(non_existent_path: str) -> None:
 def test_copy_item_create_outcome_string(
     non_existent_path: str, existent_file_path: Generator[str, None, None]
 ) -> None:
+    changed_lines = ["example", "example2"]
+    changed_lines_string = "\n".join(changed_lines)
     assert (
         str(
             CopyItemCopyOutcome(
                 source=non_existent_path,
                 destination=existent_file_path,
+                changed_lines=changed_lines,
             )
         )
-        == f"Copy {non_existent_path} to {existent_file_path}"
+        == f"Copy {non_existent_path} to {existent_file_path}, changed_lines:\n{changed_lines_string}"
     )
 
 
@@ -287,8 +290,8 @@ def test_copy_item_copy_outcome_equal(
     existent_file_path: Generator[str, None, None], non_existent_path: str
 ) -> None:
     assert CopyItemCopyOutcome(
-        source=existent_file_path, destination=non_existent_path
-    ) == CopyItemCopyOutcome(source=existent_file_path, destination=non_existent_path)
+        source=existent_file_path, destination=non_existent_path, changed_lines=[]
+    ) == CopyItemCopyOutcome(source=existent_file_path, destination=non_existent_path, changed_lines=[])
 
 
 def test_copy_item_copy_outcome_not_equal_source(
@@ -296,9 +299,9 @@ def test_copy_item_copy_outcome_not_equal_source(
     non_existent_path: str,
 ) -> None:
     assert CopyItemCopyOutcome(
-        source=existent_file_path, destination=non_existent_path
+        source=existent_file_path, destination=non_existent_path, changed_lines=[]
     ) != CopyItemCopyOutcome(
-        source=existent_file_path + "-example", destination=non_existent_path
+        source=existent_file_path + "-example", destination=non_existent_path, changed_lines=[]
     )
 
 
@@ -307,9 +310,20 @@ def test_copy_item_copy_outcome_not_equal_destination(
     non_existent_path: str,
 ) -> None:
     assert CopyItemCopyOutcome(
-        source=existent_file_path, destination=non_existent_path
+        source=existent_file_path, destination=non_existent_path, changed_lines=[]
     ) != CopyItemCopyOutcome(
-        source=existent_file_path, destination=non_existent_path + "-example"
+        source=existent_file_path, destination=non_existent_path + "-example", changed_lines=[]
+    )
+
+
+def test_copy_item_copy_outcome_not_equal_changed_lines(
+    existent_file_path: Generator[str, None, None],
+    non_existent_path: str,
+) -> None:
+    assert CopyItemCopyOutcome(
+        source=existent_file_path, destination=non_existent_path, changed_lines=[]
+    ) != CopyItemCopyOutcome(
+        source=existent_file_path, destination=non_existent_path, changed_lines=["example"]
     )
 
 
@@ -318,7 +332,7 @@ def test_copy_item_copy_outcome_equal_different_type(
     non_existent_path: str,
 ) -> None:
     assert (
-        CopyItemCopyOutcome(source=existent_file_path, destination=non_existent_path)
+        CopyItemCopyOutcome(source=existent_file_path, destination=non_existent_path, changed_lines=[])
         == 5
     ) is False
 
