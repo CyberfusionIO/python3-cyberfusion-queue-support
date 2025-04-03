@@ -79,7 +79,7 @@ def test_copy_item_create_outcome_string(
                 changed_lines=changed_lines,
             )
         )
-        == f"Copy {non_existent_path} to {existent_file_path}, changed_lines:\n{changed_lines_string}"
+        == f"Copy {non_existent_path} to {existent_file_path}.\nChanged_lines:\n{changed_lines_string}"
     )
 
 
