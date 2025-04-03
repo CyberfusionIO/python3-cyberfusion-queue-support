@@ -22,7 +22,7 @@ class CopyItemCopyOutcome(OutcomeInterface):
         changed_lines = "\n".join(self.changed_lines)
 
         return (
-            f"Copy {self.source} to {self.destination}, changed_lines:\n{changed_lines}"
+            f"Copy {self.source} to {self.destination}.\nChanged_lines:\n{changed_lines}"
         )
 
     def __eq__(self, other: object) -> bool:

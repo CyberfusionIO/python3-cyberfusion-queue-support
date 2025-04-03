@@ -36,12 +36,12 @@ class CopyItem(_Item):
         if os.path.islink(self.destination):
             raise PathIsSymlinkError(self.destination)
 
-    def _changed_lines(self) -> List[str]:
+    def _get_changed_lines(self) -> List[str]:
         """Get differences with destination file.
 
         No differences are returned when contents is not string.
         """
-        results = []
+        changed_lines = []
 
         contents = []
 
@@ -58,16 +58,16 @@ class CopyItem(_Item):
             lineterm="",
             n=0,
         ):
-            results.append(line)
+            changed_lines.append(line)
 
-        return results
+        return changed_lines
 
     @property
     def outcomes(self) -> List[CopyItemCopyOutcome]:
         """Get outcomes of item."""
         outcomes = []
 
-        changed_lines = self._changed_lines()
+        changed_lines = self._get_changed_lines()
 
         if not os.path.exists(self.destination) or changed_lines:
             outcomes.append(

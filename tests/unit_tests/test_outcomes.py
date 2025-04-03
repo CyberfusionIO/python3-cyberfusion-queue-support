@@ -70,6 +70,7 @@ def test_copy_item_create_outcome_string(
 ) -> None:
     changed_lines = ["example", "example2"]
     changed_lines_string = "\n".join(changed_lines)
+
     assert (
         str(
             CopyItemCopyOutcome(
