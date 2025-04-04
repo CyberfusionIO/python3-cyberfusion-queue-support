@@ -46,7 +46,7 @@ class CopyItem(_Item):
         contents = []
 
         if os.path.isfile(self.destination):
-            contents = open(self.destination, "r").readlines()
+            contents = open(self.destination).readlines()
 
         source_contents = open(self.source).readlines()
 
