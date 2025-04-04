@@ -1,3 +1,9 @@
+python3-cyberfusion-queue-support (1.6) unstable; urgency=low
+
+  - CopyItem: add changed and file difference logic
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Fri, 04 Apr 2025 17:29:00 +0200
+
 python3-cyberfusion-queue-support (1.5) unstable; urgency=low
 
   - Add systemd daemon reload

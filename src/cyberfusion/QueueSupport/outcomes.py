@@ -9,21 +9,32 @@ from cyberfusion.SystemdSupport.units import Unit
 class CopyItemCopyOutcome(OutcomeInterface):
     """Represents outcome."""
 
-    def __init__(self, *, source: str, destination: str) -> None:
+    def __init__(
+        self, *, source: str, destination: str, changed_lines: list[str]
+    ) -> None:
         """Set attributes."""
         self.source = source
         self.destination = destination
+        self.changed_lines = changed_lines
 
     def __str__(self) -> str:
         """Get human-readable string."""
-        return f"Copy {self.source} to {self.destination}"
+        changed_lines = "\n".join(self.changed_lines)
+
+        return (
+            f"Copy {self.source} to {self.destination}.\nChanged_lines:\n{changed_lines}"
+        )
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""
         if not isinstance(other, CopyItemCopyOutcome):
             return False
 
-        return other.source == self.source and other.destination == self.destination
+        return (
+            other.source == self.source
+            and other.destination == self.destination
+            and other.changed_lines == self.changed_lines
+        )
 
 
 class MoveItemMoveOutcome(OutcomeInterface):
