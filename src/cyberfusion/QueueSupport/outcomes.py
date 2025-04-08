@@ -10,7 +10,7 @@ class CopyItemCopyOutcome(OutcomeInterface):
     """Represents outcome."""
 
     def __init__(
-        self, *, source: str, destination: str, changed_lines: list[str]
+        self, *, source: str, destination: str, changed_lines: Optional[list[str]] = None
     ) -> None:
         """Set attributes."""
         self.source = source
@@ -19,10 +19,13 @@ class CopyItemCopyOutcome(OutcomeInterface):
 
     def __str__(self) -> str:
         """Get human-readable string."""
-        changed_lines = "\n".join(self.changed_lines)
+        if self.changed_lines:
+            changed_lines = "\nChanged lines:\n" + "\n".join(self.changed_lines)
+        else:
+            changed_lines = ""
 
         return (
-            f"Copy {self.source} to {self.destination}.\nChanged_lines:\n{changed_lines}"
+            f"Copy {self.source} to {self.destination}.{changed_lines}"
         )
 
     def __eq__(self, other: object) -> bool:

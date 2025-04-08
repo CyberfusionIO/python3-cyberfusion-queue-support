@@ -36,22 +36,29 @@ class CopyItem(_Item):
         if os.path.islink(self.destination):
             raise PathIsSymlinkError(self.destination)
 
-    def _get_changed_lines(self) -> List[str]:
+    def _get_changed_lines(self) -> Optional[List[str]]:
         """Get differences with destination file.
 
-        No differences are returned when contents is not string.
+        Returns None if the changed_lines could not be determined, for example
+        if the destination file is encrypted.
         """
         changed_lines = []
 
-        contents = []
+        destination_contents = []
+
+        try:
+            source_contents = open(self.source).readlines()
+        except UnicodeDecodeError:
+            return None
 
         if os.path.isfile(self.destination):
-            contents = open(self.destination).readlines()
-
-        source_contents = open(self.source).readlines()
+            try:
+                destination_contents = open(self.destination).readlines()
+            except UnicodeDecodeError:
+                return None
 
         for line in difflib.unified_diff(
-            contents,
+            destination_contents,
             source_contents,
             fromfile=self.source,
             tofile=self.destination,
@@ -69,7 +76,14 @@ class CopyItem(_Item):
 
         changed_lines = self._get_changed_lines()
 
-        if not os.path.exists(self.destination) or changed_lines:
+        if not os.path.exists(self.destination):
+            copy = True
+        elif changed_lines is None:
+            copy = True
+        else:
+            copy = bool(changed_lines)
+
+        if copy:
             outcomes.append(
                 CopyItemCopyOutcome(
                     source=self.source,

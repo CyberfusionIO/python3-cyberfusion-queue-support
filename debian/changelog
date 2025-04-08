@@ -1,3 +1,9 @@
+python3-cyberfusion-queue-support (1.7.0) unstable; urgency=low
+
+  - Handle unreadable files (regression introduced in (1.6)
+
+ -- Mika Scheer <mscheer@cyberfusion.io>  FRI, 11 Apr 2025 15:57:00 +0200
+
 python3-cyberfusion-queue-support (1.6) unstable; urgency=low
 
   - CopyItem: add changed and file difference logic

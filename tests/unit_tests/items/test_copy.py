@@ -113,3 +113,41 @@ def test_copy_item_same_not_has_outcomes(
     object_ = CopyItem(source=existent_file_path, destination=str(tmp_file))
 
     assert not object_.outcomes
+
+
+def test_copy_item_binary_source_has_outcome_copy(
+    tmp_path: Path,
+) -> None:
+    tmp_binary_file = tmp_path / "example"
+
+    tmp_binary_file.write_bytes(b'\xFF')
+
+    object_ = CopyItem(source=str(tmp_binary_file), destination=str(tmp_path / "not_exists"))
+
+    assert object_.outcomes
+
+    outcome = object_.outcomes[0]
+
+    assert isinstance(outcome, CopyItemCopyOutcome)
+    assert outcome.source == str(tmp_binary_file)
+    assert outcome.changed_lines is None
+
+
+def test_copy_item_binary_destination_has_outcome_copy(
+    existent_file_path: str,
+    tmp_path: Path,
+) -> None:
+    tmp_binary_file = tmp_path / "example"
+
+    tmp_binary_file.write_bytes(b'\xFF')
+
+    object_ = CopyItem(source=existent_file_path, destination=str(tmp_binary_file))
+
+    assert object_.outcomes
+
+    outcome = object_.outcomes[0]
+
+    assert isinstance(outcome, CopyItemCopyOutcome)
+    assert outcome.source == existent_file_path
+    assert outcome.destination == str(tmp_binary_file)
+    assert outcome.changed_lines is None
