@@ -65,7 +65,21 @@ def test_mkdir_item_create_outcome_string(non_existent_path: str) -> None:
     )
 
 
-def test_copy_item_create_outcome_string(
+def test_copy_item_copy_outcome_string(
+    non_existent_path: str, existent_file_path: Generator[str, None, None]
+) -> None:
+    assert (
+        str(
+            CopyItemCopyOutcome(
+                source=non_existent_path,
+                destination=existent_file_path,
+            )
+        )
+        == f"Copy {non_existent_path} to {existent_file_path}."
+    )
+
+
+def test_copy_item_copy_changed_lines_outcome_string(
     non_existent_path: str, existent_file_path: Generator[str, None, None]
 ) -> None:
     changed_lines = ["example", "example2"]
@@ -79,11 +93,11 @@ def test_copy_item_create_outcome_string(
                 changed_lines=changed_lines,
             )
         )
-        == f"Copy {non_existent_path} to {existent_file_path}.\nChanged_lines:\n{changed_lines_string}"
+        == f"Copy {non_existent_path} to {existent_file_path}.\nChanged lines:\n{changed_lines_string}"
     )
 
 
-def test_move_item_create_outcome_string(
+def test_move_item_move_outcome_string(
     non_existent_path: str, existent_file_path: Generator[str, None, None]
 ) -> None:
     assert (
