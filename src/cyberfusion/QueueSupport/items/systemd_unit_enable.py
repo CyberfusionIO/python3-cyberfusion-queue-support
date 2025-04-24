@@ -39,10 +39,14 @@ class SystemdUnitEnableItem(_Item):
 
         return outcomes
 
-    def fulfill(self) -> None:
+    def fulfill(self) -> List[SystemdUnitEnableItemEnableOutcome]:
         """Fulfill outcomes."""
-        for outcome in self.outcomes:
+        outcomes = self.outcomes
+
+        for outcome in outcomes:
             outcome.unit.enable()
+
+        return outcomes
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""

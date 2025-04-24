@@ -94,10 +94,14 @@ class CopyItem(_Item):
 
         return outcomes
 
-    def fulfill(self) -> None:
+    def fulfill(self) -> List[CopyItemCopyOutcome]:
         """Fulfill outcomes."""
-        for outcome in self.outcomes:
+        outcomes = self.outcomes
+
+        for outcome in outcomes:
             shutil.copyfile(outcome.source, outcome.destination)
+
+        return outcomes
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""

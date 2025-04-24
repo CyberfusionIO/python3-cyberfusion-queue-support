@@ -1,0 +1,24 @@
+#!/bin/sh
+
+set -e
+
+#DEBHELPER#
+
+if [ "$1" = "configure" ]; then
+    DATABASE_PATH=/var/lib/queue-support.db
+
+    if [ ! -f $DATABASE_PATH ]; then
+	    echo "Database does not exist, creating..."
+
+        sqlite3 $DATABASE_PATH "VACUUM;"
+    else
+        echo "Database already exists, not creating"
+    fi
+
+    chown queue-support: $DATABASE_PATH
+    chmod 0600 $DATABASE_PATH
+
+    sudo -u queue-support /usr/bin/alembic --config /usr/share/queue-support/alembic.ini upgrade head
+fi
+
+exit 0

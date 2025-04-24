@@ -8,9 +8,13 @@ from typing import Generator
 
 import pytest
 from _pytest.config import Config
+from alembic import command
+from alembic.config import Config as AlembicConfig
 from _pytest.config.argparsing import Parser
+from pytest_mock import MockerFixture
+from sqlalchemy.orm import Session
 
-from cyberfusion.QueueSupport import Queue
+from cyberfusion.QueueSupport import Queue, make_database_session
 
 
 def pytest_addoption(parser: Parser) -> None:
@@ -48,8 +52,37 @@ def get_path() -> str:
 
 
 @pytest.fixture
-def queue() -> Queue:
+def tmp_database_path(tmp_path: Path) -> str:
+    tmp_file = tmp_path / "queue-support.db"
+
+    return str(tmp_file)
+
+
+@pytest.fixture
+def queue(
+    mocker: MockerFixture, test_database_session: Session, tmp_database_path: str
+) -> Queue:
+    mocker.patch(
+        "cyberfusion.QueueSupport.make_database_session",
+        return_value=test_database_session,
+    )
+
+    alembic_cfg = AlembicConfig(file_="alembic.ini")
+    alembic_cfg.set_main_option("sqlalchemy.url", f"sqlite:///{tmp_database_path}")
+
+    command.upgrade(alembic_cfg, "head")
+
     return Queue()
+
+
+@pytest.fixture
+def test_database_session(mocker: MockerFixture, tmp_database_path: str) -> Session:
+    mocker.patch(
+        "cyberfusion.QueueSupport.database.get_database_path",
+        return_value=str(tmp_database_path),
+    )
+
+    return make_database_session()
 
 
 @pytest.fixture

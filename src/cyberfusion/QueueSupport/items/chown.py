@@ -106,9 +106,13 @@ class ChownItem(_Item):
 
         return outcomes
 
-    def fulfill(self) -> None:
+    def fulfill(
+        self,
+    ) -> List[ChownItemOwnerChangeOutcome | ChownItemGroupChangeOutcome]:
         """Fulfill outcomes."""
-        for outcome in self.outcomes:
+        outcomes = self.outcomes
+
+        for outcome in outcomes:
             if isinstance(outcome, ChownItemOwnerChangeOutcome):
                 os.chown(
                     outcome.path,
@@ -121,6 +125,8 @@ class ChownItem(_Item):
                     uid=-1,
                     gid=get_gid(outcome.new_group_name),
                 )
+
+        return outcomes
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""

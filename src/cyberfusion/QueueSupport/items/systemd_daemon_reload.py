@@ -35,10 +35,14 @@ class SystemdDaemonReloadItem(_Item):
 
         return outcomes
 
-    def fulfill(self) -> None:
+    def fulfill(self) -> List[SystemdDaemonReloadItemReloadOutcome]:
         """Fulfill outcomes."""
-        for _ in self.outcomes:
+        outcomes = self.outcomes
+
+        for _ in outcomes:
             SystemdManager.daemon_reload()
+
+        return outcomes
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""
