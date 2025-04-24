@@ -1,3 +1,9 @@
+python3-cyberfusion-queue-support (2.0) unstable; urgency=low
+
+  - Store queues
+
+ -- Mika Scheer <mscheer@cyberfusion.io>  Thu, 24 Apr 2025 16:09:00 +0000
+
 python3-cyberfusion-queue-support (1.7.0) unstable; urgency=low
 
   - Handle unreadable files (regression introduced in (1.6)
