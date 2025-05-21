@@ -18,7 +18,7 @@ class _Item(ItemInterface, ABC):
         *,
         reference: Optional[str] = None,
         hide_outcomes: bool = False,
-    ) -> None: # pragma: no cover
+    ) -> None:  # pragma: no cover
         """Set attributes."""
         self._reference = reference
         self._hide_outcomes = hide_outcomes

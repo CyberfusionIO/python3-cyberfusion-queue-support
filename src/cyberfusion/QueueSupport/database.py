@@ -28,7 +28,7 @@ def set_sqlite_pragma(
     cursor.close()
 
 
-def get_database_path() -> str: # pragma: no cover
+def get_database_path() -> str:  # pragma: no cover
     """Get database path."""
     return os.path.join(os.path.sep, "var", "lib", "queue-support.db")
 

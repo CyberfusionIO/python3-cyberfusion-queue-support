@@ -2,6 +2,10 @@
 
 from typing import List, Optional
 
+from cyberfusion.DatabaseSupport.database_user_grants import DatabaseUserGrant
+from cyberfusion.DatabaseSupport.database_users import DatabaseUser
+from cyberfusion.DatabaseSupport.databases import Database
+
 from cyberfusion.QueueSupport.interfaces import OutcomeInterface
 from cyberfusion.SystemdSupport.units import Unit
 
@@ -10,7 +14,11 @@ class CopyItemCopyOutcome(OutcomeInterface):
     """Represents outcome."""
 
     def __init__(
-        self, *, source: str, destination: str, changed_lines: Optional[list[str]] = None
+        self,
+        *,
+        source: str,
+        destination: str,
+        changed_lines: Optional[list[str]] = None,
     ) -> None:
         """Set attributes."""
         self.source = source
@@ -24,9 +32,7 @@ class CopyItemCopyOutcome(OutcomeInterface):
         else:
             changed_lines = ""
 
-        return (
-            f"Copy {self.source} to {self.destination}.{changed_lines}"
-        )
+        return f"Copy {self.source} to {self.destination}.{changed_lines}"
 
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""
@@ -376,3 +382,118 @@ class SystemdUnitStopItemStopOutcome(OutcomeInterface):
             return False
 
         return other.unit.name == self.unit.name
+
+
+class DatabaseCreateItemCreateOutcome(OutcomeInterface):
+    """Represents outcome."""
+
+    def __init__(self, *, database: Database) -> None:
+        """Set attributes."""
+        self.database = database
+
+    def __str__(self) -> str:
+        """Get human-readable string."""
+        return f"Create {self.database.name} in {self.database.server_software_name}"
+
+    def __eq__(self, other: object) -> bool:
+        """Get equality based on attributes."""
+        if not isinstance(other, DatabaseCreateItemCreateOutcome):
+            return False
+
+        return (
+            other.database.server_software_name == self.database.server_software_name
+            and other.database.name == self.database.name
+        )
+
+
+class DatabaseUserEnsureStateItemCreateOutcome(OutcomeInterface):
+    """Represents outcome."""
+
+    def __init__(self, *, database_user: DatabaseUser) -> None:
+        """Set attributes."""
+        self.database_user = database_user
+
+    def __str__(self) -> str:
+        """Get human-readable string."""
+        return f"Create {self.database_user.name} in {self.database_user.server_software_name}"
+
+    def __eq__(self, other: object) -> bool:
+        """Get equality based on attributes."""
+        if not isinstance(other, DatabaseUserEnsureStateItemCreateOutcome):
+            return False
+
+        return (
+            other.database_user.server_software_name
+            == self.database_user.server_software_name
+            and other.database_user.name == self.database_user.name
+            and other.database_user.password == self.database_user.password
+            and other.database_user.host == self.database_user.host
+        )
+
+
+class DatabaseUserEnsureStateItemEditPasswordOutcome(OutcomeInterface):
+    """Represents outcome."""
+
+    def __init__(self, *, database_user: DatabaseUser) -> None:
+        """Set attributes."""
+        self.database_user = database_user
+
+    def __str__(self) -> str:
+        """Get human-readable string."""
+        return f"Edit password of {self.database_user.name} in {self.database_user.server_software_name}"
+
+    def __eq__(self, other: object) -> bool:
+        """Get equality based on attributes."""
+        if not isinstance(other, DatabaseUserEnsureStateItemEditPasswordOutcome):
+            return False
+
+        print(
+            other.database_user.server_software_name,
+            other.database_user.name,
+            other.database_user.password,
+            other.database_user.host,
+        )
+        print(
+            self.database_user.server_software_name,
+            self.database_user.name,
+            self.database_user.password,
+            self.database_user.host,
+        )
+
+        return (
+            other.database_user.server_software_name
+            == self.database_user.server_software_name
+            and other.database_user.name == self.database_user.name
+            and other.database_user.password == self.database_user.password
+            and other.database_user.host == self.database_user.host
+        )
+
+
+class DatabaseUserGrantGrantItemGrantOutcome(OutcomeInterface):
+    """Represents outcome."""
+
+    def __init__(self, *, database_user_grant: DatabaseUserGrant) -> None:
+        """Set attributes."""
+        self.database_user_grant = database_user_grant
+
+    def __str__(self) -> str:
+        """Get human-readable string."""
+        return f"Grant {self.database_user_grant.privilege_names} to {self.database_user_grant.table_name} in {self.database_user_grant.database_name} in {self.database_user_grant.database_user.server_software_name}"
+
+    def __eq__(self, other: object) -> bool:
+        """Get equality based on attributes."""
+        if not isinstance(other, DatabaseUserGrantGrantItemGrantOutcome):
+            return False
+
+        return (
+            other.database_user_grant.database_user.server_software_name
+            == self.database_user_grant.database_user.server_software_name
+            and other.database_user_grant.database_user.name
+            == self.database_user_grant.database_user.name
+            and other.database_user_grant.database_user.host
+            == self.database_user_grant.database_user.host
+            and other.database_user_grant.privilege_names
+            == self.database_user_grant.privilege_names
+            and other.database_user_grant.table_name
+            == self.database_user_grant.table_name
+        )

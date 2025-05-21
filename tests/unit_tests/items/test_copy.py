@@ -120,9 +120,11 @@ def test_copy_item_binary_source_has_outcome_copy(
 ) -> None:
     tmp_binary_file = tmp_path / "example"
 
-    tmp_binary_file.write_bytes(b'\xFF')
+    tmp_binary_file.write_bytes(b"\xff")
 
-    object_ = CopyItem(source=str(tmp_binary_file), destination=str(tmp_path / "not_exists"))
+    object_ = CopyItem(
+        source=str(tmp_binary_file), destination=str(tmp_path / "not_exists")
+    )
 
     assert object_.outcomes
 
@@ -139,7 +141,7 @@ def test_copy_item_binary_destination_has_outcome_copy(
 ) -> None:
     tmp_binary_file = tmp_path / "example"
 
-    tmp_binary_file.write_bytes(b'\xFF')
+    tmp_binary_file.write_bytes(b"\xff")
 
     object_ = CopyItem(source=existent_file_path, destination=str(tmp_binary_file))
 
