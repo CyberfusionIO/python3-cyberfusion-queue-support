@@ -82,7 +82,7 @@ class DatabaseUserEnsureStateItem(_Item):
         for outcome in outcomes:
             if isinstance(outcome, DatabaseUserEnsureStateItemCreateOutcome):
                 outcome.database_user.create()
-            elif isinstance(outcome, DatabaseUserEnsureStateItemEditPasswordOutcome):
+            else:
                 outcome.database_user.edit()
 
         return outcomes
