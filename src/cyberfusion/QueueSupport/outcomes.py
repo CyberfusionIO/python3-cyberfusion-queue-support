@@ -406,6 +406,28 @@ class DatabaseCreateItemCreateOutcome(OutcomeInterface):
         )
 
 
+class DatabaseDropItemDropOutcome(OutcomeInterface):
+    """Represents outcome."""
+
+    def __init__(self, *, database: Database) -> None:
+        """Set attributes."""
+        self.database = database
+
+    def __str__(self) -> str:
+        """Get human-readable string."""
+        return f"Drop {self.database.name} in {self.database.server_software_name}"
+
+    def __eq__(self, other: object) -> bool:
+        """Get equality based on attributes."""
+        if not isinstance(other, DatabaseDropItemDropOutcome):
+            return False
+
+        return (
+            other.database.server_software_name == self.database.server_software_name
+            and other.database.name == self.database.name
+        )
+
+
 class DatabaseUserEnsureStateItemCreateOutcome(OutcomeInterface):
     """Represents outcome."""
 

@@ -30,7 +30,7 @@ from cyberfusion.QueueSupport.outcomes import (
     DatabaseCreateItemCreateOutcome,
     DatabaseUserEnsureStateItemCreateOutcome,
     DatabaseUserEnsureStateItemEditPasswordOutcome,
-    DatabaseUserGrantGrantItemGrantOutcome,
+    DatabaseUserGrantGrantItemGrantOutcome, DatabaseDropItemDropOutcome,
 )
 from cyberfusion.SystemdSupport.units import Unit
 
@@ -243,6 +243,25 @@ def test_database_create_item_create_outcome_string() -> None:
             )
         )
         == "Create test in MariaDB"
+    )
+
+
+def test_database_drop_item_drop_outcome_string() -> None:
+    assert (
+        str(
+            DatabaseDropItemDropOutcome(
+                database=Database(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    ),
+                    name="test",
+                    server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                )
+            )
+        )
+        == "Drop test in MariaDB"
     )
 
 
@@ -899,7 +918,7 @@ def test_systemd_tmp_files_create_item_create_outcome_equal_different_type() -> 
     assert (SystemdTmpFilesCreateItemCreateOutcome(path="/tmp/example") == 5) is False
 
 
-# Equal: DatabaseUserGrantGrantItemGrantOutcome
+# Equal: DatabaseCreateItemCreateOutcome
 
 
 def test_database_create_item_create_outcome_equal() -> None:
@@ -945,6 +964,64 @@ def test_database_create_item_create_outcome_not_equal_different_database() -> N
 def test_database_create_item_create_outcome_not_equal_different_type() -> None:
     assert (
         DatabaseCreateItemCreateOutcome(
+            database=Database(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                ),
+                name="test",
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            )
+        )
+        == 5
+    ) is False
+
+
+# Equal: DatabaseDropItemDropOutcome
+
+
+def test_database_drop_item_drop_outcome_equal() -> None:
+    assert DatabaseDropItemDropOutcome(
+        database=Database(
+            support=DatabaseSupport(
+                server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+            ),
+            name="test",
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        )
+    ) == DatabaseDropItemDropOutcome(
+        database=Database(
+            support=DatabaseSupport(
+                server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+            ),
+            name="test",
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        )
+    )
+
+
+def test_database_drop_item_drop_outcome_not_equal_different_database() -> None:
+    assert DatabaseDropItemDropOutcome(
+        database=Database(
+            support=DatabaseSupport(
+                server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+            ),
+            name="test",
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        )
+    ) != DatabaseDropItemDropOutcome(
+        database=Database(
+            support=DatabaseSupport(
+                server_software_names=[DatabaseSupport.POSTGRESQL_SERVER_SOFTWARE_NAME]
+            ),
+            name="example",
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        )
+    )
+
+
+def test_database_drop_item_drop_outcome_not_equal_different_type() -> None:
+    assert (
+        DatabaseDropItemDropOutcome(
             database=Database(
                 support=DatabaseSupport(
                     server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
