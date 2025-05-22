@@ -491,6 +491,30 @@ class DatabaseUserEnsureStateItemEditPasswordOutcome(OutcomeInterface):
         )
 
 
+class DatabaseUserDropItemDropOutcome(OutcomeInterface):
+    """Represents outcome."""
+
+    def __init__(self, *, database_user: DatabaseUser) -> None:
+        """Set attributes."""
+        self.database_user = database_user
+
+    def __str__(self) -> str:
+        """Get human-readable string."""
+        return f"Drop {self.database_user.name} in {self.database_user.server_software_name}"
+
+    def __eq__(self, other: object) -> bool:
+        """Get equality based on attributes."""
+        if not isinstance(other, DatabaseUserDropItemDropOutcome):
+            return False
+
+        return (
+            other.database_user.server_software_name
+            == self.database_user.server_software_name
+            and other.database_user.name == self.database_user.name
+            and other.database_user.host == self.database_user.host
+        )
+
+
 class DatabaseUserGrantGrantItemGrantOutcome(OutcomeInterface):
     """Represents outcome."""
 
@@ -505,6 +529,36 @@ class DatabaseUserGrantGrantItemGrantOutcome(OutcomeInterface):
     def __eq__(self, other: object) -> bool:
         """Get equality based on attributes."""
         if not isinstance(other, DatabaseUserGrantGrantItemGrantOutcome):
+            return False
+
+        return (
+            other.database_user_grant.database_user.server_software_name
+            == self.database_user_grant.database_user.server_software_name
+            and other.database_user_grant.database_user.name
+            == self.database_user_grant.database_user.name
+            and other.database_user_grant.database_user.host
+            == self.database_user_grant.database_user.host
+            and other.database_user_grant.privilege_names
+            == self.database_user_grant.privilege_names
+            and other.database_user_grant.table_name
+            == self.database_user_grant.table_name
+        )
+
+
+class DatabaseUserGrantRevokeItemRevokeOutcome(OutcomeInterface):
+    """Represents outcome."""
+
+    def __init__(self, *, database_user_grant: DatabaseUserGrant) -> None:
+        """Set attributes."""
+        self.database_user_grant = database_user_grant
+
+    def __str__(self) -> str:
+        """Get human-readable string."""
+        return f"Revoke {self.database_user_grant.privilege_names} to {self.database_user_grant.table_name} in {self.database_user_grant.database_name} in {self.database_user_grant.database_user.server_software_name}"
+
+    def __eq__(self, other: object) -> bool:
+        """Get equality based on attributes."""
+        if not isinstance(other, DatabaseUserGrantRevokeItemRevokeOutcome):
             return False
 
         return (

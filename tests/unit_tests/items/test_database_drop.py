@@ -54,7 +54,7 @@ def test_database_drop_item_not_equal_different_type() -> None:
 # Outcomes
 
 
-def test_database_drop_item_not_exists_has_outcome_drop(
+def test_database_drop_item_exists_has_outcome_drop(
     mocker: MockerFixture,
 ) -> None:
     object_ = DatabaseDropItem(
@@ -64,12 +64,10 @@ def test_database_drop_item_not_exists_has_outcome_drop(
 
     mocker.patch.object(Database, "exists", new=PropertyMock(return_value=True))
 
-    assert object_.outcomes == [
-        DatabaseDropItemDropOutcome(database=object_.database)
-    ]
+    assert object_.outcomes == [DatabaseDropItemDropOutcome(database=object_.database)]
 
 
-def test_database_drop_item_exists_not_has_outcome_drop(
+def test_database_drop_item_not_exists_not_has_outcome_drop(
     mocker: MockerFixture,
 ) -> None:
     object_ = DatabaseDropItem(

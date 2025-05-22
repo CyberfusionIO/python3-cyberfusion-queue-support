@@ -7,7 +7,10 @@ from pytest_mock import MockerFixture
 from cyberfusion.QueueSupport.items.database_user_ensure_state import (
     DatabaseUserEnsureStateItem,
 )
-from cyberfusion.QueueSupport.outcomes import DatabaseUserEnsureStateItemCreateOutcome
+from cyberfusion.QueueSupport.outcomes import (
+    DatabaseUserEnsureStateItemCreateOutcome,
+    DatabaseUserEnsureStateItemEditPasswordOutcome,
+)
 
 MODE = 0o755
 
@@ -26,7 +29,7 @@ def test_database_user_ensure_state_item_equal() -> None:
     )
 
 
-def test_database_user_create_item_not_equal_server_software_name() -> None:
+def test_database_user_ensure_state_item_not_equal_server_software_name() -> None:
     assert DatabaseUserEnsureStateItem(
         server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
         name="example",
@@ -106,7 +109,7 @@ def test_database_user_ensure_state_item_not_exists_has_outcome_create(
     ]
 
 
-def test_database_user_ensure_state_item_exists_different_password_has_outcome_create(
+def test_database_user_ensure_state_item_exists_different_password_has_outcome_edit_password(
     mocker: MockerFixture,
 ) -> None:
     object_ = DatabaseUserEnsureStateItem(
@@ -115,15 +118,17 @@ def test_database_user_ensure_state_item_exists_different_password_has_outcome_c
         password="example",
     )
 
-    mocker.patch.object(DatabaseUser, "exists", new=PropertyMock(return_value=False))
+    mocker.patch.object(DatabaseUser, "exists", new=PropertyMock(return_value=True))
     mocker.patch.object(object_.database_user, "_get_password", return_value="test")
 
     assert object_.outcomes == [
-        DatabaseUserEnsureStateItemCreateOutcome(database_user=object_.database_user)
+        DatabaseUserEnsureStateItemEditPasswordOutcome(
+            database_user=object_.database_user
+        )
     ]
 
 
-def test_database_user_ensure_state_item_exists_same_password_not_has_outcome_create(
+def test_database_user_ensure_state_item_exists_same_password_not_has_outcomes(
     mocker: MockerFixture,
 ) -> None:
     object_ = DatabaseUserEnsureStateItem(
