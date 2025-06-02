@@ -59,4 +59,4 @@ def test_rmtree_item_not_exists_not_has_outcome_remove(
 
     object_ = RmTreeItem(path=non_existent_path)
 
-    assert RmTreeItemRemoveOutcome(path=non_existent_path) not in object_.outcomes
+    assert not object_.outcomes

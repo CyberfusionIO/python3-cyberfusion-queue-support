@@ -77,4 +77,4 @@ def test_database_drop_item_not_exists_not_has_outcome_drop(
 
     mocker.patch.object(Database, "exists", new=PropertyMock(return_value=False))
 
-    assert object_.outcomes == []
+    assert not object_.outcomes

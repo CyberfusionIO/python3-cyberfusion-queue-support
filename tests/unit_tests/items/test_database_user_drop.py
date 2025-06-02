@@ -95,4 +95,4 @@ def test_database_user_drop_item_not_exists_different_password_not_has_outcome_d
     mocker.patch.object(DatabaseUser, "exists", new=PropertyMock(return_value=False))
     mocker.patch.object(object_.database_user, "_get_password", return_value="test")
 
-    assert object_.outcomes == []
+    assert not object_.outcomes

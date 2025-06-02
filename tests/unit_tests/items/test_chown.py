@@ -166,14 +166,7 @@ def test_chown_item_same_not_has_outcome_owner_name_change(
         group_name=old_group_name,
     )
 
-    assert (
-        ChownItemOwnerChangeOutcome(
-            path=existent_file_path,
-            old_owner_name=old_owner_name,
-            new_owner_name=old_group_name,
-        )
-        not in object_.outcomes
-    )
+    assert not object_.outcomes
 
 
 @pytest.mark.ci
@@ -262,14 +255,7 @@ def test_chown_item_same_not_has_outcome_group_name_change(
         group_name=old_group_name,
     )
 
-    assert (
-        ChownItemGroupChangeOutcome(
-            path=existent_file_path,
-            old_group_name=old_owner_name,
-            new_group_name=old_group_name,
-        )
-        not in object_.outcomes
-    )
+    assert not object_.outcomes
 
 
 @pytest.mark.ci

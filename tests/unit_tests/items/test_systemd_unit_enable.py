@@ -61,6 +61,4 @@ def test_systemd_unit_enable_item_enabled_not_has_outcome_enable(
 
     object_ = SystemdUnitEnableItem(name="example")
 
-    assert (
-        SystemdUnitEnableItemEnableOutcome(unit=Unit("example")) not in object_.outcomes
-    )
+    assert not object_.outcomes

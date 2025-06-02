@@ -89,9 +89,4 @@ def test_chmod_item_same_not_has_outcome_mode_change(
 
     object_ = ChmodItem(path=existent_file_path, mode=MODE)
 
-    assert (
-        ChmodItemModeChangeOutcome(
-            path=existent_file_path, old_mode=MODE, new_mode=MODE
-        )
-        not in object_.outcomes
-    )
+    assert not object_.outcomes

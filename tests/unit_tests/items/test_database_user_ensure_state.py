@@ -140,7 +140,4 @@ def test_database_user_ensure_state_item_exists_same_password_not_has_outcomes(
     mocker.patch.object(DatabaseUser, "exists", new=PropertyMock(return_value=True))
     mocker.patch.object(object_.database_user, "_get_password", return_value="example")
 
-    print(object_.database_user.password)
-    print(object_.database_user._get_password())
-
-    assert object_.outcomes == []
+    assert not object_.outcomes

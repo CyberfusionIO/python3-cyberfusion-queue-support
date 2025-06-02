@@ -34,7 +34,7 @@ def test_systemd_unit_start_item_equal_different_type(
 # Outcomes
 
 
-def test_systemd_unit_start_item_not_startd_has_outcome_start(
+def test_systemd_unit_start_item_not_started_has_outcome_start(
     existent_file_path: Generator[str, None, None], mocker: MockerFixture
 ) -> None:
     mocker.patch(
@@ -47,7 +47,7 @@ def test_systemd_unit_start_item_not_startd_has_outcome_start(
     assert SystemdUnitStartItemStartOutcome(unit=Unit("example")) in object_.outcomes
 
 
-def test_systemd_unit_start_item_startd_not_has_outcome_start(
+def test_systemd_unit_start_item_started_not_has_outcome_start(
     existent_file_path: Generator[str, None, None], mocker: MockerFixture
 ) -> None:
     mocker.patch(
@@ -57,6 +57,4 @@ def test_systemd_unit_start_item_startd_not_has_outcome_start(
 
     object_ = SystemdUnitStartItem(name="example")
 
-    assert (
-        SystemdUnitStartItemStartOutcome(unit=Unit("example")) not in object_.outcomes
-    )
+    assert not object_.outcomes

@@ -79,4 +79,4 @@ def test_database_create_item_exists_not_has_outcome_create(
 
     mocker.patch.object(Database, "exists", new=PropertyMock(return_value=True))
 
-    assert object_.outcomes == []
+    assert not object_.outcomes

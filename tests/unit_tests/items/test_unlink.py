@@ -58,4 +58,4 @@ def test_unlink_item_not_exists_not_has_outcome_unlink(
 
     object_ = UnlinkItem(path=non_existent_path)
 
-    assert UnlinkItemUnlinkOutcome(path=non_existent_path) not in object_.outcomes
+    assert not object_.outcomes
