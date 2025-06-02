@@ -60,4 +60,4 @@ def test_mkdir_item_exists_not_has_outcome_create(
 
     object_ = MkdirItem(path=existent_directory_path)
 
-    assert MkdirItemCreateOutcome(path=existent_directory_path) not in object_.outcomes
+    assert not object_.outcomes

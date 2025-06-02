@@ -166,4 +166,4 @@ def test_database_user_grant_grant_item_exists_not_has_outcome_grant(
         DatabaseUserGrant, "exists", new=PropertyMock(return_value=True)
     )
 
-    assert object_.outcomes == []
+    assert not object_.outcomes

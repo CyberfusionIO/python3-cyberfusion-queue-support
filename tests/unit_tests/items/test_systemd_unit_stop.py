@@ -55,4 +55,4 @@ def test_systemd_unit_stop_item_not_active_not_has_outcome_stop(
 
     object_ = SystemdUnitStopItem(name="example")
 
-    assert SystemdUnitStopItemStopOutcome(unit=Unit("example")) not in object_.outcomes
+    assert not object_.outcomes
