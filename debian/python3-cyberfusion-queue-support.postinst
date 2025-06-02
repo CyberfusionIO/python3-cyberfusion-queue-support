@@ -5,7 +5,14 @@ set -e
 #DEBHELPER#
 
 if [ "$1" = "configure" ]; then
-    DATABASE_PATH=/var/lib/queue-support.db
+    # Create/migrate database
+
+    DATABASE_DIR=/var/lib/queue-support
+    DATABASE_PATH=$DATABASE_DIR/queue-support.db
+
+    mkdir -p $DATABASE_DIR
+    chown queue-support: $DATABASE_DIR
+    chmod 0700 $DATABASE_DIR
 
     if [ ! -f $DATABASE_PATH ]; then
 	    echo "Database does not exist, creating..."
@@ -18,7 +25,12 @@ if [ "$1" = "configure" ]; then
     chown queue-support: $DATABASE_PATH
     chmod 0600 $DATABASE_PATH
 
-    sudo -u queue-support /usr/bin/alembic --config /usr/share/queue-support/alembic.ini upgrade head
+    sudo -u queue-support /usr/bin/queue-support-migrate
+
+    # Set config file permissions
+
+    chown queue-support: /etc/queue-support.conf
+    chmod 0600 /etc/queue-support.conf
 fi
 
 exit 0

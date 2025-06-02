@@ -20,6 +20,7 @@ unit test and feature test:
   image: python:3.11
   script:
     - !reference [.add repositories, script]
+    - ln -s .env.ci .env
     - addgroup --gid 1000 ci
     - adduser --disabled-password --gecos "" --uid 1000 --gid 1000 ci
     - pip install --no-cache-dir -r requirements/test.txt

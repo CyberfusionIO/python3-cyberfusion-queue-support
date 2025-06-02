@@ -37,6 +37,10 @@ Run the following command to install the package from PyPI:
 
     pip3 install python3-cyberfusion-queue-support
 
+Then, run database migrations:
+
+    bin/queue-support-migrate
+
 ## Debian
 
 Run the following commands to build a Debian package:

@@ -1,4 +1,5 @@
-import os
+from alembic.config import Config
+from alembic import command
 import sqlite3
 from datetime import datetime, timezone
 from sqlalchemy.pool.base import _ConnectionRecord
@@ -9,6 +10,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
 from sqlalchemy.types import JSON
+
+from cyberfusion.QueueSupport.settings import settings
 
 
 @event.listens_for(Engine, "connect")  # type: ignore[misc]
@@ -28,14 +31,17 @@ def set_sqlite_pragma(
     cursor.close()
 
 
-def get_database_path() -> str:  # pragma: no cover
-    """Get database path."""
-    return os.path.join(os.path.sep, "var", "lib", "queue-support.db")
+def run_migrations() -> None:
+    """Upgrade database schema to latest version."""
+    alembic_config = Config(file_=settings.alembic_config_file_path)
+    alembic_config.set_main_option("sqlalchemy.url", settings.database_path)
+
+    command.upgrade(alembic_config, "head")
 
 
 def make_database_session() -> Session:
     engine = create_engine(
-        "sqlite:///" + get_database_path(), connect_args={"check_same_thread": False}
+        settings.database_path, connect_args={"check_same_thread": False}
     )
 
     return sessionmaker(bind=engine)()
