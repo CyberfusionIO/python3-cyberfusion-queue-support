@@ -48,8 +48,8 @@ class CommandItem(_Item):
                     capture_output=True,
                 )
 
-                logger.info("Command stdout: %s", output.stdout)
-                logger.info("Command stderr: %s", output.stderr)
+                outcome.stdout = output.stdout
+                outcome.stderr = output.stderr
             except subprocess.CalledProcessError as e:
                 raise CommandQueueFulfillFailed(
                     self, command=outcome.command, stdout=e.stdout, stderr=e.stderr
