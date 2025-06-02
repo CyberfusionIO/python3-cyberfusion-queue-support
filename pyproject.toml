@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "python3-cyberfusion-queue-support"
-version = "2.2.1"
+version = "2.2.2"
 description = "Library to queue actions."
 readme = "README.md"
 authors = [

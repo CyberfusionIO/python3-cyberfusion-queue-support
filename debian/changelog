@@ -1,3 +1,9 @@
+python3-cyberfusion-queue-support (2.2.2) unstable; urgency=low
+
+  - Fix saving systemd-related items to database
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Mon, 02 Jun 2025 19:34:00 +0200
+
 python3-cyberfusion-queue-support (2.2.1) unstable; urgency=low
 
   - Move migrations to source tree
