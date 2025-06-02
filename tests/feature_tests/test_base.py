@@ -16,6 +16,7 @@ from cyberfusion.QueueSupport import (
 from cyberfusion.QueueSupport.items.chmod import ChmodItem
 from cyberfusion.QueueSupport.items.command import CommandItem
 
+
 MODE = 0o600
 
 

@@ -3,6 +3,7 @@ import os
 from alembic import command
 import sqlite3
 from datetime import datetime, timezone
+
 from sqlalchemy.pool.base import _ConnectionRecord
 from sqlalchemy import ForeignKey, MetaData, Boolean
 from sqlalchemy import create_engine, Column, DateTime, Integer, String
@@ -12,6 +13,7 @@ from sqlalchemy.engine import Engine
 from sqlalchemy import event
 from sqlalchemy.types import JSON
 
+from cyberfusion.QueueSupport.encoders import json_serialize
 from cyberfusion.QueueSupport.settings import settings
 
 
@@ -47,7 +49,9 @@ def run_migrations() -> None:
 
 def make_database_session() -> Session:
     engine = create_engine(
-        settings.database_path, connect_args={"check_same_thread": False}
+        settings.database_path,
+        connect_args={"check_same_thread": False},
+        json_serializer=json_serialize,
     )
 
     return sessionmaker(bind=engine)()
