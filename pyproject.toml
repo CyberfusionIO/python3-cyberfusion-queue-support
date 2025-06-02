@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "python3-cyberfusion-queue-support"
-version = "2.0"
+version = "2.1"
 description = "Library to queue actions."
 readme = "README.md"
 authors = [
@@ -14,7 +14,11 @@ dependencies = [
     "python3-cyberfusion-systemd-support~=2.1",
     "alembic==1.8.1",
     "SQLAlchemy==1.4.46",
+    "pydantic[dotenv]==1.10.4",
 ]
 
 [project.urls]
 "Source" = "https://github.com/CyberfusionIO/python3-cyberfusion-queue-support"
+
+[project.scripts]
+queue-support-migrate = "cyberfusion.QueueSupport.database:run_migrations"

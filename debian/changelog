@@ -1,3 +1,10 @@
+python3-cyberfusion-queue-support (2.1) unstable; urgency=low
+
+  - Make database path configurable
+  - Add `queue-support-migrate`
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Mon, 02 Jun 2025 16:47:00 +0200
+
 python3-cyberfusion-queue-support (2.0) unstable; urgency=low
 
   - Store queues
