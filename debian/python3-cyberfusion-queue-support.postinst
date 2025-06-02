@@ -17,7 +17,7 @@ if [ "$1" = "configure" ]; then
     if [ ! -f $DATABASE_PATH ]; then
 	    echo "Database does not exist, creating..."
 
-        sqlite3 $DATABASE_PATH "VACUUM;"
+      sqlite3 $DATABASE_PATH "VACUUM;"
     else
         echo "Database already exists, not creating"
     fi

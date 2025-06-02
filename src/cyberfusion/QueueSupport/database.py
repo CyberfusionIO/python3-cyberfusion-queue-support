@@ -1,4 +1,5 @@
 from alembic.config import Config
+import os
 from alembic import command
 import sqlite3
 from datetime import datetime, timezone
@@ -33,8 +34,13 @@ def set_sqlite_pragma(
 
 def run_migrations() -> None:
     """Upgrade database schema to latest version."""
-    alembic_config = Config(file_=settings.alembic_config_file_path)
+    alembic_config = Config()
+
     alembic_config.set_main_option("sqlalchemy.url", settings.database_path)
+    alembic_config.set_main_option(
+        "script_location",
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), "migrations"),
+    )
 
     command.upgrade(alembic_config, "head")
 
