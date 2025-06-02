@@ -1,4 +1,3 @@
-import os
 import sqlite3
 from datetime import datetime, timezone
 from sqlalchemy.pool.base import _ConnectionRecord
@@ -9,6 +8,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
 from sqlalchemy.types import JSON
+
+from cyberfusion.QueueSupport.settings import settings
 
 
 @event.listens_for(Engine, "connect")  # type: ignore[misc]
@@ -28,14 +29,9 @@ def set_sqlite_pragma(
     cursor.close()
 
 
-def get_database_path() -> str: # pragma: no cover
-    """Get database path."""
-    return os.path.join(os.path.sep, "var", "lib", "queue-support.db")
-
-
 def make_database_session() -> Session:
     engine = create_engine(
-        "sqlite:///" + get_database_path(), connect_args={"check_same_thread": False}
+        "sqlite:///" + settings.database_path, connect_args={"check_same_thread": False}
     )
 
     return sessionmaker(bind=engine)()

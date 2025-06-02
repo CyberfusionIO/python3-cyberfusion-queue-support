@@ -15,6 +15,7 @@ from pytest_mock import MockerFixture
 from sqlalchemy.orm import Session
 
 from cyberfusion.QueueSupport import Queue, make_database_session
+from cyberfusion.QueueSupport.settings import settings
 
 
 def pytest_addoption(parser: Parser) -> None:
@@ -77,12 +78,13 @@ def queue(
 
 @pytest.fixture
 def test_database_session(mocker: MockerFixture, tmp_database_path: str) -> Session:
-    mocker.patch(
-        "cyberfusion.QueueSupport.database.get_database_path",
-        return_value=str(tmp_database_path),
-    )
+    original_database_path = settings.database_path
 
-    return make_database_session()
+    settings.database_path = str(tmp_database_path)
+
+    yield make_database_session()
+
+    settings.database_path = original_database_path
 
 
 @pytest.fixture

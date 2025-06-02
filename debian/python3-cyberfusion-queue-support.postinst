@@ -5,6 +5,8 @@ set -e
 #DEBHELPER#
 
 if [ "$1" = "configure" ]; then
+    # Create/migrate database
+
     DATABASE_PATH=/var/lib/queue-support.db
 
     if [ ! -f $DATABASE_PATH ]; then
@@ -19,6 +21,11 @@ if [ "$1" = "configure" ]; then
     chmod 0600 $DATABASE_PATH
 
     sudo -u queue-support /usr/bin/alembic --config /usr/share/queue-support/alembic.ini upgrade head
+
+    # Set config file permissions
+
+    chown queue-support: /etc/queue-support.conf
+    chmod 0600 /etc/queue-support.conf
 fi
 
 exit 0
