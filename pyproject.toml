@@ -19,3 +19,6 @@ dependencies = [
 
 [project.urls]
 "Source" = "https://github.com/CyberfusionIO/python3-cyberfusion-queue-support"
+
+[project.scripts]
+queue-support-migrate = "cyberfusion.QueueSupport.database:run_migrations"

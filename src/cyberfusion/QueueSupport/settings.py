@@ -1,9 +1,9 @@
 from pydantic import BaseSettings
-from pathlib import Path
 
 
 class Settings(BaseSettings):
-    database_path: Path = Path("queue-support.db")
+    database_path: str = "sqlite:///./queue-support.db"
+    alembic_config_file_path: str = "alembic.ini"
 
     class Config:
         env_prefix = "queue_support_"
