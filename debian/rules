@@ -9,5 +9,3 @@ export PYBUILD_DISABLE=test
 
 execute_after_dh_install:
 	dh_installsysusers
-	# Run make manually; no native way to let dh_install use multiple build systems
-	make install

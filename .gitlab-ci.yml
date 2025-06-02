@@ -25,6 +25,7 @@ unit test and feature test:
     - adduser --disabled-password --gecos "" --uid 1000 --gid 1000 ci
     - pip install --no-cache-dir -r requirements/test.txt
     - pip install .
+    - queue-support-migrate
     - pytest -n 10 -vvv --cov-branch --cov=cyberfusion.QueueSupport --cov-config=.coveragerc --cov-fail-under=100 --junitxml=report-pytest.xml --ci
   artifacts:
     reports:
