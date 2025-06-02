@@ -2,6 +2,13 @@ from typing import Generator
 
 
 from cyberfusion.Common import generate_random_string
+from cyberfusion.DatabaseSupport import DatabaseSupport
+from cyberfusion.DatabaseSupport.database_user_grants import DatabaseUserGrant
+from cyberfusion.DatabaseSupport.database_users import DatabaseUser
+from cyberfusion.DatabaseSupport.databases import Database
+from cyberfusion.DatabaseSupport.servers import Server
+from sqlalchemy import Table, MetaData
+
 from cyberfusion.QueueSupport.outcomes import (
     ChmodItemModeChangeOutcome,
     ChownItemGroupChangeOutcome,
@@ -20,6 +27,13 @@ from cyberfusion.QueueSupport.outcomes import (
     SystemdUnitStopItemStopOutcome,
     UnlinkItemUnlinkOutcome,
     RmTreeItemRemoveOutcome,
+    DatabaseCreateItemCreateOutcome,
+    DatabaseUserEnsureStateItemCreateOutcome,
+    DatabaseUserEnsureStateItemEditPasswordOutcome,
+    DatabaseUserGrantGrantItemGrantOutcome,
+    DatabaseDropItemDropOutcome,
+    DatabaseUserDropItemDropOutcome,
+    DatabaseUserGrantRevokeItemRevokeOutcome,
 )
 from cyberfusion.SystemdSupport.units import Unit
 
@@ -213,6 +227,243 @@ def test_systemd_tmp_files_create_item_create_outcome_string() -> None:
     assert (
         str(SystemdTmpFilesCreateItemCreateOutcome(path="/tmp/example"))
         == "Create tmp files according to tmp files configuration file at /tmp/example"
+    )
+
+
+def test_database_create_item_create_outcome_string() -> None:
+    assert (
+        str(
+            DatabaseCreateItemCreateOutcome(
+                database=Database(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    ),
+                    name="test",
+                    server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                )
+            )
+        )
+        == "Create test in MariaDB"
+    )
+
+
+def test_database_drop_item_drop_outcome_string() -> None:
+    assert (
+        str(
+            DatabaseDropItemDropOutcome(
+                database=Database(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    ),
+                    name="test",
+                    server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                )
+            )
+        )
+        == "Drop test in MariaDB"
+    )
+
+
+def test_database_user_ensure_state_item_create_outcome_string() -> None:
+    assert (
+        str(
+            DatabaseUserEnsureStateItemCreateOutcome(
+                database_user=DatabaseUser(
+                    server=Server(
+                        support=DatabaseSupport(
+                            server_software_names=[
+                                DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                            ]
+                        )
+                    ),
+                    server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                    name="test",
+                )
+            )
+        )
+        == "Create test in MariaDB"
+    )
+
+
+def test_database_user_ensure_state_item_edit_password_outcome_string() -> None:
+    assert (
+        str(
+            DatabaseUserEnsureStateItemEditPasswordOutcome(
+                database_user=DatabaseUser(
+                    server=Server(
+                        support=DatabaseSupport(
+                            server_software_names=[
+                                DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                            ]
+                        )
+                    ),
+                    server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                    name="test",
+                )
+            )
+        )
+        == "Edit password of test in MariaDB"
+    )
+
+
+def test_database_user_drop_item_drop_outcome_string() -> None:
+    assert (
+        str(
+            DatabaseUserDropItemDropOutcome(
+                database_user=DatabaseUser(
+                    server=Server(
+                        support=DatabaseSupport(
+                            server_software_names=[
+                                DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                            ]
+                        )
+                    ),
+                    server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                    name="test",
+                )
+            )
+        )
+        == "Drop test in MariaDB"
+    )
+
+
+def test_database_user_grant_grant_item_create_outcome_string() -> None:
+    assert (
+        str(
+            DatabaseUserGrantGrantItemGrantOutcome(
+                database_user_grant=DatabaseUserGrant(
+                    database=Database(
+                        support=DatabaseSupport(
+                            server_software_names=[
+                                DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                            ]
+                        ),
+                        name="test",
+                        server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                    ),
+                    database_user=DatabaseUser(
+                        server=Server(
+                            support=DatabaseSupport(
+                                server_software_names=[
+                                    DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                                ]
+                            )
+                        ),
+                        server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                        name="test",
+                    ),
+                    privilege_names=["ALL"],
+                    table=None,
+                )
+            )
+        )
+        == "Grant ['ALL'] to * in test in MariaDB"
+    )
+
+
+def test_database_user_grant_grant_item_create_outcome_string_table_name() -> None:
+    assert (
+        str(
+            DatabaseUserGrantGrantItemGrantOutcome(
+                database_user_grant=DatabaseUserGrant(
+                    database=Database(
+                        support=DatabaseSupport(
+                            server_software_names=[
+                                DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                            ]
+                        ),
+                        name="test",
+                        server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                    ),
+                    database_user=DatabaseUser(
+                        server=Server(
+                            support=DatabaseSupport(
+                                server_software_names=[
+                                    DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                                ]
+                            )
+                        ),
+                        server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                        name="test",
+                    ),
+                    privilege_names=["ALL"],
+                    table=Table("example", MetaData()),
+                )
+            )
+        )
+        == "Grant ['ALL'] to example in test in MariaDB"
+    )
+
+
+def test_database_user_grant_revoke_item_revoke_outcome_string() -> None:
+    assert (
+        str(
+            DatabaseUserGrantRevokeItemRevokeOutcome(
+                database_user_grant=DatabaseUserGrant(
+                    database=Database(
+                        support=DatabaseSupport(
+                            server_software_names=[
+                                DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                            ]
+                        ),
+                        name="test",
+                        server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                    ),
+                    database_user=DatabaseUser(
+                        server=Server(
+                            support=DatabaseSupport(
+                                server_software_names=[
+                                    DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                                ]
+                            )
+                        ),
+                        server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                        name="test",
+                    ),
+                    privilege_names=["ALL"],
+                    table=None,
+                )
+            )
+        )
+        == "Revoke ['ALL'] to * in test in MariaDB"
+    )
+
+
+def test_database_user_grant_revoke_item_revoke_outcome_string_table_name() -> None:
+    assert (
+        str(
+            DatabaseUserGrantRevokeItemRevokeOutcome(
+                database_user_grant=DatabaseUserGrant(
+                    database=Database(
+                        support=DatabaseSupport(
+                            server_software_names=[
+                                DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                            ]
+                        ),
+                        name="test",
+                        server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                    ),
+                    database_user=DatabaseUser(
+                        server=Server(
+                            support=DatabaseSupport(
+                                server_software_names=[
+                                    DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                                ]
+                            )
+                        ),
+                        server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                        name="test",
+                    ),
+                    privilege_names=["ALL"],
+                    table=Table("example", MetaData()),
+                )
+            )
+        )
+        == "Revoke ['ALL'] to example in test in MariaDB"
     )
 
 
@@ -757,3 +1008,623 @@ def test_systemd_tmp_files_create_item_create_outcome_not_equal_unit() -> None:
 
 def test_systemd_tmp_files_create_item_create_outcome_equal_different_type() -> None:
     assert (SystemdTmpFilesCreateItemCreateOutcome(path="/tmp/example") == 5) is False
+
+
+# Equal: DatabaseCreateItemCreateOutcome
+
+
+def test_database_create_item_create_outcome_equal() -> None:
+    assert DatabaseCreateItemCreateOutcome(
+        database=Database(
+            support=DatabaseSupport(
+                server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+            ),
+            name="test",
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        )
+    ) == DatabaseCreateItemCreateOutcome(
+        database=Database(
+            support=DatabaseSupport(
+                server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+            ),
+            name="test",
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        )
+    )
+
+
+def test_database_create_item_create_outcome_not_equal_different_database() -> None:
+    assert DatabaseCreateItemCreateOutcome(
+        database=Database(
+            support=DatabaseSupport(
+                server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+            ),
+            name="test",
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        )
+    ) != DatabaseCreateItemCreateOutcome(
+        database=Database(
+            support=DatabaseSupport(
+                server_software_names=[DatabaseSupport.POSTGRESQL_SERVER_SOFTWARE_NAME]
+            ),
+            name="example",
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        )
+    )
+
+
+def test_database_create_item_create_outcome_not_equal_different_type() -> None:
+    assert (
+        DatabaseCreateItemCreateOutcome(
+            database=Database(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                ),
+                name="test",
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            )
+        )
+        == 5
+    ) is False
+
+
+# Equal: DatabaseDropItemDropOutcome
+
+
+def test_database_drop_item_drop_outcome_equal() -> None:
+    assert DatabaseDropItemDropOutcome(
+        database=Database(
+            support=DatabaseSupport(
+                server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+            ),
+            name="test",
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        )
+    ) == DatabaseDropItemDropOutcome(
+        database=Database(
+            support=DatabaseSupport(
+                server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+            ),
+            name="test",
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        )
+    )
+
+
+def test_database_drop_item_drop_outcome_not_equal_different_database() -> None:
+    assert DatabaseDropItemDropOutcome(
+        database=Database(
+            support=DatabaseSupport(
+                server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+            ),
+            name="test",
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        )
+    ) != DatabaseDropItemDropOutcome(
+        database=Database(
+            support=DatabaseSupport(
+                server_software_names=[DatabaseSupport.POSTGRESQL_SERVER_SOFTWARE_NAME]
+            ),
+            name="example",
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        )
+    )
+
+
+def test_database_drop_item_drop_outcome_not_equal_different_type() -> None:
+    assert (
+        DatabaseDropItemDropOutcome(
+            database=Database(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                ),
+                name="test",
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            )
+        )
+        == 5
+    ) is False
+
+
+# Equal: DatabaseUserEnsureStateItemCreateOutcome
+
+
+def test_database_user_ensure_state_item_create_outcome_equal() -> None:
+    assert DatabaseUserEnsureStateItemCreateOutcome(
+        database_user=DatabaseUser(
+            server=Server(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                )
+            ),
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            name="test",
+        )
+    ) == DatabaseUserEnsureStateItemCreateOutcome(
+        database_user=DatabaseUser(
+            server=Server(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                )
+            ),
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            name="test",
+        )
+    )
+
+
+def test_database_user_ensure_state_item_create_outcome_not_equal_different_database_user() -> (
+    None
+):
+    assert DatabaseUserEnsureStateItemCreateOutcome(
+        database_user=DatabaseUser(
+            server=Server(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                )
+            ),
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            name="test",
+        )
+    ) != DatabaseUserEnsureStateItemCreateOutcome(
+        database_user=DatabaseUser(
+            server=Server(
+                support=DatabaseSupport(
+                    server_software_names=[
+                        DatabaseSupport.POSTGRESQL_SERVER_SOFTWARE_NAME
+                    ]
+                )
+            ),
+            server_software_name=DatabaseSupport.POSTGRESQL_SERVER_SOFTWARE_NAME,
+            name="example",
+        )
+    )
+
+
+def test_database_user_ensure_state_item_create_outcome_not_equal_different_type() -> (
+    None
+):
+    assert (
+        DatabaseUserEnsureStateItemCreateOutcome(
+            database_user=DatabaseUser(
+                server=Server(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    )
+                ),
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                name="test",
+            )
+        )
+        == 5
+    ) is False
+
+
+# Equal: DatabaseUserEnsureStateItemEditPasswordOutcome
+
+
+def test_database_user_ensure_state_item_edit_password_outcome_equal() -> None:
+    assert DatabaseUserEnsureStateItemEditPasswordOutcome(
+        database_user=DatabaseUser(
+            server=Server(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                )
+            ),
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            name="test",
+        )
+    ) == DatabaseUserEnsureStateItemEditPasswordOutcome(
+        database_user=DatabaseUser(
+            server=Server(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                )
+            ),
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            name="test",
+        )
+    )
+
+
+def test_database_user_ensure_state_item_edit_password_outcome_not_equal_different_database_user() -> (
+    None
+):
+    assert DatabaseUserEnsureStateItemEditPasswordOutcome(
+        database_user=DatabaseUser(
+            server=Server(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                )
+            ),
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            name="test",
+        )
+    ) != DatabaseUserEnsureStateItemEditPasswordOutcome(
+        database_user=DatabaseUser(
+            server=Server(
+                support=DatabaseSupport(
+                    server_software_names=[
+                        DatabaseSupport.POSTGRESQL_SERVER_SOFTWARE_NAME
+                    ]
+                )
+            ),
+            server_software_name=DatabaseSupport.POSTGRESQL_SERVER_SOFTWARE_NAME,
+            name="example",
+        )
+    )
+
+
+def test_database_user_ensure_state_item_edit_password_outcome_not_equal_different_type() -> (
+    None
+):
+    assert (
+        DatabaseUserEnsureStateItemEditPasswordOutcome(
+            database_user=DatabaseUser(
+                server=Server(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    )
+                ),
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                name="test",
+            )
+        )
+        == 5
+    ) is False
+
+
+# Equal: DatabaseUserDropItemDropOutcome
+
+
+def test_database_user_drop_item_drop_outcome_equal() -> None:
+    assert DatabaseUserDropItemDropOutcome(
+        database_user=DatabaseUser(
+            server=Server(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                )
+            ),
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            name="test",
+        )
+    ) == DatabaseUserDropItemDropOutcome(
+        database_user=DatabaseUser(
+            server=Server(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                )
+            ),
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            name="test",
+        )
+    )
+
+
+def test_database_user_drop_item_drop_outcome_not_equal_different_database_user() -> (
+    None
+):
+    assert DatabaseUserDropItemDropOutcome(
+        database_user=DatabaseUser(
+            server=Server(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                )
+            ),
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            name="test",
+        )
+    ) != DatabaseUserDropItemDropOutcome(
+        database_user=DatabaseUser(
+            server=Server(
+                support=DatabaseSupport(
+                    server_software_names=[
+                        DatabaseSupport.POSTGRESQL_SERVER_SOFTWARE_NAME
+                    ]
+                )
+            ),
+            server_software_name=DatabaseSupport.POSTGRESQL_SERVER_SOFTWARE_NAME,
+            name="example",
+        )
+    )
+
+
+def test_database_user_drop_item_drop_outcome_not_equal_different_type() -> None:
+    assert (
+        DatabaseUserDropItemDropOutcome(
+            database_user=DatabaseUser(
+                server=Server(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    )
+                ),
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                name="test",
+            )
+        )
+        == 5
+    ) is False
+
+
+# Equal: DatabaseUserGrantGrantItemGrantOutcome
+
+
+def test_database_user_grant_grant_item_grant_outcome_equal() -> None:
+    assert DatabaseUserGrantGrantItemGrantOutcome(
+        database_user_grant=DatabaseUserGrant(
+            database=Database(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                ),
+                name="test",
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            ),
+            database_user=DatabaseUser(
+                server=Server(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    )
+                ),
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                name="test",
+            ),
+            privilege_names=["ALL"],
+            table=None,
+        )
+    ) == DatabaseUserGrantGrantItemGrantOutcome(
+        database_user_grant=DatabaseUserGrant(
+            database=Database(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                ),
+                name="test",
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            ),
+            database_user=DatabaseUser(
+                server=Server(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    )
+                ),
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                name="test",
+            ),
+            privilege_names=["ALL"],
+            table=None,
+        )
+    )
+
+
+def test_database_user_grant_grant_item_grant_outcome_not_equal_different_database_user_grant() -> (
+    None
+):
+    assert DatabaseUserGrantGrantItemGrantOutcome(
+        database_user_grant=DatabaseUserGrant(
+            database=Database(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                ),
+                name="test",
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            ),
+            database_user=DatabaseUser(
+                server=Server(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    )
+                ),
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                name="test",
+            ),
+            privilege_names=["ALL"],
+            table=None,
+        )
+    ) != DatabaseUserGrantGrantItemGrantOutcome(
+        database_user_grant=DatabaseUserGrant(
+            database=Database(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                ),
+                name="example",
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            ),
+            database_user=DatabaseUser(
+                server=Server(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    )
+                ),
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                name="example",
+            ),
+            privilege_names=["SELECT"],
+            table=Table("example", MetaData()),
+        )
+    )
+
+
+def test_database_user_grant_grant_item_grant_outcome_not_equal_different_type() -> (
+    None
+):
+    assert (
+        DatabaseUserGrantGrantItemGrantOutcome(
+            database_user_grant=DatabaseUserGrant(
+                database=Database(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    ),
+                    name="test",
+                    server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                ),
+                database_user=DatabaseUser(
+                    server=Server(
+                        support=DatabaseSupport(
+                            server_software_names=[
+                                DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                            ]
+                        )
+                    ),
+                    server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                    name="test",
+                ),
+                privilege_names=["ALL"],
+                table=None,
+            )
+        )
+        == 5
+    ) is False
+
+
+# Equal: DatabaseUserGrantRevokeItemRevokeOutcome
+
+
+def test_database_user_grant_revoke_item_revoke_outcome_equal() -> None:
+    assert DatabaseUserGrantRevokeItemRevokeOutcome(
+        database_user_grant=DatabaseUserGrant(
+            database=Database(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                ),
+                name="test",
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            ),
+            database_user=DatabaseUser(
+                server=Server(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    )
+                ),
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                name="test",
+            ),
+            privilege_names=["ALL"],
+            table=None,
+        )
+    ) == DatabaseUserGrantRevokeItemRevokeOutcome(
+        database_user_grant=DatabaseUserGrant(
+            database=Database(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                ),
+                name="test",
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            ),
+            database_user=DatabaseUser(
+                server=Server(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    )
+                ),
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                name="test",
+            ),
+            privilege_names=["ALL"],
+            table=None,
+        )
+    )
+
+
+def test_database_user_grant_revoke_item_revoke_outcome_not_equal_different_database_user_grant() -> (
+    None
+):
+    assert DatabaseUserGrantRevokeItemRevokeOutcome(
+        database_user_grant=DatabaseUserGrant(
+            database=Database(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                ),
+                name="test",
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            ),
+            database_user=DatabaseUser(
+                server=Server(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    )
+                ),
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                name="test",
+            ),
+            privilege_names=["ALL"],
+            table=None,
+        )
+    ) != DatabaseUserGrantRevokeItemRevokeOutcome(
+        database_user_grant=DatabaseUserGrant(
+            database=Database(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                ),
+                name="example",
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            ),
+            database_user=DatabaseUser(
+                server=Server(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    )
+                ),
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                name="example",
+            ),
+            privilege_names=["SELECT"],
+            table=Table("example", MetaData()),
+        )
+    )
+
+
+def test_database_user_grant_revoke_item_revoke_outcome_not_equal_different_type() -> (
+    None
+):
+    assert (
+        DatabaseUserGrantRevokeItemRevokeOutcome(
+            database_user_grant=DatabaseUserGrant(
+                database=Database(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    ),
+                    name="test",
+                    server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                ),
+                database_user=DatabaseUser(
+                    server=Server(
+                        support=DatabaseSupport(
+                            server_software_names=[
+                                DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                            ]
+                        )
+                    ),
+                    server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                    name="test",
+                ),
+                privilege_names=["ALL"],
+                table=None,
+            )
+        )
+        == 5
+    ) is False
