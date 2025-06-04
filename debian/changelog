@@ -1,3 +1,10 @@
+python3-cyberfusion-queue-support (2.2.3) unstable; urgency=low
+
+  [ Mika Scheer ]
+  - Fix outcomes being added to all items
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Wed, 04 Jun 2025 16:33:00 +0200
+
 python3-cyberfusion-queue-support (2.2.2) unstable; urgency=low
 
   - Fix saving systemd-related items to database

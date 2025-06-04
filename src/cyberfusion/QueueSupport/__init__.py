@@ -108,19 +108,21 @@ class Queue:
                 "Processing item with id '%s'", item_mapping.database_object.id
             )
 
+            item_outcomes = []
+
             if preview:
                 if not item_mapping.item.hide_outcomes:
-                    outcomes.extend(item_mapping.item.outcomes)
+                    item_outcomes.extend(item_mapping.item.outcomes)
             else:
                 try:
                     logger.debug(
                         "Fulfilling item with id '%s'", item_mapping.database_object.id
                     )
 
-                    fulfill_outcomes = item_mapping.item.fulfill()
-
-                    if not item_mapping.item.hide_outcomes:
-                        outcomes.extend(fulfill_outcomes)
+                    if item_mapping.item.hide_outcomes:
+                        item_mapping.item.fulfill()
+                    else:
+                        item_outcomes.extend(item_mapping.item.fulfill())
 
                     logger.debug(
                         "Fulfilled item with id '%s'", item_mapping.database_object.id
@@ -132,15 +134,18 @@ class Queue:
                         item_mapping.item,
                     ) from e
 
-            for outcome in outcomes:
-                outcome_object = QueueItemOutcome(
-                    queue_item=item_mapping.database_object,
-                    queue_process=process_object,
-                    type=outcome.__class__.__name__,
-                    attributes=outcome.__dict__,
+            outcomes.extend(item_outcomes)
+
+            for outcome in item_outcomes:
+                self._database_session.add(
+                    QueueItemOutcome(
+                        queue_item=item_mapping.database_object,
+                        queue_process=process_object,
+                        type=outcome.__class__.__name__,
+                        attributes=outcome.__dict__,
+                    )
                 )
 
-                self._database_session.add(outcome_object)
                 self._database_session.commit()
 
             logger.debug("Processed item with id '%s'", item_mapping.database_object.id)
