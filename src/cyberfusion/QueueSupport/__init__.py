@@ -137,12 +137,15 @@ class Queue:
             outcomes.extend(item_outcomes)
 
             for outcome in item_outcomes:
-                self._database_session.add(QueueItemOutcome(
-                    queue_item=item_mapping.database_object,
-                    queue_process=process_object,
-                    type=outcome.__class__.__name__,
-                    attributes=outcome.__dict__,
-                ))
+                self._database_session.add(
+                    QueueItemOutcome(
+                        queue_item=item_mapping.database_object,
+                        queue_process=process_object,
+                        type=outcome.__class__.__name__,
+                        attributes=outcome.__dict__,
+                    )
+                )
+
                 self._database_session.commit()
 
             logger.debug("Processed item with id '%s'", item_mapping.database_object.id)
