@@ -50,7 +50,6 @@ def run_migrations() -> None:
 def make_database_session() -> Session:
     engine = create_engine(
         settings.database_path,
-        connect_args={"check_same_thread": False},
         json_serializer=json_serialize,
     )
 
