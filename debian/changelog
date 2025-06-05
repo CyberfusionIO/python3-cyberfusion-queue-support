@@ -1,3 +1,9 @@
+python3-cyberfusion-queue-support (2.2.4) unstable; urgency=low
+
+  - Disallow unsafe database session multithreading
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Thu, 05 Jun 2025 16:27:00 +0200
+
 python3-cyberfusion-queue-support (2.2.3) unstable; urgency=low
 
   [ Mika Scheer ]
