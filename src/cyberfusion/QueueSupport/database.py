@@ -9,7 +9,6 @@ from sqlalchemy import ForeignKey, MetaData, Boolean
 from sqlalchemy import create_engine, Column, DateTime, Integer, String
 from sqlalchemy.orm import Session, sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.engine import Engine
 from sqlalchemy import event
 from sqlalchemy.types import JSON
 
@@ -17,7 +16,6 @@ from cyberfusion.QueueSupport.encoders import json_serialize
 from cyberfusion.QueueSupport.settings import settings
 
 
-@event.listens_for(Engine, "connect")  # type: ignore[misc]
 def set_sqlite_pragma(
     dbapi_connection: sqlite3.Connection, connection_record: _ConnectionRecord
 ) -> None:
@@ -52,6 +50,8 @@ def make_database_session() -> Session:
         settings.database_path,
         json_serializer=json_serialize,
     )
+
+    event.listen(engine, "connect", set_sqlite_pragma)
 
     return sessionmaker(bind=engine)()
 

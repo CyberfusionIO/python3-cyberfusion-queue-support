@@ -7,9 +7,7 @@ from cyberfusion.QueueSupport import Queue
 from tests.stubs import NoopItemStub
 
 
-def test_add_unit_attribute_database(
-    queue: Queue, test_database_session: Session
-) -> None:
+def test_add_unit_attribute_database(queue: Queue, database_session: Session) -> None:
     NAME = "example"
 
     class UnitItem(NoopItemStub):
