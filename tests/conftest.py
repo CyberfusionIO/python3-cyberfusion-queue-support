@@ -54,13 +54,13 @@ def get_path() -> str:
 @pytest.fixture
 def queue(
     mocker: MockerFixture,
-    test_database_session: Session,
+    database_session: Session,
 ) -> Queue:
     return Queue()
 
 
 @pytest.fixture
-def test_database_session(mocker: MockerFixture, tmp_path: Path) -> Session:
+def database_session(mocker: MockerFixture, tmp_path: Path) -> Session:
     original_database_path = settings.database_path
 
     tmp_database_path = os.path.join("sqlite:///" + str(tmp_path), "queue-support.db")
@@ -70,11 +70,6 @@ def test_database_session(mocker: MockerFixture, tmp_path: Path) -> Session:
     run_migrations()
 
     database_session = make_database_session()
-
-    mocker.patch(
-        "cyberfusion.QueueSupport.make_database_session",
-        return_value=database_session,
-    )
 
     yield database_session
 

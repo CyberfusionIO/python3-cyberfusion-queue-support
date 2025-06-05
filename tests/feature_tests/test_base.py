@@ -11,7 +11,6 @@ from cyberfusion.QueueSupport import (
     Queue,
     QueueFulfillFailed,
     database,
-    QueueItemMapping,
 )
 from cyberfusion.QueueSupport.items.chmod import ChmodItem
 from cyberfusion.QueueSupport.items.command import CommandItem
@@ -62,9 +61,9 @@ def test_queue_process_not_overrides_exception(
 def test_init_queue_adds_database_object(
     queue: Queue,
     existent_file_path: Generator[str, None, None],
-    test_database_session: Session,
+    database_session: Session,
 ) -> None:
-    queue_objects = test_database_session.scalars(select(database.Queue)).all()
+    queue_objects = database_session.scalars(select(database.Queue)).all()
 
     assert len(queue_objects) == 1
 
@@ -74,15 +73,13 @@ def test_init_queue_adds_database_object(
 def test_queue_add_adds_database_object(
     queue: Queue,
     existent_file_path: Generator[str, None, None],
-    test_database_session: Session,
+    database_session: Session,
 ) -> None:
     item = ChmodItem(path=existent_file_path, mode=MODE)
 
     queue.add(item)
 
-    item_database_objects = test_database_session.scalars(
-        select(database.QueueItem)
-    ).all()
+    item_database_objects = database_session.scalars(select(database.QueueItem)).all()
 
     assert len(item_database_objects) == 1
 
@@ -93,7 +90,6 @@ def test_queue_add_adds_database_object(
 
     assert item_database_objects[0].id
     assert item_database_objects[0].queue_id == queue.queue_database_object.id
-    assert item_database_objects[0].queue == queue.queue_database_object
     assert item_database_objects[0].type == item.__class__.__name__
     assert item_database_objects[0].reference == item.reference
     assert item_database_objects[0].hide_outcomes == item.hide_outcomes
@@ -104,7 +100,7 @@ def test_queue_add_adds_database_object(
 def test_queue_add_adds_mapping(
     queue: Queue,
     existent_file_path: Generator[str, None, None],
-    test_database_session: Session,
+    database_session: Session,
 ) -> None:
     item = ChmodItem(path=existent_file_path, mode=MODE)
 
@@ -112,15 +108,12 @@ def test_queue_add_adds_mapping(
 
     assert len(queue.item_mappings) == 1
 
-    item_database_objects = test_database_session.scalars(
-        select(database.QueueItem)
-    ).all()
+    item_database_objects = database_session.scalars(select(database.QueueItem)).all()
 
     assert len(item_database_objects) == 1
 
-    item_mapping = QueueItemMapping(item, item_database_objects[0])
-
-    assert item_mapping in queue.item_mappings
+    assert queue.item_mappings[0].item == item
+    assert queue.item_mappings[0].database_object.id == item_database_objects[0].id
 
 
 def test_queue_add_run_duplicate_last(
@@ -200,18 +193,17 @@ def test_queue_add_not_run_duplicate_last(
 
 
 def test_queue_process_adds_database_object(
-    queue: Queue, test_database_session: Session
+    queue: Queue, database_session: Session
 ) -> None:
     queue.process(preview=False)
 
-    process_database_objects = test_database_session.scalars(
+    process_database_objects = database_session.scalars(
         select(database.QueueProcess)
     ).all()
 
     assert len(process_database_objects) == 1
 
     assert process_database_objects[0].queue_id == queue.queue_database_object.id
-    assert process_database_objects[0].queue == queue.queue_database_object
     assert not process_database_objects[0].preview
 
 
@@ -264,7 +256,7 @@ def test_queue_preview_not_returns_outcomes_when_hide_outcomes(
 def test_queue_process_not_returns_outcomes_deduplicated(
     queue: Queue,
     existent_file_path: Generator[str, None, None],
-    test_database_session: Session,
+    database_session: Session,
 ) -> None:
     item_0_deduplicated = ChmodItem(
         reference="deduplicated", path=existent_file_path, mode=MODE
@@ -276,7 +268,7 @@ def test_queue_process_not_returns_outcomes_deduplicated(
 
     queue.process(preview=False)
 
-    outcome_database_objects = test_database_session.scalars(
+    outcome_database_objects = database_session.scalars(
         select(database.QueueItemOutcome)
     ).all()
 
@@ -323,7 +315,7 @@ def test_queue_process_preview_not_fulfills(
 def test_queue_process_adds_outcomes_database_object(
     queue: Queue,
     existent_file_path: Generator[str, None, None],
-    test_database_session: Session,
+    database_session: Session,
 ) -> None:
     item = ChmodItem(path=existent_file_path, mode=MODE)
 
@@ -331,7 +323,7 @@ def test_queue_process_adds_outcomes_database_object(
 
     outcomes = queue.process(preview=False)
 
-    outcome_database_objects = test_database_session.scalars(
+    outcome_database_objects = database_session.scalars(
         select(database.QueueItemOutcome)
     ).all()
 
@@ -340,9 +332,6 @@ def test_queue_process_adds_outcomes_database_object(
     assert (
         outcome_database_objects[0].queue_item_id
         == queue.item_mappings[0].database_object.id
-    )
-    assert (
-        outcome_database_objects[0].queue_item == queue.item_mappings[0].database_object
     )
     assert outcome_database_objects[0].queue_process_id
     assert outcome_database_objects[0].queue_process
