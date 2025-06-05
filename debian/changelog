@@ -1,3 +1,9 @@
+python3-cyberfusion-queue-support (2.2.5) unstable; urgency=low
+
+  - Don't leak PRAGMA statement to other database sessions
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Thu, 05 Jun 2025 17:59:00 +0200
+
 python3-cyberfusion-queue-support (2.2.4) unstable; urgency=low
 
   - Disallow unsafe database session multithreading
