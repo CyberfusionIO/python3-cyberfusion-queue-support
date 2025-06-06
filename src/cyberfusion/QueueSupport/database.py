@@ -119,3 +119,4 @@ class QueueItemOutcome(BaseModel):
     queue_process = relationship("QueueProcess")
     type = Column(String(length=255), nullable=False)
     attributes = Column(JSON, nullable=False)
+    string = Column(String(length=255), nullable=False)

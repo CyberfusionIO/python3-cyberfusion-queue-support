@@ -143,6 +143,7 @@ class Queue:
                         queue_process=process_object,
                         type=outcome.__class__.__name__,
                         attributes=outcome.__dict__,
+                        string=str(outcome),
                     )
                 )
 

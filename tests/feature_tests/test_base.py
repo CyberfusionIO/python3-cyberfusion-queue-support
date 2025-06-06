@@ -337,3 +337,4 @@ def test_queue_process_adds_outcomes_database_object(
     assert outcome_database_objects[0].queue_process
     assert outcome_database_objects[0].type == outcomes[0].__class__.__name__
     assert outcome_database_objects[0].attributes == outcomes[0].__dict__
+    assert outcome_database_objects[0].string == str(outcomes[0])
