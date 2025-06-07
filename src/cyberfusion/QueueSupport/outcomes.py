@@ -9,6 +9,8 @@ from cyberfusion.DatabaseSupport.databases import Database
 from cyberfusion.QueueSupport.interfaces import OutcomeInterface
 from cyberfusion.SystemdSupport.units import Unit
 
+from cyberfusion.QueueSupport.sentinels import UNKNOWN
+
 
 class CopyItemCopyOutcome(OutcomeInterface):
     """Represents outcome."""
@@ -147,9 +149,17 @@ class RmTreeItemRemoveOutcome(OutcomeInterface):
 class CommandItemRunOutcome(OutcomeInterface):
     """Represents outcome."""
 
-    def __init__(self, *, command: List[str]) -> None:
+    def __init__(
+        self,
+        *,
+        command: List[str],
+        stdout: str | UNKNOWN = UNKNOWN,
+        stderr: str | UNKNOWN = UNKNOWN,
+    ) -> None:
         """Set attributes."""
         self.command = command
+        self.stdout = stdout
+        self.stderr = stderr
 
     def __str__(self) -> str:
         """Get human-readable string."""
@@ -160,7 +170,11 @@ class CommandItemRunOutcome(OutcomeInterface):
         if not isinstance(other, CommandItemRunOutcome):
             return False
 
-        return other.command == self.command
+        return (
+            other.command == self.command
+            and other.stdout == self.stdout
+            and other.stderr == self.stderr
+        )
 
 
 class ChmodItemModeChangeOutcome(OutcomeInterface):
