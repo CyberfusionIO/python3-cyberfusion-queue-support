@@ -106,6 +106,7 @@ class QueueItem(BaseModel):
     hide_outcomes = Column(Boolean, nullable=False)
     deduplicated = Column(Boolean, nullable=False)
     attributes = Column(JSON, nullable=False)
+    traceback = Column(String(), nullable=True)
 
 
 class QueueItemOutcome(BaseModel):

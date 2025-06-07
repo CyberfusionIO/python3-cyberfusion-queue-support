@@ -2,60 +2,17 @@ import os
 from copy import copy
 from typing import Generator
 
-import pytest
 from pytest_mock import MockerFixture
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from cyberfusion.QueueSupport import (
     Queue,
-    QueueFulfillFailed,
     database,
 )
 from cyberfusion.QueueSupport.items.chmod import ChmodItem
-from cyberfusion.QueueSupport.items.command import CommandItem
-
 
 MODE = 0o600
-
-
-def test_queue_process_raises_exception(
-    queue: Queue, existent_file_path: Generator[str, None, None]
-) -> None:
-    item = ChmodItem(
-        path=existent_file_path,
-        mode=204983136789054,  # Invalid mode
-    )
-
-    queue.add(item)
-
-    with pytest.raises(QueueFulfillFailed) as e:
-        queue.process(preview=False)
-
-    assert e.value.item == item
-
-
-def test_queue_process_not_overrides_exception(
-    queue: Queue,
-    existent_file_path: Generator[str, None, None],
-    mocker: MockerFixture,
-) -> None:
-    """When QueueFulfillFailed (or subclass) is raised, don't raise a new QueueFulfillFailed exception."""
-    item = CommandItem(command=["true"])  # Random item
-
-    exception = QueueFulfillFailed(item=item)
-
-    mocker.patch(
-        "cyberfusion.QueueSupport.items.command.CommandItem.fulfill",
-        side_effect=exception,
-    )
-
-    queue.add(item)
-
-    with pytest.raises(QueueFulfillFailed) as e:
-        queue.process(preview=False)
-
-    assert e.value is exception  # Same instance = not re-raised
 
 
 def test_init_queue_adds_database_object(
@@ -95,6 +52,7 @@ def test_queue_add_adds_database_object(
     assert item_database_objects[0].hide_outcomes == item.hide_outcomes
     assert not item_database_objects[0].deduplicated
     assert item_database_objects[0].attributes == item_dict
+    assert item_database_objects[0].traceback is None
 
 
 def test_queue_add_adds_mapping(
@@ -338,3 +296,57 @@ def test_queue_process_adds_outcomes_database_object(
     assert outcome_database_objects[0].type == outcomes[0].__class__.__name__
     assert outcome_database_objects[0].attributes == outcomes[0].__dict__
     assert outcome_database_objects[0].string == str(outcomes[0])
+
+
+def test_queue_process_traceback(
+    database_session: Session,
+    existent_file_path: Generator[str, None, None],
+    queue: Queue,
+) -> None:
+    item = ChmodItem(
+        path=existent_file_path,
+        mode=204983136789054,  # Invalid mode
+    )
+
+    queue.add(item)
+
+    queue.process(preview=False)
+
+    item_database_objects = database_session.scalars(select(database.QueueItem)).all()
+
+    assert len(item_database_objects) == 1
+
+    assert "Traceback (most recent call last):" in item_database_objects[0].traceback
+
+
+def test_queue_process_no_fulfill_after_traceback(
+    mocker: MockerFixture,
+    database_session: Session,
+    existent_file_path: Generator[str, None, None],
+    queue: Queue,
+) -> None:
+    """Test that when an item has a traceback (i.e. fulfilling failed), other items are not fulfilled."""
+    item_1 = ChmodItem(
+        path=existent_file_path,
+        mode=204983136789054,  # Invalid mode
+    )
+
+    item_2 = item_1.__class__(
+        path=existent_file_path,
+        mode=MODE,
+    )
+
+    spy_fulfill = mocker.spy(item_1.__class__, "fulfill")
+
+    queue.add(item_1)
+    queue.add(item_2)
+
+    queue.process(preview=False)
+
+    item_database_objects = database_session.scalars(select(database.QueueItem)).all()
+
+    assert len(item_database_objects) == 2
+
+    assert "Traceback (most recent call last):" in item_database_objects[0].traceback
+
+    spy_fulfill.assert_called_once()
