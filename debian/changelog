@@ -1,3 +1,46 @@
+python3-cyberfusion-queue-support (2.4) unstable; urgency=low
+
+  - Store traceback with queue items
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Sat, 07 Jun 2025 13:10:00 +0200
+
+python3-cyberfusion-queue-support (2.3) unstable; urgency=low
+
+  - Add string to queue_item_outcomes
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Fri, 06 Jun 2025 20:12:00 +0200
+
+python3-cyberfusion-queue-support (2.2.5) unstable; urgency=low
+
+  - Don't leak PRAGMA statement to other database sessions
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Thu, 05 Jun 2025 17:59:00 +0200
+
+python3-cyberfusion-queue-support (2.2.4) unstable; urgency=low
+
+  - Disallow unsafe database session multithreading
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Thu, 05 Jun 2025 16:27:00 +0200
+
+python3-cyberfusion-queue-support (2.2.3) unstable; urgency=low
+
+  [ Mika Scheer ]
+  - Fix outcomes being added to all items
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Wed, 04 Jun 2025 16:33:00 +0200
+
+python3-cyberfusion-queue-support (2.2.2) unstable; urgency=low
+
+  - Fix saving systemd-related items to database
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Mon, 02 Jun 2025 19:34:00 +0200
+
+python3-cyberfusion-queue-support (2.2.1) unstable; urgency=low
+
+  - Move migrations to source tree
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Mon, 02 Jun 2025 18:08:00 +0200
+
 python3-cyberfusion-queue-support (2.2) unstable; urgency=low
 
   - Add queue items: DatabaseCreateItem, DatabaseDropItem, DatabaseUserDropItem,

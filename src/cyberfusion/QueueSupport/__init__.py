@@ -4,7 +4,7 @@ import logging
 from copy import copy
 from dataclasses import dataclass
 from typing import List
-
+import traceback
 from cyberfusion.QueueSupport.database import (
     Queue as QueueModel,
     QueueItem,
@@ -12,7 +12,7 @@ from cyberfusion.QueueSupport.database import (
     QueueItemOutcome,
     QueueProcess,
 )
-from cyberfusion.QueueSupport.exceptions import QueueFulfillFailed
+
 from cyberfusion.QueueSupport.interfaces import OutcomeInterface
 from cyberfusion.QueueSupport.items import _Item
 
@@ -78,6 +78,7 @@ class Queue:
             hide_outcomes=item.hide_outcomes,
             deduplicated=deduplicated,
             attributes=item_dict,
+            traceback=None,
         )
 
         self._database_session.add(object_)
@@ -105,45 +106,56 @@ class Queue:
             if not item_mapping.database_object.deduplicated
         ]:
             logger.debug(
-                "Processing item with id '%s'", item_mapping.database_object.id
+                "Processing item with ID '%s'", item_mapping.database_object.id
             )
+
+            item_outcomes = []
 
             if preview:
                 if not item_mapping.item.hide_outcomes:
-                    outcomes.extend(item_mapping.item.outcomes)
+                    item_outcomes.extend(item_mapping.item.outcomes)
             else:
                 try:
                     logger.debug(
-                        "Fulfilling item with id '%s'", item_mapping.database_object.id
+                        "Fulfilling item with ID '%s'", item_mapping.database_object.id
                     )
 
-                    fulfill_outcomes = item_mapping.item.fulfill()
-
-                    if not item_mapping.item.hide_outcomes:
-                        outcomes.extend(fulfill_outcomes)
+                    if item_mapping.item.hide_outcomes:
+                        item_mapping.item.fulfill()
+                    else:
+                        item_outcomes.extend(item_mapping.item.fulfill())
 
                     logger.debug(
-                        "Fulfilled item with id '%s'", item_mapping.database_object.id
+                        "Fulfilled item with ID '%s'", item_mapping.database_object.id
                     )
-                except QueueFulfillFailed:
-                    raise
                 except Exception as e:
-                    raise QueueFulfillFailed(
-                        item_mapping.item,
-                    ) from e
+                    logger.exception(e)
 
-            for outcome in outcomes:
-                outcome_object = QueueItemOutcome(
-                    queue_item=item_mapping.database_object,
-                    queue_process=process_object,
-                    type=outcome.__class__.__name__,
-                    attributes=outcome.__dict__,
+                    item_mapping.database_object.traceback = traceback.format_exc()
+
+                    self._database_session.add(item_mapping.database_object)
+                    self._database_session.commit()
+
+                    # Don't fulfill other queue items
+
+                    break
+
+            outcomes.extend(item_outcomes)
+
+            for outcome in item_outcomes:
+                self._database_session.add(
+                    QueueItemOutcome(
+                        queue_item=item_mapping.database_object,
+                        queue_process=process_object,
+                        type=outcome.__class__.__name__,
+                        attributes=outcome.__dict__,
+                        string=str(outcome),
+                    )
                 )
 
-                self._database_session.add(outcome_object)
                 self._database_session.commit()
 
-            logger.debug("Processed item with id '%s'", item_mapping.database_object.id)
+            logger.debug("Processed item with ID '%s'", item_mapping.database_object.id)
 
         logger.debug("Processed items")
 

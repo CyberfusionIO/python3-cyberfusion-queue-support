@@ -1,20 +1,21 @@
 from alembic.config import Config
+import os
 from alembic import command
 import sqlite3
 from datetime import datetime, timezone
+
 from sqlalchemy.pool.base import _ConnectionRecord
 from sqlalchemy import ForeignKey, MetaData, Boolean
 from sqlalchemy import create_engine, Column, DateTime, Integer, String
 from sqlalchemy.orm import Session, sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.engine import Engine
 from sqlalchemy import event
 from sqlalchemy.types import JSON
 
+from cyberfusion.QueueSupport.encoders import json_serialize
 from cyberfusion.QueueSupport.settings import settings
 
 
-@event.listens_for(Engine, "connect")  # type: ignore[misc]
 def set_sqlite_pragma(
     dbapi_connection: sqlite3.Connection, connection_record: _ConnectionRecord
 ) -> None:
@@ -33,16 +34,24 @@ def set_sqlite_pragma(
 
 def run_migrations() -> None:
     """Upgrade database schema to latest version."""
-    alembic_config = Config(file_=settings.alembic_config_file_path)
+    alembic_config = Config()
+
     alembic_config.set_main_option("sqlalchemy.url", settings.database_path)
+    alembic_config.set_main_option(
+        "script_location",
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), "migrations"),
+    )
 
     command.upgrade(alembic_config, "head")
 
 
 def make_database_session() -> Session:
     engine = create_engine(
-        settings.database_path, connect_args={"check_same_thread": False}
+        settings.database_path,
+        json_serializer=json_serialize,
     )
+
+    event.listen(engine, "connect", set_sqlite_pragma)
 
     return sessionmaker(bind=engine)()
 
@@ -97,6 +106,7 @@ class QueueItem(BaseModel):
     hide_outcomes = Column(Boolean, nullable=False)
     deduplicated = Column(Boolean, nullable=False)
     attributes = Column(JSON, nullable=False)
+    traceback = Column(String(), nullable=True)
 
 
 class QueueItemOutcome(BaseModel):
@@ -110,3 +120,4 @@ class QueueItemOutcome(BaseModel):
     queue_process = relationship("QueueProcess")
     type = Column(String(length=255), nullable=False)
     attributes = Column(JSON, nullable=False)
+    string = Column(String(length=255), nullable=False)
