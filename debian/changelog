@@ -1,3 +1,9 @@
+python3-cyberfusion-queue-support (2.5) unstable; urgency=low
+
+  - Add command stdout and stderr to outcome
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Sat, 07 Jun 2025 13:22:00 +0200
+
 python3-cyberfusion-queue-support (2.4) unstable; urgency=low
 
   - Store traceback with queue items
