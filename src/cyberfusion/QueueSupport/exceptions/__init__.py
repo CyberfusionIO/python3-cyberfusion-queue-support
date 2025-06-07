@@ -20,16 +20,10 @@ class PathIsSymlinkError(ItemError):
 
 
 @dataclass
-class QueueFulfillFailed(Exception):
-    """Error occurred while fulfilling queue."""
-
-    item: _Item
-
-
-@dataclass
-class CommandQueueFulfillFailed(QueueFulfillFailed):
+class CommandQueueFulfillFailed(Exception):
     """Error occurred while fulfilling queue, with command item."""
 
+    item: _Item
     command: List[str]
     stdout: str
     stderr: str
