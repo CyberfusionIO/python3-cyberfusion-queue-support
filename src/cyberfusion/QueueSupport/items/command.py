@@ -45,7 +45,8 @@ class CommandItem(_Item):
                     outcome.command,
                     check=True,
                     text=True,
-                    capture_output=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
                 )
 
                 outcome.stdout = output.stdout

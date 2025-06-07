@@ -720,7 +720,7 @@ def test_unlink_item_unlink_outcome_equal_different_type(
     ) is False
 
 
-# Equal: CommandItemModeChangeOutcome
+# Equal: CommandItemRunOutcome
 
 
 def test_command_item_run_outcome_equal() -> None:
@@ -729,9 +729,25 @@ def test_command_item_run_outcome_equal() -> None:
     ) == CommandItemRunOutcome(command="true")
 
 
-def test_command_item_run_outcome_not_equal_path() -> None:
-    assert CommandItemRunOutcome(command="true") != CommandItemRunOutcome(
-        command="false"
+def test_command_item_run_outcome_not_equal_command() -> None:
+    assert CommandItemRunOutcome(
+        command="true", stdout="example", stderr="example"
+    ) != CommandItemRunOutcome(command="false", stdout="example", stderr="example")
+
+
+def test_command_item_run_outcome_not_equal_stdout() -> None:
+    assert CommandItemRunOutcome(
+        command="true", stdout="example" + generate_random_string(), stderr="example"
+    ) != CommandItemRunOutcome(
+        command="true", stdout="example" + generate_random_string(), stderr="example"
+    )
+
+
+def test_command_item_run_outcome_not_equal_stderr() -> None:
+    assert CommandItemRunOutcome(
+        command="true", stdout="example", stderr="example" + generate_random_string()
+    ) != CommandItemRunOutcome(
+        command="true", stdout="example", stderr="example" + generate_random_string()
     )
 
 

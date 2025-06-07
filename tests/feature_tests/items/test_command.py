@@ -8,17 +8,21 @@ from cyberfusion.QueueSupport.items.command import CommandItem
 
 
 def test_command_item_fulfill_run(mocker: MockerFixture) -> None:
-    spy_run = mocker.patch(
-        "subprocess.run",
-        return_value=subprocess.CompletedProcess(args=["true"], returncode=0),
-    )
+    spy_run = mocker.spy(subprocess, "run")
 
-    object_ = CommandItem(command=["true"])
-    object_.fulfill()
+    COMMAND = ["echo", "test"]
+
+    object_ = CommandItem(command=COMMAND)
+    outcomes = object_.fulfill()
 
     spy_run.assert_called_once_with(
-        ["true"], check=True, text=True, capture_output=True
+        COMMAND, check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
+
+    assert len(outcomes) == 1
+
+    assert COMMAND[1] in outcomes[0].stdout
+    assert outcomes[0].stderr is not None
 
 
 def test_command_item_fulfill_run_failed() -> None:
