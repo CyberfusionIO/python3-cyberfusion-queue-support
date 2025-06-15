@@ -30,7 +30,7 @@ if [ "$1" = "configure" ]; then
     # Set config file permissions
 
     chown queue-support: /etc/queue-support.conf
-    chmod 0600 /etc/queue-support.conf
+    chmod 0644 /etc/queue-support.conf
 fi
 
 exit 0
