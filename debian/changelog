@@ -1,3 +1,9 @@
+python3-cyberfusion-queue-support (2.6.0) unstable; urgency=low
+
+  - Let database user grant items accept table_name instead of table
+
+ -- Mika Scheer <mscheer@cyberfusion.io>  Sun, 15 Jun 2025 18:52:00 +0200
+
 python3-cyberfusion-queue-support (2.5.2) unstable; urgency=low
 
   - Make config file readable (0600 -> 0644)
