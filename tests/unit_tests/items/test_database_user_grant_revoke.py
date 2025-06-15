@@ -3,7 +3,6 @@ from unittest.mock import PropertyMock
 from cyberfusion.DatabaseSupport import DatabaseSupport
 from cyberfusion.DatabaseSupport.database_user_grants import DatabaseUserGrant
 from pytest_mock import MockerFixture
-from sqlalchemy import Table, MetaData
 
 from cyberfusion.QueueSupport.items.database_user_grant_revoke import (
     DatabaseUserGrantRevokeItem,
@@ -21,13 +20,13 @@ def test_database_user_grant_revoke_item_equal() -> None:
         database_name="example",
         database_user_name="example",
         privilege_names=["ALL"],
-        table=Table("example", MetaData()),
+        table_name="example",
     ) == DatabaseUserGrantRevokeItem(
         server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
         database_name="example",
         database_user_name="example",
         privilege_names=["ALL"],
-        table=Table("example", MetaData()),
+        table_name="example",
     )
 
 
@@ -37,13 +36,13 @@ def test_database_user_grant_revoke_item_not_equal_database_name() -> None:
         database_name="example",
         database_user_name="example",
         privilege_names=["ALL"],
-        table=None,
+        table_name=None,
     ) != DatabaseUserGrantRevokeItem(
         server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
         database_name="test",
         database_user_name="example",
         privilege_names=["ALL"],
-        table=None,
+        table_name=None,
     )
 
 
@@ -53,13 +52,13 @@ def test_database_user_grant_revoke_item_not_equal_database_user_name() -> None:
         database_name="example",
         database_user_name="example",
         privilege_names=["ALL"],
-        table=None,
+        table_name=None,
     ) != DatabaseUserGrantRevokeItem(
         server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
         database_name="example",
         database_user_name="test",
         privilege_names=["ALL"],
-        table=None,
+        table_name=None,
     )
 
 
@@ -70,14 +69,14 @@ def test_database_user_grant_revoke_item_not_equal_database_user_host() -> None:
         database_user_name="example",
         database_user_host="example",
         privilege_names=["ALL"],
-        table=None,
+        table_name=None,
     ) != DatabaseUserGrantRevokeItem(
         server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
         database_name="example",
         database_user_name="example",
         database_user_host="test",
         privilege_names=["ALL"],
-        table=None,
+        table_name=None,
     )
 
 
@@ -87,29 +86,29 @@ def test_database_user_grant_revoke_item_not_equal_privileges_names() -> None:
         database_name="example",
         database_user_name="example",
         privilege_names=["ALL"],
-        table=None,
+        table_name=None,
     ) != DatabaseUserGrantRevokeItem(
         server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
         database_name="example",
         database_user_name="example",
         privilege_names=["SELECT"],
-        table=None,
+        table_name=None,
     )
 
 
-def test_database_user_grant_revoke_item_not_equal_table() -> None:
+def test_database_user_grant_revoke_item_not_equal_table_name() -> None:
     assert DatabaseUserGrantRevokeItem(
         server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
         database_name="example",
         database_user_name="example",
         privilege_names=["ALL"],
-        table=None,
+        table_name=None,
     ) != DatabaseUserGrantRevokeItem(
         server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
         database_name="example",
         database_user_name="example",
         privilege_names=["ALL"],
-        table=Table("example", MetaData()),
+        table_name="example",
     )
 
 
@@ -120,7 +119,7 @@ def test_database_user_grant_revoke_item_not_equal_different_type() -> None:
             database_name="example",
             database_user_name="example",
             privilege_names=["ALL"],
-            table=None,
+            table_name=None,
         )
         == 5
     ) is False
@@ -137,7 +136,7 @@ def test_database_user_grant_revoke_item_exists_has_outcome_revoke(
         database_name="example",
         database_user_name="example",
         privilege_names=["ALL"],
-        table=None,
+        table_name=None,
     )
 
     mocker.patch.object(
@@ -159,7 +158,7 @@ def test_database_user_grant_revoke_item_not_exists_not_has_outcome_revoke(
         database_name="example",
         database_user_name="example",
         privilege_names=["ALL"],
-        table=None,
+        table_name=None,
     )
 
     mocker.patch.object(

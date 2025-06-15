@@ -18,7 +18,7 @@ def test_database_user_grant_grant_item_fulfill_grant(mocker: MockerFixture) -> 
         database_name="test",
         database_user_name="test",
         privilege_names=["ALL"],
-        table=None,
+        table_name=None,
     )
 
     mocker.patch.object(
@@ -39,7 +39,7 @@ def test_database_user_grant_grant_item_fulfill_not_grant(
         database_name="test",
         database_user_name="test",
         privilege_names=["ALL"],
-        table=None,
+        table_name=None,
     )
 
     mocker.patch.object(

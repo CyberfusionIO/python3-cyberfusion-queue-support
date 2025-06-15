@@ -18,7 +18,7 @@ def test_database_user_grant_revoke_item_fulfill_revoke(mocker: MockerFixture) -
         database_name="test",
         database_user_name="test",
         privilege_names=["ALL"],
-        table=None,
+        table_name=None,
     )
 
     mocker.patch.object(
@@ -39,7 +39,7 @@ def test_database_user_grant_revoke_item_fulfill_not_revoke(
         database_name="test",
         database_user_name="test",
         privilege_names=["ALL"],
-        table=None,
+        table_name=None,
     )
 
     mocker.patch.object(

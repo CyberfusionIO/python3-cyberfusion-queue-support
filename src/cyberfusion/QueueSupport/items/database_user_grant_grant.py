@@ -28,7 +28,7 @@ class DatabaseUserGrantGrantItem(_Item):
         database_user_name: str,
         database_user_host: Optional[str] = None,
         privilege_names: List[str],
-        table: Optional[Table],
+        table_name: Optional[str],
         reference: Optional[str] = None,
         hide_outcomes: bool = False,
     ) -> None:
@@ -38,7 +38,7 @@ class DatabaseUserGrantGrantItem(_Item):
         self.database_user_name = database_user_name
         self.database_user_host = database_user_host
         self.privilege_names = privilege_names
-        self.table = table
+        self.table_name = table_name
         self._reference = reference
         self._hide_outcomes = hide_outcomes
 
@@ -59,11 +59,19 @@ class DatabaseUserGrantGrantItem(_Item):
             host=self.database_user_host,
         )
 
+        if self.table_name:
+            self._table = Table(
+                database=self._database,
+                name=self.table_name,
+            )
+        else:
+            self._table = None
+
         self.database_user_grant = DatabaseUserGrant(
             database=self._database,
             database_user=self._database_user,
             privilege_names=self.privilege_names,
-            table=self.table,
+            table=self._table,
         )
 
     @property
@@ -100,5 +108,5 @@ class DatabaseUserGrantGrantItem(_Item):
             and other.database_user_host == self.database_user_host
             and other.database_name == self.database_name
             and other.privilege_names == self.privilege_names
-            and getattr(other.table, "name", None) == getattr(self.table, "name", None)
+            and other.table_name == self.table_name
         )
