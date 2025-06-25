@@ -1,3 +1,9 @@
+python3-cyberfusion-queue-support (2.6.1) unstable; urgency=low
+
+  - Allow group to read and write to database
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Wed, 25 Jun 2025 20:50:00 +0200
+
 python3-cyberfusion-queue-support (2.6.0) unstable; urgency=low
 
   - Let database user grant items accept table_name instead of table
