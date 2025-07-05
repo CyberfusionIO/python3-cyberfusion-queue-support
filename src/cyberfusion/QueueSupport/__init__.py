@@ -47,22 +47,18 @@ class Queue:
         """Add item to queue."""
         deduplicated = False
 
-        existing_item_index = next(
-            (
-                index
-                for index, item_mapping in enumerate(self.item_mappings)
-                if item_mapping.item == item
-            ),
-            None,
-        )
+        existing_items_indexes = [
+            index
+            for index, item_mapping in enumerate(self.item_mappings)
+            if item_mapping.item == item
+        ]
 
-        if existing_item_index is not None:
+        if existing_items_indexes:
             if run_duplicate_last:
-                self.item_mappings[
-                    existing_item_index
-                ].database_object.deduplicated = True
-
-                self._database_session.commit()
+                for existing_item_index in existing_items_indexes:
+                    self.item_mappings[
+                        existing_item_index
+                    ].database_object.deduplicated = True
             else:
                 deduplicated = True
 
