@@ -1,6 +1,7 @@
 python3-cyberfusion-queue-support (2.6.3) unstable; urgency=medium
 
   * Set multiple items to deduplicated
+  * Fix static `created_at`
 
  -- William Edwards <wedwards@cyberfusion.nl>  Sun, 06 Jul 2025 01:15:00 +0000
 

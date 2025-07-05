@@ -1,5 +1,6 @@
 from alembic.config import Config
 import os
+import functools
 from alembic import command
 import sqlite3
 from datetime import datetime, timezone
@@ -75,7 +76,9 @@ class BaseModel(Base):  # type: ignore[misc, valid-type]
     __abstract__ = True
 
     id = Column(Integer, primary_key=True)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc), nullable=False)
+    created_at = Column(
+        DateTime, default=functools.partial(datetime.now, timezone.utc), nullable=False
+    )
 
 
 class Queue(BaseModel):
