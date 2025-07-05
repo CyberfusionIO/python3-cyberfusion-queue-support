@@ -31,10 +31,15 @@ def test_queue_add_adds_database_object(
     queue: Queue,
     existent_file_path: Generator[str, None, None],
     database_session: Session,
+    mocker: MockerFixture,
 ) -> None:
+    queue._database_session = database_session
+
     item = ChmodItem(path=existent_file_path, mode=MODE)
 
     queue.add(item)
+
+    database_session.commit()
 
     item_database_objects = database_session.scalars(select(database.QueueItem)).all()
 
@@ -60,9 +65,13 @@ def test_queue_add_adds_mapping(
     existent_file_path: Generator[str, None, None],
     database_session: Session,
 ) -> None:
+    queue._database_session = database_session
+
     item = ChmodItem(path=existent_file_path, mode=MODE)
 
     queue.add(item)
+
+    database_session.commit()
 
     assert len(queue.item_mappings) == 1
 

@@ -8,6 +8,8 @@ from tests.stubs import NoopItemStub
 
 
 def test_add_unit_attribute_database(queue: Queue, database_session: Session) -> None:
+    queue._database_session = database_session
+
     NAME = "example"
 
     class UnitItem(NoopItemStub):
@@ -28,5 +30,7 @@ def test_add_unit_attribute_database(queue: Queue, database_session: Session) ->
     item = UnitItem(name=NAME)
 
     queue.add(item)
+
+    database_session.commit()
 
     assert queue.item_mappings[0].database_object.attributes["unit"] == {"name": NAME}

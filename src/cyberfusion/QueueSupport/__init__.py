@@ -78,7 +78,6 @@ class Queue:
         )
 
         self._database_session.add(object_)
-        self._database_session.commit()
 
         self.item_mappings.append(QueueItemMapping(item, object_))
 
@@ -92,7 +91,6 @@ class Queue:
         )
 
         self._database_session.add(process_object)
-        self._database_session.commit()
 
         outcomes = []
 
@@ -130,7 +128,6 @@ class Queue:
                     item_mapping.database_object.traceback = traceback.format_exc()
 
                     self._database_session.add(item_mapping.database_object)
-                    self._database_session.commit()
 
                     # Don't fulfill other queue items
 
@@ -149,10 +146,10 @@ class Queue:
                     )
                 )
 
-                self._database_session.commit()
-
             logger.debug("Processed item with ID '%s'", item_mapping.database_object.id)
 
         logger.debug("Processed items")
+
+        self._database_session.commit()
 
         return outcomes
