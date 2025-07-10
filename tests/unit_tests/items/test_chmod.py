@@ -1,8 +1,10 @@
+import json
 import os
 from typing import Generator
 
 import pytest
 
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 from cyberfusion.QueueSupport.exceptions import PathIsSymlinkError
 from cyberfusion.QueueSupport.items.chmod import ChmodItem
 from cyberfusion.QueueSupport.outcomes import ChmodItemModeChangeOutcome
@@ -90,3 +92,22 @@ def test_chmod_item_same_not_has_outcome_mode_change(
     object_ = ChmodItem(path=existent_file_path, mode=MODE)
 
     assert not object_.outcomes
+
+
+# Serialization
+
+
+def test_chmod_item_serialization(
+    existent_file_path: Generator[str, None, None],
+) -> None:
+    object_ = ChmodItem(path=existent_file_path, mode=MODE)
+
+    serialized = json.dumps(object_, cls=CustomEncoder)
+    expected = json.dumps(
+        {
+            "path": existent_file_path,
+            "mode": MODE,
+        }
+    )
+
+    assert serialized == expected

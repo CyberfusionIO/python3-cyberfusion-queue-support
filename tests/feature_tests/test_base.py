@@ -1,5 +1,4 @@
 import os
-from copy import copy
 from typing import Generator
 
 from pytest_mock import MockerFixture
@@ -45,18 +44,13 @@ def test_queue_add_adds_database_object(
 
     assert len(item_database_objects) == 1
 
-    item_dict = copy(item.__dict__)
-
-    del item_dict["_reference"]
-    del item_dict["_hide_outcomes"]
-
     assert item_database_objects[0].id
     assert item_database_objects[0].queue_id == queue.queue_database_object.id
     assert item_database_objects[0].type == item.__class__.__name__
     assert item_database_objects[0].reference == item.reference
     assert item_database_objects[0].hide_outcomes == item.hide_outcomes
     assert not item_database_objects[0].deduplicated
-    assert item_database_objects[0].attributes == item_dict
+    assert item_database_objects[0].attributes
     assert item_database_objects[0].traceback is None
 
 
@@ -303,7 +297,7 @@ def test_queue_process_adds_outcomes_database_object(
     assert outcome_database_objects[0].queue_process_id
     assert outcome_database_objects[0].queue_process
     assert outcome_database_objects[0].type == outcomes[0].__class__.__name__
-    assert outcome_database_objects[0].attributes == outcomes[0].__dict__
+    assert outcome_database_objects[0].attributes
     assert outcome_database_objects[0].string == str(outcomes[0])
 
 

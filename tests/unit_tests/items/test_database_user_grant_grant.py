@@ -8,6 +8,8 @@ from cyberfusion.QueueSupport.items.database_user_grant_grant import (
     DatabaseUserGrantGrantItem,
 )
 from cyberfusion.QueueSupport.outcomes import DatabaseUserGrantGrantItemGrantOutcome
+import json
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 
 MODE = 0o755
 
@@ -166,3 +168,43 @@ def test_database_user_grant_grant_item_exists_not_has_outcome_grant(
     )
 
     assert not object_.outcomes
+
+
+# Serialization
+
+
+def test_database_user_grant_grant_item_serialization() -> None:
+    object_ = DatabaseUserGrantGrantItem(
+        server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        database_name="example",
+        database_user_name="example",
+        privilege_names=["ALL"],
+        table_name="example",
+    )
+
+    serialized = json.dumps(object_, cls=CustomEncoder)
+    expected = json.dumps(
+        {
+            "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            "database_name": "example",
+            "database_user_name": "example",
+            "database_user_host": None,
+            "privilege_names": ["ALL"],
+            "table_name": "example",
+            "database_user_grant": {
+                "database": {
+                    "name": "example",
+                    "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                },
+                "database_user": {
+                    "name": "example",
+                    "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                    "host": None,
+                },
+                "privileges_name": ["ALL"],
+                "table_name": "example",
+            },
+        }
+    )
+
+    assert serialized == expected

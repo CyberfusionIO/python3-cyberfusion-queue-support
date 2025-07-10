@@ -31,7 +31,7 @@ class DatabaseUserDropItem(_Item):
         """Set attributes."""
         self.server_software_name = server_software_name
         self.name = name
-        self._host = host
+        self.host = host
         self._reference = reference
         self._hide_outcomes = hide_outcomes
 
@@ -43,7 +43,7 @@ class DatabaseUserDropItem(_Item):
             ),
             name=self.name,
             server_software_name=self.server_software_name,
-            host=self._host,
+            host=self.host,
         )
 
     @property
@@ -77,5 +77,5 @@ class DatabaseUserDropItem(_Item):
         return (
             other.server_software_name == self.server_software_name
             and other.name == self.name
-            and other._host == self._host
+            and other.host == self.host
         )

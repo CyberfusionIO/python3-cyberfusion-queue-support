@@ -6,6 +6,8 @@ from pytest_mock import MockerFixture
 
 from cyberfusion.QueueSupport.items.database_drop import DatabaseDropItem
 from cyberfusion.QueueSupport.outcomes import DatabaseDropItemDropOutcome
+import json
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 
 MODE = 0o755
 
@@ -78,3 +80,27 @@ def test_database_drop_item_not_exists_not_has_outcome_drop(
     mocker.patch.object(Database, "exists", new=PropertyMock(return_value=False))
 
     assert not object_.outcomes
+
+
+# Serialization
+
+
+def test_database_drop_item_serialization() -> None:
+    object_ = DatabaseDropItem(
+        server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        name="example",
+    )
+
+    serialized = json.dumps(object_, cls=CustomEncoder)
+    expected = json.dumps(
+        {
+            "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            "name": "example",
+            "database": {
+                "name": "example",
+                "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            },
+        }
+    )
+
+    assert serialized == expected

@@ -1,3 +1,5 @@
+import json
+
 from alembic.config import Config
 import os
 import functools
@@ -13,7 +15,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import event
 from sqlalchemy.types import JSON
 
-from cyberfusion.QueueSupport.encoders import json_serialize
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 from cyberfusion.QueueSupport.settings import settings
 
 
@@ -45,7 +47,7 @@ def run_migrations() -> None:
 def make_database_session() -> Session:
     engine = create_engine(
         settings.database_path,
-        json_serializer=json_serialize,
+        json_serializer=lambda obj: json.dumps(obj, cls=CustomEncoder),
     )
 
     event.listen(engine, "connect", set_sqlite_pragma)

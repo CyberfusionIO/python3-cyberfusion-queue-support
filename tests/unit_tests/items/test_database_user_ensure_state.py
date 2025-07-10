@@ -11,6 +11,8 @@ from cyberfusion.QueueSupport.outcomes import (
     DatabaseUserEnsureStateItemCreateOutcome,
     DatabaseUserEnsureStateItemEditPasswordOutcome,
 )
+import json
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 
 MODE = 0o755
 
@@ -141,3 +143,31 @@ def test_database_user_ensure_state_item_exists_same_password_not_has_outcomes(
     mocker.patch.object(object_.database_user, "_get_password", return_value="example")
 
     assert not object_.outcomes
+
+
+# Serialization
+
+
+def test_database_user_ensure_state_item_serialization() -> None:
+    object_ = DatabaseUserEnsureStateItem(
+        server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        name="example",
+        password="example",
+    )
+
+    serialized = json.dumps(object_, cls=CustomEncoder)
+    expected = json.dumps(
+        {
+            "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            "name": "example",
+            "password": "example",
+            "host": None,
+            "database_user": {
+                "name": "example",
+                "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                "host": None,
+            },
+        }
+    )
+
+    assert serialized == expected

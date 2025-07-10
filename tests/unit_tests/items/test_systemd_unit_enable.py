@@ -9,6 +9,8 @@ from cyberfusion.QueueSupport.outcomes import (
     SystemdUnitEnableItemEnableOutcome,
 )
 from cyberfusion.SystemdSupport.units import Unit
+import json
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 
 # Equal
 
@@ -62,3 +64,20 @@ def test_systemd_unit_enable_item_enabled_not_has_outcome_enable(
     object_ = SystemdUnitEnableItem(name="example")
 
     assert not object_.outcomes
+
+
+# Serialization
+
+
+def test_systemd_unit_enable_item_serialization() -> None:
+    object_ = SystemdUnitEnableItem(name="example")
+
+    serialized = json.dumps(object_, cls=CustomEncoder)
+    expected = json.dumps(
+        {
+            "name": "example",
+            "unit": {"name": "example"},
+        }
+    )
+
+    assert serialized == expected

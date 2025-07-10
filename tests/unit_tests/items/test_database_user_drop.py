@@ -8,6 +8,8 @@ from cyberfusion.QueueSupport.items.database_user_drop import (
     DatabaseUserDropItem,
 )
 from cyberfusion.QueueSupport.outcomes import DatabaseUserDropItemDropOutcome
+import json
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 
 MODE = 0o755
 
@@ -96,3 +98,29 @@ def test_database_user_drop_item_not_exists_different_password_not_has_outcome_d
     mocker.patch.object(object_.database_user, "_get_password", return_value="test")
 
     assert not object_.outcomes
+
+
+# Serialization
+
+
+def test_database_user_drop_item_serialization() -> None:
+    object_ = DatabaseUserDropItem(
+        server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        name="example",
+    )
+
+    serialized = json.dumps(object_, cls=CustomEncoder)
+    expected = json.dumps(
+        {
+            "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            "name": "example",
+            "host": None,
+            "database_user": {
+                "name": "example",
+                "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                "host": None,
+            },
+        }
+    )
+
+    assert serialized == expected

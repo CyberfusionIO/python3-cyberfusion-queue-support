@@ -6,6 +6,8 @@ from cyberfusion.QueueSupport.items.systemd_tmp_files_create import (
 from cyberfusion.QueueSupport.outcomes import (
     SystemdTmpFilesCreateItemCreateOutcome,
 )
+import json
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 
 # Equal
 
@@ -43,3 +45,21 @@ def test_systemd_tmp_files_create_item_has_outcome_create(
     assert (
         SystemdTmpFilesCreateItemCreateOutcome(path="/tmp/example") in object_.outcomes
     )
+
+
+# Serialization
+
+
+def test_systemd_tmp_files_create_item_serialization(
+    existent_file_path: Generator[str, None, None],
+) -> None:
+    object_ = SystemdTmpFilesCreateItem(path="/tmp/example")
+
+    serialized = json.dumps(object_, cls=CustomEncoder)
+    expected = json.dumps(
+        {
+            "path": "/tmp/example",
+        }
+    )
+
+    assert serialized == expected

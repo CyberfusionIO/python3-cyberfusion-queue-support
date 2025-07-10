@@ -6,6 +6,8 @@ import pytest
 from cyberfusion.QueueSupport.exceptions import PathIsSymlinkError
 from cyberfusion.QueueSupport.items.rmtree import RmTreeItem
 from cyberfusion.QueueSupport.outcomes import RmTreeItemRemoveOutcome
+import json
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 
 
 # Equal
@@ -60,3 +62,21 @@ def test_rmtree_item_not_exists_not_has_outcome_remove(
     object_ = RmTreeItem(path=non_existent_path)
 
     assert not object_.outcomes
+
+
+# Serialization
+
+
+def test_rmtree_item_serialization(
+    existent_file_path: Generator[str, None, None],
+) -> None:
+    object_ = RmTreeItem(path=existent_file_path)
+
+    serialized = json.dumps(object_, cls=CustomEncoder)
+    expected = json.dumps(
+        {
+            "path": existent_file_path,
+        }
+    )
+
+    assert serialized == expected

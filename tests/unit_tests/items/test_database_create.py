@@ -6,6 +6,8 @@ from pytest_mock import MockerFixture
 
 from cyberfusion.QueueSupport.items.database_create import DatabaseCreateItem
 from cyberfusion.QueueSupport.outcomes import DatabaseCreateItemCreateOutcome
+import json
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 
 MODE = 0o755
 
@@ -80,3 +82,27 @@ def test_database_create_item_exists_not_has_outcome_create(
     mocker.patch.object(Database, "exists", new=PropertyMock(return_value=True))
 
     assert not object_.outcomes
+
+
+# Serialization
+
+
+def test_database_create_item_serialization() -> None:
+    object_ = DatabaseCreateItem(
+        server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        name="example",
+    )
+
+    serialized = json.dumps(object_, cls=CustomEncoder)
+    expected = json.dumps(
+        {
+            "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            "name": "example",
+            "database": {
+                "name": "example",
+                "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            },
+        }
+    )
+
+    assert serialized == expected

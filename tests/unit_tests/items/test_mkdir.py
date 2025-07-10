@@ -6,6 +6,8 @@ import pytest
 from cyberfusion.QueueSupport.exceptions import PathIsSymlinkError
 from cyberfusion.QueueSupport.items.mkdir import MkdirItem
 from cyberfusion.QueueSupport.outcomes import MkdirItemCreateOutcome
+import json
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 
 # Equal
 
@@ -61,3 +63,21 @@ def test_mkdir_item_exists_not_has_outcome_create(
     object_ = MkdirItem(path=existent_directory_path)
 
     assert not object_.outcomes
+
+
+# Serialization
+
+
+def test_mkdir_item_serialization(
+    non_existent_path: str,
+) -> None:
+    object_ = MkdirItem(path=non_existent_path)
+
+    serialized = json.dumps(object_, cls=CustomEncoder)
+    expected = json.dumps(
+        {
+            "path": non_existent_path,
+        }
+    )
+
+    assert serialized == expected
