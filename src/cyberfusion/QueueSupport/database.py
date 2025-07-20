@@ -20,12 +20,6 @@ from cyberfusion.QueueSupport.settings import settings
 def set_sqlite_pragma(
     dbapi_connection: sqlite3.Connection, connection_record: _ConnectionRecord
 ) -> None:
-    """Enable foreign key support.
-
-    This is needed for cascade deletes to work.
-
-    See https://docs.sqlalchemy.org/en/13/dialects/sqlite.html#sqlite-foreign-keys
-    """
     cursor = dbapi_connection.cursor()
 
     cursor.execute("PRAGMA foreign_keys=ON")
@@ -88,6 +82,15 @@ class Queue(BaseModel):
 
     __tablename__ = "queues"
 
+    queue_items = relationship(
+        "QueueItem",
+        back_populates="queue",
+    )
+    queue_processes = relationship(
+        "QueueProcess",
+        back_populates="queue",
+    )
+
 
 class QueueProcess(BaseModel):
     """QueueProcess model."""
@@ -95,8 +98,13 @@ class QueueProcess(BaseModel):
     __tablename__ = "queue_processes"
 
     queue_id = Column(Integer, ForeignKey("queues.id"), nullable=False)
-    queue = relationship("Queue")
     preview = Column(Boolean, nullable=False)
+
+    queue = relationship("Queue", back_populates="queue_processes")
+    queue_item_outcomes = relationship(
+        "QueueItemOutcome",
+        back_populates="queue_process",
+    )
 
 
 class QueueItem(BaseModel):
@@ -105,13 +113,18 @@ class QueueItem(BaseModel):
     __tablename__ = "queue_items"
 
     queue_id = Column(Integer, ForeignKey("queues.id"), nullable=False)
-    queue = relationship("Queue")
     type = Column(String(length=255), nullable=False)
     reference = Column(String(length=255), nullable=True)
     hide_outcomes = Column(Boolean, nullable=False)
     deduplicated = Column(Boolean, nullable=False)
     attributes = Column(JSON, nullable=False)
     traceback = Column(String(), nullable=True)
+
+    queue = relationship("Queue", back_populates="queue_items")
+    queue_item_outcomes = relationship(
+        "QueueItemOutcome",
+        back_populates="queue_item",
+    )
 
 
 class QueueItemOutcome(BaseModel):
@@ -120,9 +133,10 @@ class QueueItemOutcome(BaseModel):
     __tablename__ = "queue_item_outcomes"
 
     queue_item_id = Column(Integer, ForeignKey("queue_items.id"), nullable=False)
-    queue_item = relationship("QueueItem")
     queue_process_id = Column(Integer, ForeignKey("queue_processes.id"), nullable=False)
-    queue_process = relationship("QueueProcess")
     type = Column(String(length=255), nullable=False)
     attributes = Column(JSON, nullable=False)
     string = Column(String(length=255), nullable=False)
+
+    queue_item = relationship("QueueItem", back_populates="queue_item_outcomes")
+    queue_process = relationship("QueueProcess", back_populates="queue_item_outcomes")
