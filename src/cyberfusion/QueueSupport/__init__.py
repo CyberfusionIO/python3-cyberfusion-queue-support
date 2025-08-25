@@ -71,8 +71,6 @@ class Queue:
             traceback=None,
         )
 
-        print("AJSDFLKASDFKASLF", type(object_.attributes))
-
         self._database_session.add(object_)
 
         self.item_mappings.append(QueueItemMapping(item, object_))
