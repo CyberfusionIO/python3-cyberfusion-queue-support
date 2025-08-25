@@ -1,3 +1,9 @@
+python3-cyberfusion-queue-support (2.7) unstable; urgency=medium
+
+  * Add JSON encoding for all queue items and outcomes
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Mon, 25 Aug 2025 11:57:00 +0000
+
 python3-cyberfusion-queue-support (2.6.4) unstable; urgency=medium
 
   * Database: add reverse relationships

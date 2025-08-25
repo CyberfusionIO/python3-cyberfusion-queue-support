@@ -9,6 +9,8 @@ from cyberfusion.QueueSupport.outcomes import (
     SystemdUnitStartItemStartOutcome,
 )
 from cyberfusion.SystemdSupport.units import Unit
+import json
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 
 # Equal
 
@@ -58,3 +60,22 @@ def test_systemd_unit_start_item_started_not_has_outcome_start(
     object_ = SystemdUnitStartItem(name="example")
 
     assert not object_.outcomes
+
+
+# Serialization
+
+
+def test_systemd_unit_start_item_serialization(
+    existent_file_path: Generator[str, None, None],
+) -> None:
+    object_ = SystemdUnitStartItem(name="example")
+
+    serialized = json.dumps(object_, cls=CustomEncoder)
+    expected = json.dumps(
+        {
+            "name": "example",
+            "unit": {"name": "example"},
+        }
+    )
+
+    assert serialized == expected

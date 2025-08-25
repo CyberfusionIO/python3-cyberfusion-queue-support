@@ -6,6 +6,8 @@ import pytest
 from cyberfusion.QueueSupport.exceptions import PathIsSymlinkError
 from cyberfusion.QueueSupport.items.unlink import UnlinkItem
 from cyberfusion.QueueSupport.outcomes import UnlinkItemUnlinkOutcome
+import json
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 
 # Equal
 
@@ -59,3 +61,21 @@ def test_unlink_item_not_exists_not_has_outcome_unlink(
     object_ = UnlinkItem(path=non_existent_path)
 
     assert not object_.outcomes
+
+
+# Serialization
+
+
+def test_unlink_item_serialization(
+    existent_file_path: Generator[str, None, None],
+) -> None:
+    object_ = UnlinkItem(path=existent_file_path)
+
+    serialized = json.dumps(object_, cls=CustomEncoder)
+    expected = json.dumps(
+        {
+            "path": existent_file_path,
+        }
+    )
+
+    assert serialized == expected

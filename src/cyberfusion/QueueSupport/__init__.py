@@ -1,7 +1,6 @@
 """Classes for queue."""
 
 import logging
-from copy import copy
 from dataclasses import dataclass
 from typing import List
 import traceback
@@ -62,18 +61,13 @@ class Queue:
             else:
                 deduplicated = True
 
-        item_dict = copy(item.__dict__)
-
-        del item_dict["_reference"]
-        del item_dict["_hide_outcomes"]
-
         object_ = QueueItem(
             queue=self.queue_database_object,
             type=item.__class__.__name__,
             reference=item.reference,
             hide_outcomes=item.hide_outcomes,
             deduplicated=deduplicated,
-            attributes=item_dict,
+            attributes=item,
             traceback=None,
         )
 
@@ -141,7 +135,7 @@ class Queue:
                         queue_item=item_mapping.database_object,
                         queue_process=process_object,
                         type=outcome.__class__.__name__,
-                        attributes=outcome.__dict__,
+                        attributes=outcome,
                         string=str(outcome),
                     )
                 )

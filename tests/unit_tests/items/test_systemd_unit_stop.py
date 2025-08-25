@@ -7,6 +7,8 @@ from cyberfusion.QueueSupport.items.systemd_unit_stop import (
 )
 from cyberfusion.QueueSupport.outcomes import SystemdUnitStopItemStopOutcome
 from cyberfusion.SystemdSupport.units import Unit
+import json
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 
 # Equal
 
@@ -56,3 +58,22 @@ def test_systemd_unit_stop_item_not_active_not_has_outcome_stop(
     object_ = SystemdUnitStopItem(name="example")
 
     assert not object_.outcomes
+
+
+# Serialization
+
+
+def test_systemd_unit_stop_item_serialization(
+    existent_file_path: Generator[str, None, None],
+) -> None:
+    object_ = SystemdUnitStopItem(name="example")
+
+    serialized = json.dumps(object_, cls=CustomEncoder)
+    expected = json.dumps(
+        {
+            "name": "example",
+            "unit": {"name": "example"},
+        }
+    )
+
+    assert serialized == expected

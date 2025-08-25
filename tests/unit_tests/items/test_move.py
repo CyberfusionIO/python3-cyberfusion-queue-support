@@ -6,6 +6,8 @@ import pytest
 from cyberfusion.QueueSupport.exceptions import PathIsSymlinkError
 from cyberfusion.QueueSupport.items.move import MoveItem
 from cyberfusion.QueueSupport.outcomes import MoveItemMoveOutcome
+import json
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 
 # Equal
 
@@ -74,3 +76,22 @@ def test_move_item_has_outcome_move(
         MoveItemMoveOutcome(source=existent_file_path, destination=non_existent_path)
         in object_.outcomes
     )
+
+
+# Serialization
+
+
+def test_move_item_serialization(
+    existent_file_path: Generator[str, None, None], non_existent_path: str
+) -> None:
+    object_ = MoveItem(source=existent_file_path, destination=non_existent_path)
+
+    serialized = json.dumps(object_, cls=CustomEncoder)
+    expected = json.dumps(
+        {
+            "source": existent_file_path,
+            "destination": non_existent_path,
+        }
+    )
+
+    assert serialized == expected

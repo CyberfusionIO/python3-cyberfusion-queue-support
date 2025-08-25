@@ -8,6 +8,8 @@ from cyberfusion.QueueSupport.items.systemd_daemon_reload import (
 from cyberfusion.QueueSupport.outcomes import (
     SystemdDaemonReloadItemReloadOutcome,
 )
+import json
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 
 # Equal
 
@@ -33,3 +35,17 @@ def test_systemd_daemon_reload_item_has_outcome_reload(
     object_ = SystemdDaemonReloadItem()
 
     assert SystemdDaemonReloadItemReloadOutcome() in object_.outcomes
+
+
+# Serialization
+
+
+def test_systemd_daemon_reload_item_serialization(
+    existent_file_path: Generator[str, None, None],
+) -> None:
+    object_ = SystemdDaemonReloadItem()
+
+    serialized = json.dumps(object_, cls=CustomEncoder)
+    expected = json.dumps({})
+
+    assert serialized == expected

@@ -1,3 +1,4 @@
+import json
 from typing import Generator
 
 
@@ -9,6 +10,7 @@ from cyberfusion.DatabaseSupport.databases import Database
 from cyberfusion.DatabaseSupport.servers import Server
 from sqlalchemy import Table, MetaData
 
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 from cyberfusion.QueueSupport.outcomes import (
     ChmodItemModeChangeOutcome,
     ChownItemGroupChangeOutcome,
@@ -93,7 +95,7 @@ def test_copy_item_copy_outcome_string(
     )
 
 
-def test_copy_item_copy_changed_lines_outcome_string(
+def test_copy_item_copy_outcome_changed_lines_string(
     non_existent_path: str, existent_file_path: Generator[str, None, None]
 ) -> None:
     changed_lines = ["example", "example2"]
@@ -151,7 +153,7 @@ def test_command_item_run_outcome_string(non_existent_path: str) -> None:
     assert str(CommandItemRunOutcome(command="true")) == "Run true"
 
 
-def test_chmod_item_owner_name_change_outcome_string(
+def test_chown_item_owner_name_change_outcome_string(
     non_existent_path: str,
 ) -> None:
     assert (
@@ -166,7 +168,7 @@ def test_chmod_item_owner_name_change_outcome_string(
     )
 
 
-def test_chmod_item_group_name_change_outcome_string(
+def test_chown_item_group_name_change_outcome_string(
     non_existent_path: str,
 ) -> None:
     assert (
@@ -331,7 +333,7 @@ def test_database_user_drop_item_drop_outcome_string() -> None:
     )
 
 
-def test_database_user_grant_grant_item_create_outcome_string() -> None:
+def test_database_user_grant_grant_item_grant_outcome_string() -> None:
     assert (
         str(
             DatabaseUserGrantGrantItemGrantOutcome(
@@ -1644,3 +1646,417 @@ def test_database_user_grant_revoke_item_revoke_outcome_not_equal_different_type
         )
         == 5
     ) is False
+
+
+# Serialize
+
+
+def test_chmod_item_mode_change_outcome_serialize(non_existent_path: str) -> None:
+    outcome = ChmodItemModeChangeOutcome(
+        path=non_existent_path, old_mode=0o600, new_mode=0o644
+    )
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "path": non_existent_path,
+            "old_mode": 0o600,
+            "new_mode": 0o644,
+        }
+    )
+
+
+def test_mkdir_item_create_outcome_serialize(non_existent_path: str) -> None:
+    outcome = MkdirItemCreateOutcome(path=non_existent_path)
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "path": non_existent_path,
+        }
+    )
+
+
+def test_copy_item_copy_outcome_serialize(
+    non_existent_path: str, existent_file_path: Generator[str, None, None]
+) -> None:
+    changed_lines = ["example", "example2"]
+
+    outcome = CopyItemCopyOutcome(
+        source=non_existent_path,
+        destination=existent_file_path,
+        changed_lines=changed_lines,
+    )
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "source": non_existent_path,
+            "destination": existent_file_path,
+            "changed_lines": changed_lines,
+        }
+    )
+
+
+def test_move_item_move_outcome_serialize(
+    non_existent_path: str, existent_file_path: Generator[str, None, None]
+) -> None:
+    outcome = MoveItemMoveOutcome(
+        source=non_existent_path, destination=existent_file_path
+    )
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "source": non_existent_path,
+            "destination": existent_file_path,
+        }
+    )
+
+
+def test_rmtree_item_remove_outcome_serialize(non_existent_path: str) -> None:
+    outcome = RmTreeItemRemoveOutcome(path=non_existent_path)
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "path": non_existent_path,
+        }
+    )
+
+
+def test_unlink_item_unlink_outcome_serialize(non_existent_path: str) -> None:
+    outcome = UnlinkItemUnlinkOutcome(path=non_existent_path)
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "path": non_existent_path,
+        }
+    )
+
+
+def test_command_item_run_outcome_serialize() -> None:
+    outcome = CommandItemRunOutcome(command="true", stdout="example", stderr="example")
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "command": "true",
+            "stdout": "example",
+            "stderr": "example",
+        }
+    )
+
+
+def test_chown_item_owner_change_outcome_serialize(non_existent_path: str) -> None:
+    outcome = ChownItemOwnerChangeOutcome(
+        path=non_existent_path, old_owner_name="old", new_owner_name="new"
+    )
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "path": non_existent_path,
+            "old_owner_name": "old",
+            "new_owner_name": "new",
+        }
+    )
+
+
+def test_chown_item_group_change_outcome_serialize(non_existent_path: str) -> None:
+    outcome = ChownItemGroupChangeOutcome(
+        path=non_existent_path, old_group_name="old", new_group_name="new"
+    )
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "path": non_existent_path,
+            "old_group_name": "old",
+            "new_group_name": "new",
+        }
+    )
+
+
+def test_systemd_unit_enable_item_enable_outcome_serialize() -> None:
+    outcome = SystemdUnitEnableItemEnableOutcome(unit=Unit("example"))
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "unit": {
+                "name": "example",
+            }
+        }
+    )
+
+
+def test_systemd_unit_start_item_start_outcome_serialize() -> None:
+    outcome = SystemdUnitStartItemStartOutcome(unit=Unit("example"))
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "unit": {
+                "name": "example",
+            }
+        }
+    )
+
+
+def test_systemd_daemon_reload_item_reload_outcome_serialize() -> None:
+    outcome = SystemdDaemonReloadItemReloadOutcome()
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps({})
+
+
+def test_systemd_unit_stop_item_stop_outcome_serialize() -> None:
+    outcome = SystemdUnitStopItemStopOutcome(unit=Unit("example"))
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "unit": {
+                "name": "example",
+            }
+        }
+    )
+
+
+def test_systemd_unit_disable_item_disable_outcome_serialize() -> None:
+    outcome = SystemdUnitDisableItemDisableOutcome(unit=Unit("example"))
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "unit": {
+                "name": "example",
+            }
+        }
+    )
+
+
+def test_systemd_unit_restart_item_restart_outcome_serialize() -> None:
+    outcome = SystemdUnitRestartItemRestartOutcome(unit=Unit("example"))
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "unit": {
+                "name": "example",
+            }
+        }
+    )
+
+
+def test_systemd_unit_reload_item_reload_outcome_serialize() -> None:
+    outcome = SystemdUnitReloadItemReloadOutcome(unit=Unit("example"))
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "unit": {
+                "name": "example",
+            }
+        }
+    )
+
+
+def test_systemd_tmp_files_create_item_create_outcome_serialize() -> None:
+    outcome = SystemdTmpFilesCreateItemCreateOutcome(path="/tmp/example")
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "path": "/tmp/example",
+        }
+    )
+
+
+def test_database_create_item_create_outcome_serialize() -> None:
+    outcome = DatabaseCreateItemCreateOutcome(
+        database=Database(
+            support=DatabaseSupport(
+                server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+            ),
+            name="test",
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        )
+    )
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "database": {
+                "name": "test",
+                "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            },
+        }
+    )
+
+
+def test_database_drop_item_drop_outcome_serialize() -> None:
+    outcome = DatabaseDropItemDropOutcome(
+        database=Database(
+            support=DatabaseSupport(
+                server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+            ),
+            name="test",
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+        )
+    )
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "database": {
+                "name": "test",
+                "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            },
+        }
+    )
+
+
+def test_database_user_ensure_state_item_create_outcome_serialize() -> None:
+    outcome = DatabaseUserEnsureStateItemCreateOutcome(
+        database_user=DatabaseUser(
+            server=Server(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                )
+            ),
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            name="test",
+        )
+    )
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "database_user": {
+                "name": "test",
+                "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                "host": None,
+            }
+        }
+    )
+
+
+def test_database_user_ensure_state_item_edit_password_outcome_serialize() -> None:
+    outcome = DatabaseUserEnsureStateItemEditPasswordOutcome(
+        database_user=DatabaseUser(
+            server=Server(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                )
+            ),
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            name="test",
+        )
+    )
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "database_user": {
+                "name": "test",
+                "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                "host": None,
+            }
+        }
+    )
+
+
+def test_database_user_drop_item_drop_outcome_serialize() -> None:
+    outcome = DatabaseUserDropItemDropOutcome(
+        database_user=DatabaseUser(
+            server=Server(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                )
+            ),
+            server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            name="test",
+        )
+    )
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "database_user": {
+                "name": "test",
+                "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                "host": None,
+            }
+        }
+    )
+
+
+def test_database_user_grant_grant_item_grant_outcome_serialize() -> None:
+    outcome = DatabaseUserGrantGrantItemGrantOutcome(
+        database_user_grant=DatabaseUserGrant(
+            database=Database(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                ),
+                name="test",
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            ),
+            database_user=DatabaseUser(
+                server=Server(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    )
+                ),
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                name="test",
+            ),
+            privilege_names=["ALL"],
+            table=None,
+        )
+    )
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "database_user_grant": {
+                "database": {
+                    "name": "test",
+                    "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                },
+                "database_user": {
+                    "name": "test",
+                    "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                    "host": None,
+                },
+                "privileges_name": ["ALL"],
+                "table_name": "*",
+            },
+        }
+    )
+
+
+def test_database_user_grant_revoke_item_revoke_outcome_serialize() -> None:
+    outcome = DatabaseUserGrantRevokeItemRevokeOutcome(
+        database_user_grant=DatabaseUserGrant(
+            database=Database(
+                support=DatabaseSupport(
+                    server_software_names=[DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME]
+                ),
+                name="test",
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+            ),
+            database_user=DatabaseUser(
+                server=Server(
+                    support=DatabaseSupport(
+                        server_software_names=[
+                            DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME
+                        ]
+                    )
+                ),
+                server_software_name=DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                name="test",
+            ),
+            privilege_names=["ALL"],
+            table=None,
+        )
+    )
+
+    assert json.dumps(outcome, cls=CustomEncoder) == json.dumps(
+        {
+            "database_user_grant": {
+                "database": {
+                    "name": "test",
+                    "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                },
+                "database_user": {
+                    "name": "test",
+                    "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
+                    "host": None,
+                },
+                "privileges_name": ["ALL"],
+                "table_name": "*",
+            },
+        }
+    )

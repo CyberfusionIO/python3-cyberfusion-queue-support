@@ -1,3 +1,4 @@
+import json
 import os
 from grp import getgrgid
 from pwd import getpwuid
@@ -6,6 +7,8 @@ from typing import Generator
 import pytest
 
 from cyberfusion.Common import generate_random_string
+
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 from cyberfusion.QueueSupport.exceptions import PathIsSymlinkError
 from cyberfusion.QueueSupport.items.chown import ChownItem
 from cyberfusion.QueueSupport.outcomes import (
@@ -279,3 +282,29 @@ def test_chown_item_old_not_exists_has_outcome_group_name_change(
         if isinstance(outcome, ChownItemGroupChangeOutcome)
     ][0]
     assert outcome.old_group_name == "(no group with GID exists)"
+
+
+# Serialization
+
+
+def test_chown_item_serialization(
+    existent_file_path: Generator[str, None, None],
+    ci_owner_name: str,
+    ci_group_name: str,
+) -> None:
+    object_ = ChownItem(
+        path=existent_file_path,
+        owner_name=ci_owner_name,
+        group_name=ci_group_name,
+    )
+
+    serialized = json.dumps(object_, cls=CustomEncoder)
+    expected = json.dumps(
+        {
+            "path": existent_file_path,
+            "owner_name": ci_owner_name,
+            "group_name": ci_group_name,
+        }
+    )
+
+    assert serialized == expected

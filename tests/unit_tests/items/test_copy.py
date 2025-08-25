@@ -6,6 +6,8 @@ import pytest
 from cyberfusion.QueueSupport.exceptions import PathIsSymlinkError
 from cyberfusion.QueueSupport.items.copy import CopyItem
 from cyberfusion.QueueSupport.outcomes import CopyItemCopyOutcome
+import json
+from cyberfusion.QueueSupport.encoders import CustomEncoder
 
 # Equal
 
@@ -153,3 +155,22 @@ def test_copy_item_binary_destination_has_outcome_copy(
     assert outcome.source == existent_file_path
     assert outcome.destination == str(tmp_binary_file)
     assert outcome.changed_lines is None
+
+
+# Serialization
+
+
+def test_copy_item_serialization(
+    existent_file_path: str, non_existent_path: str
+) -> None:
+    object_ = CopyItem(source=existent_file_path, destination=non_existent_path)
+
+    serialized = json.dumps(object_, cls=CustomEncoder)
+    expected = json.dumps(
+        {
+            "source": existent_file_path,
+            "destination": non_existent_path,
+        }
+    )
+
+    assert serialized == expected

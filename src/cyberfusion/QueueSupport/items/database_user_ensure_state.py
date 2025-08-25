@@ -34,7 +34,7 @@ class DatabaseUserEnsureStateItem(_Item):
         self.server_software_name = server_software_name
         self.name = name
         self.password = password
-        self._host = host
+        self.host = host
         self._reference = reference
         self._hide_outcomes = hide_outcomes
 
@@ -47,7 +47,7 @@ class DatabaseUserEnsureStateItem(_Item):
             name=self.name,
             server_software_name=self.server_software_name,
             password=self.password,
-            host=self._host,
+            host=self.host,
         )
 
     @property
@@ -95,6 +95,6 @@ class DatabaseUserEnsureStateItem(_Item):
         return (
             other.server_software_name == self.server_software_name
             and other.name == self.name
-            and other._host == self._host
+            and other.host == self.host
             and other.password == self.password
         )
