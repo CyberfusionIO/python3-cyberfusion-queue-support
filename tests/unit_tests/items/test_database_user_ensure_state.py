@@ -160,7 +160,6 @@ def test_database_user_ensure_state_item_serialization() -> None:
         {
             "server_software_name": DatabaseSupport.MARIADB_SERVER_SOFTWARE_NAME,
             "name": "example",
-            "password": "example",
             "host": None,
             "database_user": {
                 "name": "example",

@@ -33,7 +33,7 @@ class DatabaseUserEnsureStateItem(_Item):
         """Set attributes."""
         self.server_software_name = server_software_name
         self.name = name
-        self.password = password
+        self._password = password
         self.host = host
         self._reference = reference
         self._hide_outcomes = hide_outcomes
@@ -46,7 +46,7 @@ class DatabaseUserEnsureStateItem(_Item):
             ),
             name=self.name,
             server_software_name=self.server_software_name,
-            password=self.password,
+            password=self._password,
             host=self.host,
         )
 
@@ -66,7 +66,7 @@ class DatabaseUserEnsureStateItem(_Item):
                     database_user=self.database_user
                 )
             )
-        elif self.database_user._get_password() != self.password:
+        elif self.database_user._get_password() != self._password:
             outcomes.append(
                 DatabaseUserEnsureStateItemEditPasswordOutcome(
                     database_user=self.database_user
@@ -96,5 +96,5 @@ class DatabaseUserEnsureStateItem(_Item):
             other.server_software_name == self.server_software_name
             and other.name == self.name
             and other.host == self.host
-            and other.password == self.password
+            and other._password == self._password
         )

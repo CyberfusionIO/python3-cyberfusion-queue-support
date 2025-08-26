@@ -1,3 +1,9 @@
+python3-cyberfusion-queue-support (2.7.1) unstable; urgency=medium
+
+  * DatabaseUserEnsureStateItem: make `password` attribute private
+
+ -- Mika Scheer <wedwards@cyberfusion.nl>  Tue, 26 Aug 2025 13:25:00 +0000
+
 python3-cyberfusion-queue-support (2.7) unstable; urgency=medium
 
   * Add JSON encoding for all queue items and outcomes
