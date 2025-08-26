@@ -11,7 +11,8 @@ from cyberfusion.QueueSupport import (
 )
 from cyberfusion.QueueSupport.items.chmod import ChmodItem
 
-MODE = 0o600
+MODE_VALID = 0o600
+MODE_INVALID = 204983136789054
 
 
 def test_init_queue_adds_database_object(
@@ -34,7 +35,7 @@ def test_queue_add_adds_database_object(
 ) -> None:
     queue._database_session = database_session
 
-    item = ChmodItem(path=existent_file_path, mode=MODE)
+    item = ChmodItem(path=existent_file_path, mode=MODE_VALID)
 
     queue.add(item)
 
@@ -61,7 +62,7 @@ def test_queue_add_adds_mapping(
 ) -> None:
     queue._database_session = database_session
 
-    item = ChmodItem(path=existent_file_path, mode=MODE)
+    item = ChmodItem(path=existent_file_path, mode=MODE_VALID)
 
     queue.add(item)
 
@@ -80,8 +81,8 @@ def test_queue_add_adds_mapping(
 def test_queue_add_run_duplicate_last(
     queue: Queue, existent_file_path: Generator[str, None, None]
 ) -> None:
-    item_0 = ChmodItem(path=existent_file_path, mode=MODE)
-    item_1 = ChmodItem(path=existent_file_path, mode=MODE + 1)
+    item_0 = ChmodItem(path=existent_file_path, mode=MODE_VALID)
+    item_1 = ChmodItem(path=existent_file_path, mode=MODE_VALID + 1)
 
     queue.add(item_0)
     queue.add(item_1)
@@ -118,8 +119,8 @@ def test_queue_add_run_duplicate_last(
 def test_queue_add_not_run_duplicate_last(
     queue: Queue, existent_file_path: Generator[str, None, None]
 ) -> None:
-    item_0 = ChmodItem(path=existent_file_path, mode=MODE)
-    item_1 = ChmodItem(path=existent_file_path, mode=MODE + 1)
+    item_0 = ChmodItem(path=existent_file_path, mode=MODE_VALID)
+    item_1 = ChmodItem(path=existent_file_path, mode=MODE_VALID + 1)
 
     queue.add(item_0)
     queue.add(item_1)
@@ -175,11 +176,11 @@ def test_queue_process_returns_outcomes_when_not_hide_outcomes(
 ) -> None:
     spy_chmod = mocker.spy(os, "chmod")
 
-    queue.add(ChmodItem(path=existent_file_path, mode=MODE, hide_outcomes=False))
+    queue.add(ChmodItem(path=existent_file_path, mode=MODE_VALID, hide_outcomes=False))
 
     assert queue.process(preview=False)
 
-    spy_chmod.assert_called_once_with(existent_file_path, MODE)
+    spy_chmod.assert_called_once_with(existent_file_path, MODE_VALID)
 
 
 def test_queue_process_not_returns_outcomes_when_hide_outcomes(
@@ -189,18 +190,18 @@ def test_queue_process_not_returns_outcomes_when_hide_outcomes(
 ) -> None:
     spy_chmod = mocker.spy(os, "chmod")
 
-    queue.add(ChmodItem(path=existent_file_path, mode=MODE, hide_outcomes=True))
+    queue.add(ChmodItem(path=existent_file_path, mode=MODE_VALID, hide_outcomes=True))
 
     assert not queue.process(preview=False)
 
-    spy_chmod.assert_called_once_with(existent_file_path, MODE)
+    spy_chmod.assert_called_once_with(existent_file_path, MODE_VALID)
 
 
 def test_queue_process_preview_returns_outcomes_when_not_hide_outcomes(
     existent_file_path: Generator[str, None, None],
     queue: Queue,
 ) -> None:
-    queue.add(ChmodItem(path=existent_file_path, mode=MODE, hide_outcomes=False))
+    queue.add(ChmodItem(path=existent_file_path, mode=MODE_VALID, hide_outcomes=False))
 
     assert queue.process(preview=True)
 
@@ -209,7 +210,7 @@ def test_queue_preview_not_returns_outcomes_when_hide_outcomes(
     existent_file_path: Generator[str, None, None],
     queue: Queue,
 ) -> None:
-    queue.add(ChmodItem(path=existent_file_path, mode=MODE, hide_outcomes=True))
+    queue.add(ChmodItem(path=existent_file_path, mode=MODE_VALID, hide_outcomes=True))
 
     assert not queue.process(preview=True)
 
@@ -220,9 +221,11 @@ def test_queue_process_not_returns_outcomes_deduplicated(
     database_session: Session,
 ) -> None:
     item_0_deduplicated = ChmodItem(
-        reference="deduplicated", path=existent_file_path, mode=MODE
+        reference="deduplicated", path=existent_file_path, mode=MODE_VALID
     )
-    item_0 = ChmodItem(reference="not_deduplicated", path=existent_file_path, mode=MODE)
+    item_0 = ChmodItem(
+        reference="not_deduplicated", path=existent_file_path, mode=MODE_VALID
+    )
 
     queue.add(item_0_deduplicated)
     queue.add(item_0, run_duplicate_last=True)
@@ -250,7 +253,7 @@ def test_queue_process_not_preview_fulfills(
     mocker: MockerFixture,
     queue: Queue,
 ) -> None:
-    queue.add(ChmodItem(path=existent_file_path, mode=MODE))
+    queue.add(ChmodItem(path=existent_file_path, mode=MODE_VALID))
 
     spy_fulfill = mocker.spy(queue.item_mappings[0].item.__class__, "fulfill")
 
@@ -264,7 +267,7 @@ def test_queue_process_preview_not_fulfills(
     mocker: MockerFixture,
     queue: Queue,
 ) -> None:
-    queue.add(ChmodItem(path=existent_file_path, mode=MODE))
+    queue.add(ChmodItem(path=existent_file_path, mode=MODE_VALID))
 
     spy_fulfill = mocker.spy(queue.item_mappings[0].item.__class__, "fulfill")
 
@@ -278,7 +281,7 @@ def test_queue_process_adds_outcomes_database_object(
     existent_file_path: Generator[str, None, None],
     database_session: Session,
 ) -> None:
-    item = ChmodItem(path=existent_file_path, mode=MODE)
+    item = ChmodItem(path=existent_file_path, mode=MODE_VALID)
 
     queue.add(item)
 
@@ -306,10 +309,7 @@ def test_queue_process_traceback(
     existent_file_path: Generator[str, None, None],
     queue: Queue,
 ) -> None:
-    item = ChmodItem(
-        path=existent_file_path,
-        mode=204983136789054,  # Invalid mode
-    )
+    item = ChmodItem(path=existent_file_path, mode=MODE_INVALID)
 
     queue.add(item)
 
@@ -329,14 +329,11 @@ def test_queue_process_no_fulfill_after_traceback(
     queue: Queue,
 ) -> None:
     """Test that when an item has a traceback (i.e. fulfilling failed), other items are not fulfilled."""
-    item_1 = ChmodItem(
-        path=existent_file_path,
-        mode=204983136789054,  # Invalid mode
-    )
+    item_1 = ChmodItem(path=existent_file_path, mode=MODE_INVALID)
 
     item_2 = item_1.__class__(
         path=existent_file_path,
-        mode=MODE,
+        mode=MODE_VALID,
     )
 
     spy_fulfill = mocker.spy(item_1.__class__, "fulfill")
