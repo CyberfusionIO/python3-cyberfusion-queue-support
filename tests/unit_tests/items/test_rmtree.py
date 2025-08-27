@@ -47,7 +47,7 @@ def test_rmtree_item_path_not_absolute() -> None:
     with pytest.raises(ValueError) as error:
         RmTreeItem(path="test", min_depth=1)
 
-    assert error.value.args[0] == "path must be an absolute path"
+    assert error.value.args[0] == "Path must be absolute"
 
 
 def test_rmtree_item_path_min_min_depth(
@@ -63,22 +63,22 @@ def test_rmtree_item_path_less_min_depth() -> None:
     with pytest.raises(ValueError) as error:
         RmTreeItem(path="/", min_depth=1)
 
-    assert error.value.args[0] == "path doesn't have enough depth: 0 < 1"
+    assert error.value.args[0] == "Path doesn't have enough depth: 0 < 1"
 
     with pytest.raises(ValueError) as error:
         RmTreeItem(path="//", min_depth=1)
 
-    assert error.value.args[0] == "path doesn't have enough depth: 0 < 1"
+    assert error.value.args[0] == "Path doesn't have enough depth: 0 < 1"
 
     with pytest.raises(ValueError) as error:
         RmTreeItem(path="/./", min_depth=1)
 
-    assert error.value.args[0] == "path doesn't have enough depth: 0 < 1"
+    assert error.value.args[0] == "Path doesn't have enough depth: 0 < 1"
 
     with pytest.raises(ValueError) as error:
         RmTreeItem(path="/test/../", min_depth=1)
 
-    assert error.value.args[0] == "path doesn't have enough depth: 0 < 1"
+    assert error.value.args[0] == "Path doesn't have enough depth: 0 < 1"
 
 
 # Outcomes

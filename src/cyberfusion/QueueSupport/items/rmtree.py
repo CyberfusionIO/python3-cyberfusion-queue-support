@@ -30,8 +30,10 @@ class RmTreeItem(_Item):
 
         if os.path.islink(self.path):
             raise PathIsSymlinkError(self.path)
+
         if not os.path.isabs(path):
-            raise ValueError("path must be an absolute path")
+            raise ValueError("Path must be absolute")
+
         if min_depth < 1:
             raise ValueError("min_depth must be greater than 0")
 
@@ -40,7 +42,7 @@ class RmTreeItem(_Item):
         )
 
         if depth < min_depth:
-            raise ValueError(f"path doesn't have enough depth: {depth} < {min_depth}")
+            raise ValueError(f"Path doesn't have enough depth: {depth} < {min_depth}")
 
     @property
     def outcomes(self) -> List[RmTreeItemRemoveOutcome]:
