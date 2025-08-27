@@ -1,3 +1,10 @@
+python3-cyberfusion-queue-support (2.8) unstable; urgency=medium
+
+  * RmTreeItem: add min_depth
+  * RmTreeItem: require absolute path
+
+ -- Mika Scheer <wedwards@cyberfusion.nl>  Wed, 27 Aug 2025 23:10:00 +0000
+
 python3-cyberfusion-queue-support (2.7.1) unstable; urgency=medium
 
   * DatabaseUserEnsureStateItem: make `password` attribute private
