@@ -11,7 +11,7 @@ def test_rmtree_item_fulfill_remove(
 ) -> None:
     assert os.path.isdir(existent_directory_path)
 
-    object_ = RmTreeItem(path=existent_directory_path)
+    object_ = RmTreeItem(path=existent_directory_path, min_depth=1)
     object_.fulfill()
 
     assert not os.path.isdir(existent_directory_path)
@@ -24,7 +24,7 @@ def test_rmtree_item_fulfill_not_remove(
 
     spy_unlink = mocker.spy(os, "unlink")
 
-    object_ = RmTreeItem(path=non_existent_path)
+    object_ = RmTreeItem(path=non_existent_path, min_depth=1)
     object_.fulfill()
 
     spy_unlink.assert_not_called()
