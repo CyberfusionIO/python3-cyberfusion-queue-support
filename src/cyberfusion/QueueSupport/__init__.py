@@ -4,6 +4,7 @@ import logging
 from dataclasses import dataclass
 from typing import List
 import traceback
+
 from cyberfusion.QueueSupport.database import (
     Queue as QueueModel,
     QueueItem,
@@ -77,7 +78,7 @@ class Queue:
 
         self.item_mappings.append(QueueItemMapping(item, object_))
 
-    def process(self, preview: bool) -> List[OutcomeInterface]:
+    def process(self, preview: bool) -> tuple[QueueProcess, list[OutcomeInterface]]:
         """Process items."""
         logger.debug("Processing items")
 
@@ -155,4 +156,4 @@ class Queue:
 
         self._database_session.commit()
 
-        return outcomes
+        return process_object, outcomes
