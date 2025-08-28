@@ -3,6 +3,7 @@
 import logging
 import os
 import shutil
+from pathlib import Path
 from typing import List, Optional
 
 from cyberfusion.QueueSupport.exceptions import PathIsSymlinkError
@@ -37,9 +38,7 @@ class RmTreeItem(_Item):
         if min_depth < 1:
             raise ValueError("min_depth must be greater than 0")
 
-        depth = len(
-            [element for element in os.path.normpath(path).split(os.sep) if element]
-        )
+        depth = len(Path(os.path.normpath(path)).parents)
 
         if depth < min_depth:
             raise ValueError(f"Path doesn't have enough depth: {depth} < {min_depth}")
