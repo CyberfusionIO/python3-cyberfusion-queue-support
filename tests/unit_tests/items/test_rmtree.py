@@ -80,6 +80,16 @@ def test_rmtree_item_path_less_min_depth() -> None:
 
     assert error.value.args[0] == "Path doesn't have enough depth: 0 < 1"
 
+    with pytest.raises(ValueError) as error:
+        RmTreeItem(path="/test", min_depth=2)
+
+    assert error.value.args[0] == "Path doesn't have enough depth: 1 < 2"
+
+    with pytest.raises(ValueError) as error:
+        RmTreeItem(path="/test/", min_depth=2)
+
+    assert error.value.args[0] == "Path doesn't have enough depth: 1 < 2"
+
 
 # Outcomes
 
