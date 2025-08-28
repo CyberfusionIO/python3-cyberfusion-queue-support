@@ -21,11 +21,13 @@ class SystemdTmpFilesCreateItem(_Item):
         path: str,
         reference: Optional[str] = None,
         hide_outcomes: bool = False,
+        fail_silently: bool = False,
     ) -> None:
         """Set attributes."""
         self.path = path
         self._reference = reference
         self._hide_outcomes = hide_outcomes
+        self._fail_silently = fail_silently
 
     @property
     def outcomes(self) -> List[SystemdTmpFilesCreateItemCreateOutcome]:

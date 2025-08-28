@@ -29,6 +29,7 @@ class DatabaseUserEnsureStateItem(_Item):
         host: Optional[str] = None,
         reference: Optional[str] = None,
         hide_outcomes: bool = False,
+        fail_silently: bool = False,
     ) -> None:
         """Set attributes."""
         self.server_software_name = server_software_name
@@ -37,6 +38,7 @@ class DatabaseUserEnsureStateItem(_Item):
         self.host = host
         self._reference = reference
         self._hide_outcomes = hide_outcomes
+        self._fail_silently = fail_silently
 
         self.database_user = DatabaseUser(
             server=Server(

@@ -23,12 +23,14 @@ class CopyItem(_Item):
         destination: str,
         reference: Optional[str] = None,
         hide_outcomes: bool = False,
+        fail_silently: bool = False,
     ) -> None:
         """Set attributes."""
         self.source = source
         self.destination = destination
         self._reference = reference
         self._hide_outcomes = hide_outcomes
+        self._fail_silently = fail_silently
 
         if os.path.islink(self.source):
             raise PathIsSymlinkError(self.source)

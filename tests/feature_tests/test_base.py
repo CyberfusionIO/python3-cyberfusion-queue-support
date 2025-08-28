@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from cyberfusion.QueueSupport import (
     Queue,
     database,
+    QueueProcessStatus,
 )
 from cyberfusion.QueueSupport.items.chmod import ChmodItem
 
@@ -50,6 +51,7 @@ def test_queue_add_adds_database_object(
     assert item_database_objects[0].type == item.__class__.__name__
     assert item_database_objects[0].reference == item.reference
     assert item_database_objects[0].hide_outcomes == item.hide_outcomes
+    assert item_database_objects[0].fail_silently == item.fail_silently
     assert not item_database_objects[0].deduplicated
     assert item_database_objects[0].attributes
     assert item_database_objects[0].traceback is None
@@ -157,16 +159,11 @@ def test_queue_add_not_run_duplicate_last(
 def test_queue_process_adds_database_object(
     queue: Queue, database_session: Session
 ) -> None:
-    queue.process(preview=False)
+    process, _ = queue.process(preview=False)
 
-    process_database_objects = database_session.scalars(
-        select(database.QueueProcess)
-    ).all()
-
-    assert len(process_database_objects) == 1
-
-    assert process_database_objects[0].queue_id == queue.queue_database_object.id
-    assert not process_database_objects[0].preview
+    assert process.queue_id == queue.queue_database_object.id
+    assert not process.preview
+    assert process.status
 
 
 def test_queue_process_returns_outcomes_when_not_hide_outcomes(
@@ -178,7 +175,9 @@ def test_queue_process_returns_outcomes_when_not_hide_outcomes(
 
     queue.add(ChmodItem(path=existent_file_path, mode=MODE_VALID, hide_outcomes=False))
 
-    assert queue.process(preview=False)
+    process, outcomes = queue.process(preview=False)
+
+    assert outcomes
 
     spy_chmod.assert_called_once_with(existent_file_path, MODE_VALID)
 
@@ -192,7 +191,9 @@ def test_queue_process_not_returns_outcomes_when_hide_outcomes(
 
     queue.add(ChmodItem(path=existent_file_path, mode=MODE_VALID, hide_outcomes=True))
 
-    assert not queue.process(preview=False)
+    process, outcomes = queue.process(preview=False)
+
+    assert not outcomes
 
     spy_chmod.assert_called_once_with(existent_file_path, MODE_VALID)
 
@@ -203,7 +204,9 @@ def test_queue_process_preview_returns_outcomes_when_not_hide_outcomes(
 ) -> None:
     queue.add(ChmodItem(path=existent_file_path, mode=MODE_VALID, hide_outcomes=False))
 
-    assert queue.process(preview=True)
+    process, outcomes = queue.process(preview=True)
+
+    assert outcomes
 
 
 def test_queue_preview_not_returns_outcomes_when_hide_outcomes(
@@ -212,7 +215,9 @@ def test_queue_preview_not_returns_outcomes_when_hide_outcomes(
 ) -> None:
     queue.add(ChmodItem(path=existent_file_path, mode=MODE_VALID, hide_outcomes=True))
 
-    assert not queue.process(preview=True)
+    process, outcomes = queue.process(preview=True)
+
+    assert not outcomes
 
 
 def test_queue_process_not_returns_outcomes_deduplicated(
@@ -285,7 +290,7 @@ def test_queue_process_adds_outcomes_database_object(
 
     queue.add(item)
 
-    outcomes = queue.process(preview=False)
+    process, outcomes = queue.process(preview=False)
 
     outcome_database_objects = database_session.scalars(
         select(database.QueueItemOutcome)
@@ -302,6 +307,48 @@ def test_queue_process_adds_outcomes_database_object(
     assert outcome_database_objects[0].type == outcomes[0].__class__.__name__
     assert outcome_database_objects[0].attributes
     assert outcome_database_objects[0].string == str(outcomes[0])
+
+
+def test_queue_process_fatal(
+    database_session: Session,
+    existent_file_path: Generator[str, None, None],
+    queue: Queue,
+) -> None:
+    item = ChmodItem(path=existent_file_path, mode=MODE_INVALID)
+
+    queue.add(item)
+
+    process, _ = queue.process(preview=False)
+
+    assert process.status == QueueProcessStatus.FATAL
+
+
+def test_queue_process_warning(
+    database_session: Session,
+    existent_file_path: Generator[str, None, None],
+    queue: Queue,
+) -> None:
+    item = ChmodItem(path=existent_file_path, mode=MODE_INVALID, fail_silently=True)
+
+    queue.add(item)
+
+    process, _ = queue.process(preview=False)
+
+    assert process.status == QueueProcessStatus.WARNING
+
+
+def test_queue_process_success(
+    database_session: Session,
+    existent_file_path: Generator[str, None, None],
+    queue: Queue,
+) -> None:
+    item = ChmodItem(path=existent_file_path, mode=MODE_VALID)
+
+    queue.add(item)
+
+    process, _ = queue.process(preview=False)
+
+    assert process.status == QueueProcessStatus.SUCCESS
 
 
 def test_queue_process_traceback(
@@ -322,14 +369,48 @@ def test_queue_process_traceback(
     assert "Traceback (most recent call last):" in item_database_objects[0].traceback
 
 
-def test_queue_process_no_fulfill_after_traceback(
+def test_queue_process_no_fulfill_after_traceback_true(
     mocker: MockerFixture,
     database_session: Session,
     existent_file_path: Generator[str, None, None],
     queue: Queue,
 ) -> None:
-    """Test that when an item has a traceback (i.e. fulfilling failed), other items are not fulfilled."""
-    item_1 = ChmodItem(path=existent_file_path, mode=MODE_INVALID)
+    """Test that when an item with `fail_silently=True` has a traceback (i.e. fulfilling failed), other items are fulfilled."""
+    item_1 = ChmodItem(path=existent_file_path, mode=MODE_INVALID, fail_silently=True)
+
+    item_2 = item_1.__class__(
+        path=existent_file_path,
+        mode=MODE_VALID,
+    )
+
+    spy_fulfill = mocker.spy(item_1.__class__, "fulfill")
+
+    queue.add(item_1)
+    queue.add(item_2)
+
+    queue.process(preview=False)
+
+    item_database_objects = database_session.scalars(select(database.QueueItem)).all()
+
+    assert len(item_database_objects) == 2
+
+    assert "Traceback (most recent call last):" in item_database_objects[0].traceback
+
+    assert spy_fulfill.call_count == 2
+
+
+def test_queue_process_no_fulfill_after_traceback_false(
+    mocker: MockerFixture,
+    database_session: Session,
+    existent_file_path: Generator[str, None, None],
+    queue: Queue,
+) -> None:
+    """Test that when an item with `fail_silently=False` has a traceback (i.e. fulfilling failed), other items are not fulfilled."""
+    item_1 = ChmodItem(
+        path=existent_file_path,
+        mode=MODE_INVALID,
+        fail_silently=False,
+    )
 
     item_2 = item_1.__class__(
         path=existent_file_path,

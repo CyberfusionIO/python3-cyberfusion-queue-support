@@ -4,6 +4,7 @@ import logging
 from dataclasses import dataclass
 from typing import List
 import traceback
+
 from cyberfusion.QueueSupport.database import (
     Queue as QueueModel,
     QueueItem,
@@ -11,6 +12,7 @@ from cyberfusion.QueueSupport.database import (
     QueueItemOutcome,
     QueueProcess,
 )
+from cyberfusion.QueueSupport.enums import QueueProcessStatus
 
 from cyberfusion.QueueSupport.interfaces import OutcomeInterface
 from cyberfusion.QueueSupport.items import _Item
@@ -66,6 +68,7 @@ class Queue:
             type=item.__class__.__name__,
             reference=item.reference,
             hide_outcomes=item.hide_outcomes,
+            fail_silently=item.fail_silently,
             deduplicated=deduplicated,
             attributes=item,
             traceback=None,
@@ -75,13 +78,12 @@ class Queue:
 
         self.item_mappings.append(QueueItemMapping(item, object_))
 
-    def process(self, preview: bool) -> List[OutcomeInterface]:
+    def process(self, preview: bool) -> tuple[QueueProcess, list[OutcomeInterface]]:
         """Process items."""
         logger.debug("Processing items")
 
         process_object = QueueProcess(
-            queue_id=self.queue_database_object.id,
-            preview=preview,
+            queue_id=self.queue_database_object.id, preview=preview, status=None
         )
 
         self._database_session.add(process_object)
@@ -123,9 +125,12 @@ class Queue:
 
                     self._database_session.add(item_mapping.database_object)
 
-                    # Don't fulfill other queue items
+                    if item_mapping.database_object.fail_silently:
+                        process_object.status = QueueProcessStatus.WARNING
+                    else:
+                        process_object.status = QueueProcessStatus.FATAL
 
-                    break
+                        break
 
             outcomes.extend(item_outcomes)
 
@@ -144,6 +149,11 @@ class Queue:
 
         logger.debug("Processed items")
 
+        if not process_object.status:
+            process_object.status = QueueProcessStatus.SUCCESS
+
+        self._database_session.add(process_object)
+
         self._database_session.commit()
 
-        return outcomes
+        return process_object, outcomes
