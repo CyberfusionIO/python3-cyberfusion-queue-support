@@ -11,7 +11,7 @@ from cyberfusion.QueueSupport.database import (
     QueueItemOutcome,
     QueueProcess,
 )
-from cyberfusion.QueueSupport.exceptions.enums import QueueProcessStatus
+from cyberfusion.QueueSupport.enums import QueueProcessStatus
 
 from cyberfusion.QueueSupport.interfaces import OutcomeInterface
 from cyberfusion.QueueSupport.items import _Item
