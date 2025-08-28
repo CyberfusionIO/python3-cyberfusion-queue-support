@@ -1,4 +1,5 @@
 import json
+from sqlalchemy import Enum
 
 from alembic.config import Config
 import os
@@ -16,6 +17,7 @@ from sqlalchemy import event
 from sqlalchemy.types import JSON
 
 from cyberfusion.QueueSupport.encoders import CustomEncoder
+from cyberfusion.QueueSupport.exceptions.enums import QueueProcessStatus
 from cyberfusion.QueueSupport.settings import settings
 
 
@@ -101,6 +103,7 @@ class QueueProcess(BaseModel):
 
     queue_id = Column(Integer, ForeignKey("queues.id"), nullable=False)
     preview = Column(Boolean, nullable=False)
+    status = Column(Enum(QueueProcessStatus), nullable=True)
 
     queue = relationship("Queue", back_populates="queue_processes")
     queue_item_outcomes = relationship(

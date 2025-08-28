@@ -11,6 +11,7 @@ from cyberfusion.QueueSupport.database import (
     QueueItemOutcome,
     QueueProcess,
 )
+from cyberfusion.QueueSupport.exceptions.enums import QueueProcessStatus
 
 from cyberfusion.QueueSupport.interfaces import OutcomeInterface
 from cyberfusion.QueueSupport.items import _Item
@@ -80,8 +81,7 @@ class Queue:
         logger.debug("Processing items")
 
         process_object = QueueProcess(
-            queue_id=self.queue_database_object.id,
-            preview=preview,
+            queue_id=self.queue_database_object.id, preview=preview, status=None
         )
 
         self._database_session.add(process_object)
@@ -121,6 +121,8 @@ class Queue:
 
                     item_mapping.database_object.traceback = traceback.format_exc()
 
+                    process_object.status = QueueProcessStatus.FATAL
+
                     self._database_session.add(item_mapping.database_object)
 
                     # Don't fulfill other queue items
@@ -143,6 +145,11 @@ class Queue:
             logger.debug("Processed item with ID '%s'", item_mapping.database_object.id)
 
         logger.debug("Processed items")
+
+        if not process_object.status:
+            process_object.status = QueueProcessStatus.SUCCESS
+
+        self._database_session.add(process_object)
 
         self._database_session.commit()
 

@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from cyberfusion.QueueSupport import (
     Queue,
     database,
+    QueueProcessStatus,
 )
 from cyberfusion.QueueSupport.items.chmod import ChmodItem
 
@@ -302,6 +303,42 @@ def test_queue_process_adds_outcomes_database_object(
     assert outcome_database_objects[0].type == outcomes[0].__class__.__name__
     assert outcome_database_objects[0].attributes
     assert outcome_database_objects[0].string == str(outcomes[0])
+
+
+def test_queue_process_fatal(
+    database_session: Session,
+    existent_file_path: Generator[str, None, None],
+    queue: Queue,
+) -> None:
+    item = ChmodItem(path=existent_file_path, mode=MODE_INVALID)
+
+    queue.add(item)
+
+    queue.process(preview=False)
+
+    queue_processes = database_session.scalars(select(database.QueueProcess)).all()
+
+    assert len(queue_processes) == 1
+
+    assert queue_processes[0].status == QueueProcessStatus.FATAL
+
+
+def test_queue_process_success(
+    database_session: Session,
+    existent_file_path: Generator[str, None, None],
+    queue: Queue,
+) -> None:
+    item = ChmodItem(path=existent_file_path, mode=MODE_VALID)
+
+    queue.add(item)
+
+    queue.process(preview=False)
+
+    queue_processes = database_session.scalars(select(database.QueueProcess)).all()
+
+    assert len(queue_processes) == 1
+
+    assert queue_processes[0].status == QueueProcessStatus.SUCCESS
 
 
 def test_queue_process_traceback(
