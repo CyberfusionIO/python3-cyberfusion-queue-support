@@ -17,7 +17,7 @@ from sqlalchemy import event
 from sqlalchemy.types import JSON
 
 from cyberfusion.QueueSupport.encoders import CustomEncoder
-from cyberfusion.QueueSupport.exceptions.enums import QueueProcessStatus
+from cyberfusion.QueueSupport.enums import QueueProcessStatus
 from cyberfusion.QueueSupport.settings import settings
 
 
