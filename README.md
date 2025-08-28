@@ -16,16 +16,19 @@ For example, suppose the file `/tmp/example.txt` should be chmodded to 0600. You
 ... see what the chmod _would_ do with 'preview mode':
 
 ```
->>> queue.process(preview=False)
+>>> process, outcomes = queue.process(preview=False)
+>>> outcomes
 [<cyberfusion.QueueSupport.outcomes.ChmodItemModeChangeOutcome object at 0x7f947e8ef510>]
->>> print(queue.process(preview=True)[0])
+>>> process, outcomes = queue.process(preview=True)
+>>> print(outcomes[0])
 Change mode of /tmp/example.txt from 0o644 to 0o600
 ```
 
 ... then actually run the chmod:
 
 ```
->>> print(queue.process(preview=False)[0])
+>>> process, outcomes = queue.process(preview=False)
+>>> print(outcomes[0])
 Change mode of /tmp/example2.txt from 0o644 to 0o600
 ```
 
@@ -159,7 +162,9 @@ queue.add(item)
 
 preview = True or False
 
-outcomes = queue.process(preview=preview)
+process, outcomes = queue.process(preview=preview)
+
+print(process.status)
 
 for outcome in outcomes:
     print(str(outcome))

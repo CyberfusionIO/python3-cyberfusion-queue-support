@@ -159,16 +159,11 @@ def test_queue_add_not_run_duplicate_last(
 def test_queue_process_adds_database_object(
     queue: Queue, database_session: Session
 ) -> None:
-    queue.process(preview=False)
+    process, _ = queue.process(preview=False)
 
-    process_database_objects = database_session.scalars(
-        select(database.QueueProcess)
-    ).all()
-
-    assert len(process_database_objects) == 1
-
-    assert process_database_objects[0].queue_id == queue.queue_database_object.id
-    assert not process_database_objects[0].preview
+    assert process.queue_id == queue.queue_database_object.id
+    assert not process.preview
+    assert process.status
 
 
 def test_queue_process_returns_outcomes_when_not_hide_outcomes(
@@ -180,7 +175,9 @@ def test_queue_process_returns_outcomes_when_not_hide_outcomes(
 
     queue.add(ChmodItem(path=existent_file_path, mode=MODE_VALID, hide_outcomes=False))
 
-    assert queue.process(preview=False)
+    process, outcomes = queue.process(preview=False)
+
+    assert outcomes
 
     spy_chmod.assert_called_once_with(existent_file_path, MODE_VALID)
 
@@ -194,7 +191,9 @@ def test_queue_process_not_returns_outcomes_when_hide_outcomes(
 
     queue.add(ChmodItem(path=existent_file_path, mode=MODE_VALID, hide_outcomes=True))
 
-    assert not queue.process(preview=False)
+    process, outcomes = queue.process(preview=False)
+
+    assert not outcomes
 
     spy_chmod.assert_called_once_with(existent_file_path, MODE_VALID)
 
@@ -205,7 +204,9 @@ def test_queue_process_preview_returns_outcomes_when_not_hide_outcomes(
 ) -> None:
     queue.add(ChmodItem(path=existent_file_path, mode=MODE_VALID, hide_outcomes=False))
 
-    assert queue.process(preview=True)
+    process, outcomes = queue.process(preview=True)
+
+    assert outcomes
 
 
 def test_queue_preview_not_returns_outcomes_when_hide_outcomes(
@@ -214,7 +215,9 @@ def test_queue_preview_not_returns_outcomes_when_hide_outcomes(
 ) -> None:
     queue.add(ChmodItem(path=existent_file_path, mode=MODE_VALID, hide_outcomes=True))
 
-    assert not queue.process(preview=True)
+    process, outcomes = queue.process(preview=True)
+
+    assert not outcomes
 
 
 def test_queue_process_not_returns_outcomes_deduplicated(
@@ -287,7 +290,7 @@ def test_queue_process_adds_outcomes_database_object(
 
     queue.add(item)
 
-    outcomes = queue.process(preview=False)
+    process, outcomes = queue.process(preview=False)
 
     outcome_database_objects = database_session.scalars(
         select(database.QueueItemOutcome)
@@ -315,13 +318,9 @@ def test_queue_process_fatal(
 
     queue.add(item)
 
-    queue.process(preview=False)
+    process, _ = queue.process(preview=False)
 
-    queue_processes = database_session.scalars(select(database.QueueProcess)).all()
-
-    assert len(queue_processes) == 1
-
-    assert queue_processes[0].status == QueueProcessStatus.FATAL
+    assert process.status == QueueProcessStatus.FATAL
 
 
 def test_queue_process_warning(
@@ -333,13 +332,9 @@ def test_queue_process_warning(
 
     queue.add(item)
 
-    queue.process(preview=False)
+    process, _ = queue.process(preview=False)
 
-    queue_processes = database_session.scalars(select(database.QueueProcess)).all()
-
-    assert len(queue_processes) == 1
-
-    assert queue_processes[0].status == QueueProcessStatus.WARNING
+    assert process.status == QueueProcessStatus.WARNING
 
 
 def test_queue_process_success(
@@ -351,13 +346,9 @@ def test_queue_process_success(
 
     queue.add(item)
 
-    queue.process(preview=False)
+    process, _ = queue.process(preview=False)
 
-    queue_processes = database_session.scalars(select(database.QueueProcess)).all()
-
-    assert len(queue_processes) == 1
-
-    assert queue_processes[0].status == QueueProcessStatus.SUCCESS
+    assert process.status == QueueProcessStatus.SUCCESS
 
 
 def test_queue_process_traceback(
