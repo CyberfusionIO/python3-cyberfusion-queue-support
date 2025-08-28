@@ -20,11 +20,13 @@ class UnlinkItem(_Item):
         path: str,
         reference: Optional[str] = None,
         hide_outcomes: bool = False,
+        fail_silently: bool = False,
     ) -> None:
         """Set attributes."""
         self.path = path
         self._reference = reference
         self._hide_outcomes = hide_outcomes
+        self._fail_silently = fail_silently
 
         if os.path.islink(self.path):
             raise PathIsSymlinkError(self.path)

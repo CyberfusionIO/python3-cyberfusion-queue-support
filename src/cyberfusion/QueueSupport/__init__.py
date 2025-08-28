@@ -67,6 +67,7 @@ class Queue:
             type=item.__class__.__name__,
             reference=item.reference,
             hide_outcomes=item.hide_outcomes,
+            fail_silently=item.fail_silently,
             deduplicated=deduplicated,
             attributes=item,
             traceback=None,
@@ -121,13 +122,14 @@ class Queue:
 
                     item_mapping.database_object.traceback = traceback.format_exc()
 
-                    process_object.status = QueueProcessStatus.FATAL
-
                     self._database_session.add(item_mapping.database_object)
 
-                    # Don't fulfill other queue items
+                    if item_mapping.database_object.fail_silently:
+                        process_object.status = QueueProcessStatus.WARNING
+                    else:
+                        process_object.status = QueueProcessStatus.FATAL
 
-                    break
+                        break
 
             outcomes.extend(item_outcomes)
 

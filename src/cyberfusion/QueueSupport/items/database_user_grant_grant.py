@@ -31,6 +31,7 @@ class DatabaseUserGrantGrantItem(_Item):
         table_name: Optional[str],
         reference: Optional[str] = None,
         hide_outcomes: bool = False,
+        fail_silently: bool = False,
     ) -> None:
         """Set attributes."""
         self.server_software_name = server_software_name
@@ -41,6 +42,7 @@ class DatabaseUserGrantGrantItem(_Item):
         self.table_name = table_name
         self._reference = reference
         self._hide_outcomes = hide_outcomes
+        self._fail_silently = fail_silently
 
         self._database = Database(
             support=DatabaseSupport(server_software_names=[self.server_software_name]),

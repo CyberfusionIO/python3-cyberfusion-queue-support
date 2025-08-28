@@ -121,6 +121,7 @@ class QueueItem(BaseModel):
     type = Column(String(length=255), nullable=False)
     reference = Column(String(length=255), nullable=True)
     hide_outcomes = Column(Boolean, nullable=False)
+    fail_silently = Column(Boolean, nullable=False)
     deduplicated = Column(Boolean, nullable=False)
     attributes = Column(JSON, nullable=False)
     traceback = Column(String(), nullable=True)

@@ -22,12 +22,14 @@ class DatabaseDropItem(_Item):
         name: str,
         reference: Optional[str] = None,
         hide_outcomes: bool = False,
+        fail_silently: bool = False,
     ) -> None:
         """Set attributes."""
         self.server_software_name = server_software_name
         self.name = name
         self._reference = reference
         self._hide_outcomes = hide_outcomes
+        self._fail_silently = fail_silently
 
         self.database = Database(
             support=DatabaseSupport(server_software_names=[self.server_software_name]),

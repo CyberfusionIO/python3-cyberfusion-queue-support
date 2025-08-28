@@ -22,7 +22,7 @@ def upgrade() -> None:
         "queue_processes",
         sa.Column(
             "status",
-            sa.Enum("SUCCESS", "FATAL", name="queueprocessstatus"),
+            sa.Enum("SUCCESS", "FATAL", "WARNING", name="queueprocessstatus"),
             nullable=True,
         ),
     )
