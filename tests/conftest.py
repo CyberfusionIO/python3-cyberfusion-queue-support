@@ -4,7 +4,7 @@ import pwd
 import shutil
 import uuid
 from pathlib import Path
-from typing import Generator
+from typing import Generator, Callable
 
 import pytest
 from _pytest.config import Config
@@ -12,9 +12,10 @@ from _pytest.config.argparsing import Parser
 from pytest_mock import MockerFixture
 from sqlalchemy.orm import Session
 
-from cyberfusion.QueueSupport import Queue, make_database_session
+from cyberfusion.QueueSupport import Queue, make_database_session, database
 from cyberfusion.QueueSupport.database import run_migrations
 from cyberfusion.QueueSupport.settings import settings
+from tests.stubs import NoopItem
 
 
 def pytest_addoption(parser: Parser) -> None:
@@ -152,3 +153,22 @@ def non_existent_gid() -> int:
         return gid
 
     raise Exception("Could not find free GID")
+
+
+@pytest.fixture
+def queue_generator(database_session: Session, tmp_path: Path) -> Callable[[], Queue]:
+    def generate_queue() -> Queue:
+        queue = Queue()
+
+        queue.add(NoopItem())
+
+        queue.process(preview=False)
+
+        assert database_session.query(database.Queue).count() > 0
+        assert database_session.query(database.QueueProcess).count() > 0
+        assert database_session.query(database.QueueItem).count() > 0
+        assert database_session.query(database.QueueItemOutcome).count() > 0
+
+        return queue
+
+    return generate_queue
