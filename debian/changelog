@@ -7,7 +7,7 @@ python3-cyberfusion-queue-support (3.0) unstable; urgency=medium
   * RmTreeItem: require absolute path
   * Purge queues
 
- -- William Edwards <wedwards@cyberfusion.nl>  Wed, 27 Aug 2025 00:30:00 +0000
+ -- William Edwards <wedwards@cyberfusion.nl>  Thu, 28 Aug 2025 16:56:00 +0000
 
 python3-cyberfusion-queue-support (2.7.1) unstable; urgency=medium
 
