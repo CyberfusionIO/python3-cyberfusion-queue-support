@@ -21,11 +21,13 @@ class SystemdUnitStartItem(_Item):
         name: str,
         reference: Optional[str] = None,
         hide_outcomes: bool = False,
+        fail_silently: bool = False,
     ) -> None:
         """Set attributes."""
         self.name = name
         self._reference = reference
         self._hide_outcomes = hide_outcomes
+        self._fail_silently = fail_silently
 
         self.unit = Unit(self.name)
 

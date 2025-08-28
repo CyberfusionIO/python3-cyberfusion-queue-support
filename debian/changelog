@@ -1,8 +1,9 @@
 python3-cyberfusion-queue-support (2.8) unstable; urgency=medium
 
+  * Add `fail_silently` to queue items
   * Add status to queue processes
 
- -- William Edwards <wedwards@cyberfusion.nl>  Thu, 28 Aug 2025 11:56:00 +0000
+ -- William Edwards <wedwards@cyberfusion.nl>  Wed, 27 Aug 2025 00:30:00 +0000
 
 python3-cyberfusion-queue-support (2.7.1) unstable; urgency=medium
 

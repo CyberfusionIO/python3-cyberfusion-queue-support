@@ -51,6 +51,7 @@ def test_queue_add_adds_database_object(
     assert item_database_objects[0].type == item.__class__.__name__
     assert item_database_objects[0].reference == item.reference
     assert item_database_objects[0].hide_outcomes == item.hide_outcomes
+    assert item_database_objects[0].fail_silently == item.fail_silently
     assert not item_database_objects[0].deduplicated
     assert item_database_objects[0].attributes
     assert item_database_objects[0].traceback is None
@@ -323,6 +324,24 @@ def test_queue_process_fatal(
     assert queue_processes[0].status == QueueProcessStatus.FATAL
 
 
+def test_queue_process_warning(
+    database_session: Session,
+    existent_file_path: Generator[str, None, None],
+    queue: Queue,
+) -> None:
+    item = ChmodItem(path=existent_file_path, mode=MODE_INVALID, fail_silently=True)
+
+    queue.add(item)
+
+    queue.process(preview=False)
+
+    queue_processes = database_session.scalars(select(database.QueueProcess)).all()
+
+    assert len(queue_processes) == 1
+
+    assert queue_processes[0].status == QueueProcessStatus.WARNING
+
+
 def test_queue_process_success(
     database_session: Session,
     existent_file_path: Generator[str, None, None],
@@ -359,14 +378,48 @@ def test_queue_process_traceback(
     assert "Traceback (most recent call last):" in item_database_objects[0].traceback
 
 
-def test_queue_process_no_fulfill_after_traceback(
+def test_queue_process_no_fulfill_after_traceback_true(
     mocker: MockerFixture,
     database_session: Session,
     existent_file_path: Generator[str, None, None],
     queue: Queue,
 ) -> None:
-    """Test that when an item has a traceback (i.e. fulfilling failed), other items are not fulfilled."""
-    item_1 = ChmodItem(path=existent_file_path, mode=MODE_INVALID)
+    """Test that when an item with `fail_silently=True` has a traceback (i.e. fulfilling failed), other items are fulfilled."""
+    item_1 = ChmodItem(path=existent_file_path, mode=MODE_INVALID, fail_silently=True)
+
+    item_2 = item_1.__class__(
+        path=existent_file_path,
+        mode=MODE_VALID,
+    )
+
+    spy_fulfill = mocker.spy(item_1.__class__, "fulfill")
+
+    queue.add(item_1)
+    queue.add(item_2)
+
+    queue.process(preview=False)
+
+    item_database_objects = database_session.scalars(select(database.QueueItem)).all()
+
+    assert len(item_database_objects) == 2
+
+    assert "Traceback (most recent call last):" in item_database_objects[0].traceback
+
+    assert spy_fulfill.call_count == 2
+
+
+def test_queue_process_no_fulfill_after_traceback_false(
+    mocker: MockerFixture,
+    database_session: Session,
+    existent_file_path: Generator[str, None, None],
+    queue: Queue,
+) -> None:
+    """Test that when an item with `fail_silently=False` has a traceback (i.e. fulfilling failed), other items are not fulfilled."""
+    item_1 = ChmodItem(
+        path=existent_file_path,
+        mode=MODE_INVALID,
+        fail_silently=False,
+    )
 
     item_2 = item_1.__class__(
         path=existent_file_path,

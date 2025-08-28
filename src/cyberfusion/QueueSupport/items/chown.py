@@ -39,6 +39,7 @@ class ChownItem(_Item):
         group_name: str,
         reference: Optional[str] = None,
         hide_outcomes: bool = False,
+        fail_silently: bool = False,
     ) -> None:
         """Set attributes."""
         self.path = path
@@ -46,6 +47,7 @@ class ChownItem(_Item):
         self.group_name = group_name
         self._reference = reference
         self._hide_outcomes = hide_outcomes
+        self._fail_silently = fail_silently
 
         if os.path.islink(self.path):
             raise PathIsSymlinkError(self.path)
