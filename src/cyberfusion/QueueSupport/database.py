@@ -89,10 +89,12 @@ class Queue(BaseModel):
     queue_items = relationship(
         "QueueItem",
         back_populates="queue",
+        cascade="all, delete",
     )
     queue_processes = relationship(
         "QueueProcess",
         back_populates="queue",
+        cascade="all, delete",
     )
 
 
@@ -101,7 +103,11 @@ class QueueProcess(BaseModel):
 
     __tablename__ = "queue_processes"
 
-    queue_id = Column(Integer, ForeignKey("queues.id"), nullable=False)
+    queue_id = Column(
+        Integer,
+        ForeignKey("queues.id", ondelete="CASCADE"),
+        nullable=False,
+    )
     preview = Column(Boolean, nullable=False)
     status = Column(Enum(QueueProcessStatus), nullable=True)
 
@@ -109,6 +115,7 @@ class QueueProcess(BaseModel):
     queue_item_outcomes = relationship(
         "QueueItemOutcome",
         back_populates="queue_process",
+        cascade="all, delete",
     )
 
 
@@ -117,7 +124,11 @@ class QueueItem(BaseModel):
 
     __tablename__ = "queue_items"
 
-    queue_id = Column(Integer, ForeignKey("queues.id"), nullable=False)
+    queue_id = Column(
+        Integer,
+        ForeignKey("queues.id", ondelete="CASCADE"),
+        nullable=False,
+    )
     type = Column(String(length=255), nullable=False)
     reference = Column(String(length=255), nullable=True)
     hide_outcomes = Column(Boolean, nullable=False)
@@ -130,6 +141,7 @@ class QueueItem(BaseModel):
     queue_item_outcomes = relationship(
         "QueueItemOutcome",
         back_populates="queue_item",
+        cascade="all, delete",
     )
 
 
@@ -138,8 +150,16 @@ class QueueItemOutcome(BaseModel):
 
     __tablename__ = "queue_item_outcomes"
 
-    queue_item_id = Column(Integer, ForeignKey("queue_items.id"), nullable=False)
-    queue_process_id = Column(Integer, ForeignKey("queue_processes.id"), nullable=False)
+    queue_item_id = Column(
+        Integer,
+        ForeignKey("queue_items.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    queue_process_id = Column(
+        Integer,
+        ForeignKey("queue_processes.id", ondelete="CASCADE"),
+        nullable=False,
+    )
     type = Column(String(length=255), nullable=False)
     attributes = Column(JSON, nullable=False)
     string = Column(String(length=255), nullable=False)
