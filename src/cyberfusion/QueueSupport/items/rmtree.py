@@ -3,6 +3,7 @@
 import logging
 import os
 import shutil
+from pathlib import Path
 from typing import List, Optional
 
 from cyberfusion.QueueSupport.exceptions import PathIsSymlinkError
@@ -19,6 +20,7 @@ class RmTreeItem(_Item):
         self,
         *,
         path: str,
+        min_depth: int,
         reference: Optional[str] = None,
         hide_outcomes: bool = False,
         fail_silently: bool = False,
@@ -31,6 +33,17 @@ class RmTreeItem(_Item):
 
         if os.path.islink(self.path):
             raise PathIsSymlinkError(self.path)
+
+        if not os.path.isabs(path):
+            raise ValueError("Path must be absolute")
+
+        if min_depth < 1:
+            raise ValueError("min_depth must be greater than 0")
+
+        depth = len(Path(os.path.normpath(path)).parents)
+
+        if depth < min_depth:
+            raise ValueError(f"Path doesn't have enough depth: {depth} < {min_depth}")
 
     @property
     def outcomes(self) -> List[RmTreeItemRemoveOutcome]:

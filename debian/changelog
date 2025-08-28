@@ -3,6 +3,8 @@ python3-cyberfusion-queue-support (3.0) unstable; urgency=medium
   * Add `fail_silently` to queue items
   * Add status to queue processes
   * Let `Queue.process` return queue process
+  * RmTreeItem: add min_depth
+  * RmTreeItem: require absolute path
 
  -- William Edwards <wedwards@cyberfusion.nl>  Wed, 27 Aug 2025 00:30:00 +0000
 
