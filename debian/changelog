@@ -1,3 +1,9 @@
+python3-cyberfusion-queue-support (3.0.1) unstable; urgency=medium
+
+  * Bump SystemdSupport dependency
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Wed, 24 Sep 2025 22:01:00 +0000
+
 python3-cyberfusion-queue-support (3.0) unstable; urgency=medium
 
   * Add `fail_silently` to queue items
