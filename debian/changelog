@@ -1,3 +1,9 @@
+python3-cyberfusion-queue-support (3.0.2) UNRELEASED; urgency=medium
+
+  * Add missing cronscript install
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Thu, 25 Sep 2025 16:47:00 +0000
+
 python3-cyberfusion-queue-support (3.0.1) unstable; urgency=medium
 
   * Bump SystemdSupport dependency

@@ -1,1 +1,2 @@
 etc/queue-support.conf
+etc/cronscripts/purge-queues.cron
