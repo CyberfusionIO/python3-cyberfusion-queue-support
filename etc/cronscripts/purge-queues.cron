@@ -1,9 +1,8 @@
 NAME="purge-queues"
 AUTHOR="Cyberfusion <system-messages.foundation@cyberfusion.io>"
 TUXIS_CRONLOCK="/tmp/.tuxis-cron.$NAME.lock"
-MASTERLOG="/var/log/tuxis-cron/$NAME.log"
+MASTERLOG="/tmp/$NAME.log"
 PATH=/usr/local/bin:/usr/bin:/bin:/sbin:/usr/sbin
-PROTECTLOG=yes
 
 ESCALATE_MAILTO="system-messages.foundation@cyberfusion.io"
 
