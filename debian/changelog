@@ -1,3 +1,9 @@
+python3-cyberfusion-queue-support (3.0.3) unstable; urgency=medium
+
+  * Fix purge cron log path
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Fri, 26 Sep 2025 18:26:00 +0000
+
 python3-cyberfusion-queue-support (3.0.2) unstable; urgency=medium
 
   * Add missing cronscript install
