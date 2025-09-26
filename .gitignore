@@ -137,3 +137,5 @@ report-mypy.xml
 
 # Project
 queue-support.db
+queue-support.db-shm
+queue-support.db-wal
