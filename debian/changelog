@@ -2,6 +2,7 @@ python3-cyberfusion-queue-support (3.1) UNRELEASED; urgency=medium
 
   * Add database indexes
   * Delete queues in bulk
+  * Run purge-queues as queue-support user
 
  -- William Edwards <wedwards@cyberfusion.nl>  Fri, 26 Sep 2025 18:26:00 +0000
 

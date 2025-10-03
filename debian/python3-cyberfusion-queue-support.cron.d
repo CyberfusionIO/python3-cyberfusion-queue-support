@@ -1,1 +1,1 @@
-53 8 * * * root /usr/bin/tuxis-cron /etc/cronscripts/purge-queues.cron
+53 8 * * * queue-support /usr/bin/tuxis-cron /etc/cronscripts/purge-queues.cron
