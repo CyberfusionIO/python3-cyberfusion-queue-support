@@ -104,9 +104,7 @@ class QueueProcess(BaseModel):
     __tablename__ = "queue_processes"
 
     queue_id = Column(
-        Integer,
-        ForeignKey("queues.id", ondelete="CASCADE"),
-        nullable=False,
+        Integer, ForeignKey("queues.id", ondelete="CASCADE"), nullable=False, index=True
     )
     preview = Column(Boolean, nullable=False)
     status = Column(Enum(QueueProcessStatus), nullable=True)
@@ -125,9 +123,7 @@ class QueueItem(BaseModel):
     __tablename__ = "queue_items"
 
     queue_id = Column(
-        Integer,
-        ForeignKey("queues.id", ondelete="CASCADE"),
-        nullable=False,
+        Integer, ForeignKey("queues.id", ondelete="CASCADE"), nullable=False, index=True
     )
     type = Column(String(length=255), nullable=False)
     reference = Column(String(length=255), nullable=True)
@@ -154,11 +150,13 @@ class QueueItemOutcome(BaseModel):
         Integer,
         ForeignKey("queue_items.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
     )
     queue_process_id = Column(
         Integer,
         ForeignKey("queue_processes.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
     )
     type = Column(String(length=255), nullable=False)
     attributes = Column(JSON, nullable=False)
