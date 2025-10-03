@@ -7,8 +7,11 @@ PATH=/usr/local/bin:/usr/bin:/bin:/sbin:/usr/sbin
 ESCALATE_MAILTO="system-messages.foundation@cyberfusion.io"
 
 SCRIPT=/usr/bin/queue-support-purge-queues
+PYTHON3=/usr/bin/python3
 
 func_cron()
 {
+  $PYTHON3 -c 'from random import randint; from time import sleep; sleep(randint(1,300))'
+
   $SCRIPT || fatal "Could not run script"
 }
