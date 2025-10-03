@@ -11,11 +11,8 @@ def main() -> None:
         days=settings.queue_purge_days
     )
 
-    queues = (
-        database_session.query(Queue).filter(Queue.created_at < purge_before_date).all()
-    )
+    queues = database_session.query(Queue).filter(Queue.created_at < purge_before_date)
 
-    for queue in queues:
-        database_session.delete(queue)
+    queues.delete()
 
     database_session.commit()
