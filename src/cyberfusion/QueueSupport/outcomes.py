@@ -483,19 +483,6 @@ class DatabaseUserEnsureStateItemEditPasswordOutcome(OutcomeInterface):
         if not isinstance(other, DatabaseUserEnsureStateItemEditPasswordOutcome):
             return False
 
-        print(
-            other.database_user.server_software_name,
-            other.database_user.name,
-            other.database_user.password,
-            other.database_user.host,
-        )
-        print(
-            self.database_user.server_software_name,
-            self.database_user.name,
-            self.database_user.password,
-            self.database_user.host,
-        )
-
         return (
             other.database_user.server_software_name
             == self.database_user.server_software_name
