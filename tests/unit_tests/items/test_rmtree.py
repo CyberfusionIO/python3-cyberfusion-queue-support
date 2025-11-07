@@ -1,4 +1,5 @@
 import os
+import uuid
 from typing import Generator
 
 import pytest
@@ -45,7 +46,7 @@ def test_rmtree_item_path_symlink_raises(
 
 def test_rmtree_item_path_not_absolute() -> None:
     with pytest.raises(ValueError) as error:
-        RmTreeItem(path="test", min_depth=1)
+        RmTreeItem(path=str(uuid.uuid4()), min_depth=1)
 
     assert error.value.args[0] == "Path must be absolute"
 
