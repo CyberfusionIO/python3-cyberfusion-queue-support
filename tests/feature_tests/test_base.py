@@ -1,4 +1,5 @@
 import os
+import uuid
 from typing import Generator
 
 from pytest_mock import MockerFixture
@@ -11,6 +12,7 @@ from cyberfusion.QueueSupport import (
     QueueProcessStatus,
 )
 from cyberfusion.QueueSupport.items.chmod import ChmodItem
+from cyberfusion.QueueSupport.items.mkdir import MkdirItem
 
 MODE_VALID = 0o600
 MODE_INVALID = 204983136789054
@@ -218,6 +220,17 @@ def test_queue_preview_not_returns_outcomes_when_hide_outcomes(
     process, outcomes = queue.process(preview=True)
 
     assert not outcomes
+
+
+def test_queue_preview_not_fail_when_no_parent(
+    non_existent_path: Generator[str, None, None],
+    queue: Queue,
+) -> None:
+    nested_non_existent_path = os.path.join(non_existent_path, str(uuid.uuid4()))
+
+    queue.add(MkdirItem(path=nested_non_existent_path, recursively=False))
+
+    queue.process(preview=True)
 
 
 def test_queue_process_not_returns_outcomes_deduplicated(
