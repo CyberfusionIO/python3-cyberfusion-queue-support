@@ -1,3 +1,9 @@
+python3-cyberfusion-queue-support (3.2.1) unstable; urgency=medium
+
+  * Ignore ParentNotFoundError in preview
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Sat, 06 Dec 2025 21:10:00 +0000
+
 python3-cyberfusion-queue-support (3.2) unstable; urgency=medium
 
   * Add recursively option to MkdirItem
