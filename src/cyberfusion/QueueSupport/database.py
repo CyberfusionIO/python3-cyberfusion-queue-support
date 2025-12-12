@@ -1,3 +1,4 @@
+from typing import List, Optional
 import json
 from sqlalchemy import Enum
 
@@ -7,12 +8,11 @@ import functools
 from alembic import command
 import sqlite3
 from datetime import datetime, timezone
-
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.pool.base import _ConnectionRecord
 from sqlalchemy import ForeignKey, MetaData, Boolean
-from sqlalchemy import create_engine, Column, DateTime, Integer, String
-from sqlalchemy.orm import Session, sessionmaker, relationship
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine, DateTime, Integer, String
+from sqlalchemy.orm import Session, sessionmaker, DeclarativeBase
 from sqlalchemy import event
 from sqlalchemy.types import JSON
 
@@ -65,19 +65,22 @@ naming_convention = {
     "pk": "pk_%(table_name)s",
 }
 
-metadata = MetaData(naming_convention=naming_convention)
-
-Base = declarative_base(metadata=metadata)
+metadata_obj = MetaData(naming_convention=naming_convention)
 
 
-class BaseModel(Base):  # type: ignore[misc, valid-type]
+class Base(DeclarativeBase):
+    metadata = metadata_obj
+
+
+class BaseModel(Base):
     """Base model."""
 
     __abstract__ = True
 
-    id = Column(Integer, primary_key=True)
-    created_at = Column(
-        DateTime, default=functools.partial(datetime.now, timezone.utc), nullable=False
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=functools.partial(datetime.now, timezone.utc),
     )
 
 
@@ -86,12 +89,12 @@ class Queue(BaseModel):
 
     __tablename__ = "queues"
 
-    queue_items = relationship(
+    queue_items: Mapped[List["QueueItem"]] = relationship(
         "QueueItem",
         back_populates="queue",
         cascade="all, delete",
     )
-    queue_processes = relationship(
+    queue_processes: Mapped[List["QueueProcess"]] = relationship(
         "QueueProcess",
         back_populates="queue",
         cascade="all, delete",
@@ -103,14 +106,20 @@ class QueueProcess(BaseModel):
 
     __tablename__ = "queue_processes"
 
-    queue_id = Column(
-        Integer, ForeignKey("queues.id", ondelete="CASCADE"), nullable=False, index=True
+    queue_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("queues.id", ondelete="CASCADE"), index=True
     )
-    preview = Column(Boolean, nullable=False)
-    status = Column(Enum(QueueProcessStatus), nullable=True)
+    preview: Mapped[bool] = mapped_column(
+        Boolean,
+    )
+    status: Mapped[Optional[QueueProcessStatus]] = mapped_column(
+        Enum(QueueProcessStatus),
+    )
 
-    queue = relationship("Queue", back_populates="queue_processes")
-    queue_item_outcomes = relationship(
+    queue: Mapped["Queue"] = relationship(
+        "Queue", back_populates="queue_processes", uselist=False
+    )
+    queue_item_outcomes: Mapped[List["QueueItemOutcome"]] = relationship(
         "QueueItemOutcome",
         back_populates="queue_process",
         cascade="all, delete",
@@ -122,19 +131,35 @@ class QueueItem(BaseModel):
 
     __tablename__ = "queue_items"
 
-    queue_id = Column(
-        Integer, ForeignKey("queues.id", ondelete="CASCADE"), nullable=False, index=True
+    queue_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("queues.id", ondelete="CASCADE"), index=True
     )
-    type = Column(String(length=255), nullable=False)
-    reference = Column(String(length=255), nullable=True)
-    hide_outcomes = Column(Boolean, nullable=False)
-    fail_silently = Column(Boolean, nullable=False)
-    deduplicated = Column(Boolean, nullable=False)
-    attributes = Column(JSON, nullable=False)
-    traceback = Column(String(), nullable=True)
+    type: Mapped[str] = mapped_column(
+        String(length=255),
+    )
+    reference: Mapped[Optional[str]] = mapped_column(
+        String(length=255),
+    )
+    hide_outcomes: Mapped[bool] = mapped_column(
+        Boolean,
+    )
+    fail_silently: Mapped[bool] = mapped_column(
+        Boolean,
+    )
+    deduplicated: Mapped[bool] = mapped_column(
+        Boolean,
+    )
+    attributes: Mapped[dict] = mapped_column(
+        JSON,
+    )
+    traceback: Mapped[Optional[str]] = mapped_column(
+        String(),
+    )
 
-    queue = relationship("Queue", back_populates="queue_items")
-    queue_item_outcomes = relationship(
+    queue: Mapped["Queue"] = relationship(
+        "Queue", back_populates="queue_items", uselist=False
+    )
+    queue_item_outcomes: Mapped[List["QueueItemOutcome"]] = relationship(
         "QueueItemOutcome",
         back_populates="queue_item",
         cascade="all, delete",
@@ -146,21 +171,29 @@ class QueueItemOutcome(BaseModel):
 
     __tablename__ = "queue_item_outcomes"
 
-    queue_item_id = Column(
+    queue_item_id: Mapped[int] = mapped_column(
         Integer,
         ForeignKey("queue_items.id", ondelete="CASCADE"),
-        nullable=False,
         index=True,
     )
-    queue_process_id = Column(
+    queue_process_id: Mapped[int] = mapped_column(
         Integer,
         ForeignKey("queue_processes.id", ondelete="CASCADE"),
-        nullable=False,
         index=True,
     )
-    type = Column(String(length=255), nullable=False)
-    attributes = Column(JSON, nullable=False)
-    string = Column(String(length=255), nullable=False)
+    type: Mapped[str] = mapped_column(
+        String(length=255),
+    )
+    attributes: Mapped[dict] = mapped_column(
+        JSON,
+    )
+    string: Mapped[str] = mapped_column(
+        String(length=255),
+    )
 
-    queue_item = relationship("QueueItem", back_populates="queue_item_outcomes")
-    queue_process = relationship("QueueProcess", back_populates="queue_item_outcomes")
+    queue_item: Mapped["QueueItem"] = relationship(
+        "QueueItem", back_populates="queue_item_outcomes", uselist=False
+    )
+    queue_process: Mapped["QueueProcess"] = relationship(
+        "QueueProcess", back_populates="queue_item_outcomes"
+    )
