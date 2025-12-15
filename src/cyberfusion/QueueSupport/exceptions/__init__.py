@@ -21,11 +21,6 @@ class PathIsFileError(ItemError):
 
 
 @dataclass
-class ParentNotFoundError(ItemError):
-    parent: str
-
-
-@dataclass
 class CommandQueueFulfillFailed(Exception):
     item: _Item
     command: List[str]

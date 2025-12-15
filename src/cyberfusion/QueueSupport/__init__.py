@@ -13,7 +13,6 @@ from cyberfusion.QueueSupport.database import (
     QueueProcess,
 )
 from cyberfusion.QueueSupport.enums import QueueProcessStatus
-from cyberfusion.QueueSupport.exceptions import ParentNotFoundError
 
 from cyberfusion.QueueSupport.interfaces import OutcomeInterface
 from cyberfusion.QueueSupport.items import _Item
@@ -104,10 +103,7 @@ class Queue:
 
             if preview:
                 if not item_mapping.item.hide_outcomes:
-                    try:
-                        item_outcomes.extend(item_mapping.item.outcomes)
-                    except ParentNotFoundError:
-                        pass
+                    item_outcomes.extend(item_mapping.item.outcomes)
             else:
                 try:
                     logger.debug(
