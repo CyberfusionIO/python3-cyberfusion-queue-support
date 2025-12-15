@@ -1,3 +1,9 @@
+python3-cyberfusion-queue-support (3.3.2) unstable; urgency=medium
+
+  * MkdirItem: don't raise ParentNotFoundError
+
+ -- William Edwards <wedwards@cyberfusion.nl>  Mon, 15 Dec 2025 17:59:00 +0000
+
 python3-cyberfusion-queue-support (3.3.1) unstable; urgency=medium
 
   * Ignore extraneous config options

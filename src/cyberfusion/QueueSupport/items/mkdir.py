@@ -8,7 +8,6 @@ from typing import List, Optional
 from cyberfusion.QueueSupport.exceptions import (
     PathIsSymlinkError,
     PathIsFileError,
-    ParentNotFoundError,
 )
 from cyberfusion.QueueSupport.items import _Item
 from cyberfusion.QueueSupport.outcomes import MkdirItemCreateOutcome
@@ -50,9 +49,6 @@ class MkdirItem(_Item):
                 raise PathIsFileError(str(path))
             elif os.path.isdir(path):
                 continue
-
-            if not self.recursively and str(path) != self.path:
-                raise ParentNotFoundError(str(path))
 
             outcomes.append(MkdirItemCreateOutcome(path=str(path)))
 

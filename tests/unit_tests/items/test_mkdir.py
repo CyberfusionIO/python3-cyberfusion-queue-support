@@ -7,7 +7,6 @@ import pytest
 from cyberfusion.QueueSupport.exceptions import (
     PathIsSymlinkError,
     PathIsFileError,
-    ParentNotFoundError,
 )
 from cyberfusion.QueueSupport.items.mkdir import MkdirItem
 from cyberfusion.QueueSupport.outcomes import MkdirItemCreateOutcome
@@ -55,17 +54,6 @@ def test_mkdir_item_path_file_raises(
     object_ = MkdirItem(path=existent_file_path)
 
     with pytest.raises(PathIsFileError):
-        object_.outcomes
-
-
-def test_mkdir_item_path_no_parent_raises(
-    non_existent_path: Generator[str, None, None],
-) -> None:
-    nested_non_existent_path = os.path.join(non_existent_path, str(uuid.uuid4()))
-
-    object_ = MkdirItem(path=nested_non_existent_path, recursively=False)
-
-    with pytest.raises(ParentNotFoundError):
         object_.outcomes
 
 
