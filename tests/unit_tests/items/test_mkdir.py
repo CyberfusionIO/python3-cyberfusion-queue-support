@@ -77,7 +77,7 @@ def test_mkdir_item_recursively_not_exists_has_outcome_create(
 
     assert not os.path.isdir(nested_non_existent_path)
 
-    object_ = MkdirItem(path=nested_non_existent_path, recursively=True)
+    object_ = MkdirItem(path=nested_non_existent_path)
 
     assert MkdirItemCreateOutcome(path=non_existent_path) in object_.outcomes
     assert MkdirItemCreateOutcome(path=nested_non_existent_path) in object_.outcomes
@@ -105,7 +105,6 @@ def test_mkdir_item_serialization(
     expected = json.dumps(
         {
             "path": non_existent_path,
-            "recursively": False,
         }
     )
 
