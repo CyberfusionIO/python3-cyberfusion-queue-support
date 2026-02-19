@@ -1,10 +1,10 @@
 import os
-import uuid
 from typing import Generator
 
 from pytest_mock import MockerFixture
 
 from cyberfusion.QueueSupport.items.mkdir import MkdirItem
+import uuid
 
 
 def test_mkdir_item_fulfill_create(non_existent_path: str) -> None:
@@ -21,7 +21,7 @@ def test_mkdir_item_recursively_fulfill_create(non_existent_path: str) -> None:
 
     assert not os.path.isdir(nested_non_existent_path)
 
-    object_ = MkdirItem(path=nested_non_existent_path, recursively=True)
+    object_ = MkdirItem(path=nested_non_existent_path)
     object_.fulfill()
 
     assert os.path.isdir(nested_non_existent_path)

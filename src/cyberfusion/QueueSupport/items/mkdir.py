@@ -22,14 +22,12 @@ class MkdirItem(_Item):
         self,
         *,
         path: str,
-        recursively: bool = False,
         reference: Optional[str] = None,
         hide_outcomes: bool = False,
         fail_silently: bool = False,
     ) -> None:
         """Set attributes."""
         self.path = path
-        self.recursively = recursively
         self._reference = reference
         self._hide_outcomes = hide_outcomes
         self._fail_silently = fail_silently
