@@ -155,6 +155,12 @@ class QueueItem(BaseModel):
     traceback: Mapped[Optional[str]] = mapped_column(
         String(),
     )
+    started_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime,
+    )
+    ended_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime,
+    )
 
     queue: Mapped["Queue"] = relationship(
         "Queue", back_populates="queue_items", uselist=False

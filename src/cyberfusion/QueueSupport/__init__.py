@@ -16,6 +16,7 @@ from cyberfusion.QueueSupport.enums import QueueProcessStatus
 
 from cyberfusion.QueueSupport.interfaces import OutcomeInterface
 from cyberfusion.QueueSupport.items import _Item
+from datetime import datetime, UTC
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +73,8 @@ class Queue:
             deduplicated=deduplicated,
             attributes=item,
             traceback=None,
+            started_at=None,
+            ended_at=None,
         )
 
         self._database_session.add(object_)
@@ -95,6 +98,10 @@ class Queue:
             for item_mapping in self.item_mappings
             if not item_mapping.database_object.deduplicated
         ]:
+            started_at = datetime.now(UTC)
+
+            item_mapping.database_object.started_at = started_at
+
             logger.debug(
                 "Processing item with ID '%s'", item_mapping.database_object.id
             )
@@ -123,14 +130,18 @@ class Queue:
 
                     item_mapping.database_object.traceback = traceback.format_exc()
 
-                    self._database_session.add(item_mapping.database_object)
-
                     if item_mapping.database_object.fail_silently:
                         process_object.status = QueueProcessStatus.WARNING
                     else:
                         process_object.status = QueueProcessStatus.FATAL
 
                         break
+                finally:
+                    ended_at = datetime.now(UTC)
+
+                    item_mapping.database_object.ended_at = ended_at
+
+                    self._database_session.add(item_mapping.database_object)
 
             outcomes.extend(item_outcomes)
 
