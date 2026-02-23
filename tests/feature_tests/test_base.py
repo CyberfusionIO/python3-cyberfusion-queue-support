@@ -11,6 +11,7 @@ from cyberfusion.QueueSupport import (
     QueueProcessStatus,
 )
 from cyberfusion.QueueSupport.items.chmod import ChmodItem
+from datetime import datetime
 
 MODE_VALID = 0o600
 MODE_INVALID = 204983136789054
@@ -55,6 +56,8 @@ def test_queue_add_adds_database_object(
     assert not item_database_objects[0].deduplicated
     assert item_database_objects[0].attributes
     assert item_database_objects[0].traceback is None
+    assert item_database_objects[0].started_at is None
+    assert item_database_objects[0].ended_at is None
 
 
 def test_queue_add_adds_mapping(
@@ -349,6 +352,42 @@ def test_queue_process_success(
     process, _ = queue.process(preview=False)
 
     assert process.status == QueueProcessStatus.SUCCESS
+
+
+def test_queue_process_started_at(
+    database_session: Session,
+    existent_file_path: Generator[str, None, None],
+    queue: Queue,
+) -> None:
+    item = ChmodItem(path=existent_file_path, mode=MODE_INVALID)
+
+    queue.add(item)
+
+    queue.process(preview=False)
+
+    item_database_objects = database_session.scalars(select(database.QueueItem)).all()
+
+    assert len(item_database_objects) == 1
+
+    assert item_database_objects[0].started_at < datetime.now()
+
+
+def test_queue_process_ended_at(
+    database_session: Session,
+    existent_file_path: Generator[str, None, None],
+    queue: Queue,
+) -> None:
+    item = ChmodItem(path=existent_file_path, mode=MODE_INVALID)
+
+    queue.add(item)
+
+    queue.process(preview=False)
+
+    item_database_objects = database_session.scalars(select(database.QueueItem)).all()
+
+    assert len(item_database_objects) == 1
+
+    assert item_database_objects[0].ended_at > item_database_objects[0].started_at
 
 
 def test_queue_process_traceback(
