@@ -73,6 +73,7 @@ class Queue:
             deduplicated=deduplicated,
             attributes=item,
             traceback=None,
+            fulfilled=False,
             started_at=None,
             ended_at=None,
         )
@@ -121,6 +122,8 @@ class Queue:
                         item_mapping.item.fulfill()
                     else:
                         item_outcomes.extend(item_mapping.item.fulfill())
+
+                    item_mapping.database_object.fulfilled = True
 
                     logger.debug(
                         "Fulfilled item with ID '%s'", item_mapping.database_object.id
