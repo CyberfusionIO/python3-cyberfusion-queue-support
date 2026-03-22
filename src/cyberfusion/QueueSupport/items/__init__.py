@@ -19,11 +19,13 @@ class _Item(ItemInterface, ABC):
         reference: Optional[str] = None,
         hide_outcomes: bool = False,
         fail_silently: bool = False,
+        fulfill_in_preview: bool = False,
     ) -> None:  # pragma: no cover
         """Set attributes."""
         self._reference = reference
         self._hide_outcomes = hide_outcomes
         self._fail_silently = fail_silently
+        self._fulfill_in_preview = fulfill_in_preview
 
     @property
     def hide_outcomes(self) -> bool:
@@ -34,6 +36,11 @@ class _Item(ItemInterface, ABC):
     def fail_silently(self) -> bool:
         """Get if queue process should be stopped on exception."""
         return self._fail_silently
+
+    @property
+    def fulfill_in_preview(self) -> bool:
+        """Get if item should be fulfilled even in preview mode."""
+        return self._fulfill_in_preview
 
     @property
     def reference(self) -> Optional[str]:

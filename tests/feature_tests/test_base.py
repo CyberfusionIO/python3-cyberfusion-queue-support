@@ -284,6 +284,22 @@ def test_queue_process_preview_not_fulfills(
     spy_fulfill.assert_not_called()
 
 
+def test_queue_process_preview_fulfills_when_fulfill_in_preview(
+    existent_file_path: Generator[str, None, None],
+    mocker: MockerFixture,
+    queue: Queue,
+) -> None:
+    queue.add(
+        ChmodItem(path=existent_file_path, mode=MODE_VALID, fulfill_in_preview=True)
+    )
+
+    spy_fulfill = mocker.spy(queue.item_mappings[0].item.__class__, "fulfill")
+
+    queue.process(preview=True)
+
+    spy_fulfill.assert_called_once_with(mocker.ANY)
+
+
 def test_queue_process_adds_outcomes_database_object(
     queue: Queue,
     existent_file_path: Generator[str, None, None],
