@@ -23,6 +23,7 @@ class DatabaseCreateItem(_Item):
         reference: Optional[str] = None,
         hide_outcomes: bool = False,
         fail_silently: bool = False,
+        fulfill_in_preview: bool = False,
     ) -> None:
         """Set attributes."""
         self.server_software_name = server_software_name
@@ -30,6 +31,7 @@ class DatabaseCreateItem(_Item):
         self._reference = reference
         self._hide_outcomes = hide_outcomes
         self._fail_silently = fail_silently
+        self._fulfill_in_preview = fulfill_in_preview
 
         self.database = Database(
             support=DatabaseSupport(server_software_names=[self.server_software_name]),

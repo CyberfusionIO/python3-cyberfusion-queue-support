@@ -24,12 +24,14 @@ class RmTreeItem(_Item):
         reference: Optional[str] = None,
         hide_outcomes: bool = False,
         fail_silently: bool = False,
+        fulfill_in_preview: bool = False,
     ) -> None:
         """Set attributes."""
         self.path = path
         self._reference = reference
         self._hide_outcomes = hide_outcomes
         self._fail_silently = fail_silently
+        self._fulfill_in_preview = fulfill_in_preview
 
         if os.path.islink(self.path):
             raise PathIsSymlinkError(self.path)

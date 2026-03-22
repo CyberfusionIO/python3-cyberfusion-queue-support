@@ -108,7 +108,7 @@ class Queue:
 
             item_outcomes = []
 
-            if preview:
+            if preview and not item_mapping.item.fulfill_in_preview:
                 if not item_mapping.item.hide_outcomes:
                     item_outcomes.extend(item_mapping.item.outcomes)
             else:
