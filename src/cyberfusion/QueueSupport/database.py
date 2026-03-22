@@ -155,6 +155,9 @@ class QueueItem(BaseModel):
     traceback: Mapped[Optional[str]] = mapped_column(
         String(),
     )
+    fulfilled: Mapped[bool] = mapped_column(
+        Boolean,
+    )
     started_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime,
     )
